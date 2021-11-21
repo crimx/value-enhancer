@@ -18,7 +18,7 @@ npm add value-enhancer
 
 ## Why
 
-The goal of this lib is to bring reactivity to values like MobX but without the meta programming magic. It is explicit like RxJS but trimmed and simplified with the focus on value changes instead of async operations which resulted in much smaller codebase.
+The goal of this lib is to bring reactivity to values like MobX but without the implicit-cast magic. It is like RxJS but trimmed and simplified with the focus on value changes instead of async operations which resulted in much smaller codebase.
 
 ## Usage
 
