@@ -1,12 +1,22 @@
 import type { SideEffectManager } from "side-effect-manager";
-import type { Val } from "./val";
+import { combine as combineOrigin } from "./combine";
+import type { Combine } from "./combine";
+import { Val } from "./val";
+import type { ValCompare } from "./typings";
 
 export type BindSideEffect = <TVal extends Val>(val: TVal) => TVal;
 
-export function createSideEffectBinder(
-  sideEffect: SideEffectManager
-): BindSideEffect {
-  return function bindSideEffect<TVal extends Val>(val: TVal): TVal {
+export type CreateVal = <TValue = any, TMeta = any>(
+  value: TValue,
+  compare?: ValCompare<TValue>
+) => Val<TValue, TMeta>;
+
+export function createSideEffectBinder(sideEffect: SideEffectManager): {
+  bindSideEffect: BindSideEffect;
+  combine: Combine;
+  createVal: CreateVal;
+} {
+  const bindSideEffect: BindSideEffect = val => {
     const disposerID = sideEffect.addDisposer(() => {
       val.destroy();
     });
@@ -14,5 +24,19 @@ export function createSideEffectBinder(
       sideEffect.remove(disposerID);
     });
     return val;
+  };
+
+  const combine: Combine = (valInputs, transform, compare, meta) => {
+    return bindSideEffect(combineOrigin(valInputs, transform, compare, meta));
+  };
+
+  const createVal: CreateVal = (value, compare) => {
+    return bindSideEffect(new Val(value, compare));
+  };
+
+  return {
+    bindSideEffect,
+    combine,
+    createVal,
   };
 }

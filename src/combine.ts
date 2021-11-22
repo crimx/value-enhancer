@@ -19,6 +19,21 @@ export type CombineValTransform<
   TMeta = any
 > = (newValues: TValues, oldValues?: TValues, meta?: TMeta) => TDerivedValue;
 
+export type Combine = <
+  TDerivedValue = any,
+  TValInputs extends readonly Val[] = Val[],
+  TMeta = ExtractValMeta<TValInputs[number]>
+>(
+  valInputs: readonly [...TValInputs],
+  transform: CombineValTransform<
+    TDerivedValue,
+    [...TValInputsValueTuple<TValInputs>],
+    TMeta
+  >,
+  compare?: ValCompare<TDerivedValue>,
+  meta?: TMeta
+) => Val<TDerivedValue, TMeta>;
+
 export function combine<
   TDerivedValue = any,
   TValInputs extends readonly Val[] = Val[],
