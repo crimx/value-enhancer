@@ -11,11 +11,15 @@ export type CreateVal = <TValue = any, TMeta = any>(
   compare?: ValCompare<TValue>
 ) => Val<TValue, TMeta>;
 
-export function createSideEffectBinder(sideEffect: SideEffectManager): {
+export type ValSideEffectBinder = {
   bindSideEffect: BindSideEffect;
   combine: Combine;
   createVal: CreateVal;
-} {
+};
+
+export function createSideEffectBinder(
+  sideEffect: SideEffectManager
+): ValSideEffectBinder {
   const bindSideEffect: BindSideEffect = val => {
     const disposerID = sideEffect.addDisposer(() => {
       val.destroy();
