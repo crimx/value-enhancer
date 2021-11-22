@@ -44,7 +44,7 @@ describe("withValueEnhancer", () => {
     const test1 = new Test1();
     const spy = jest.fn();
 
-    test1.$member.reaction(spy);
+    test1._member$.reaction(spy);
     expect(spy).toBeCalledTimes(0);
 
     test1.setMember(3);

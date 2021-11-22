@@ -20,7 +20,7 @@ type ExtractValKeys<TInstance, TKey = keyof TInstance> = TKey extends Extract<
 
 export type ValEnhancer<TVal, TKey extends string> = Readonly<
   Record<TKey, ExtractValValue<TVal>> &
-    Record<`$${TKey}`, TVal> &
+    Record<`_${TKey}$`, TVal> &
     Record<
       `set${Capitalize<TKey>}`,
       (value: ExtractValValue<TVal>, meta?: ExtractValMeta<TVal>) => void
@@ -60,7 +60,7 @@ export function enhanceVal<TInstance, TKey extends string, TValue, TMeta>(
         return val.value;
       },
     },
-    [`$${key}`]: {
+    [`_${key}$`]: {
       value: val,
     },
     [`set${capitalize(key)}`]: {
