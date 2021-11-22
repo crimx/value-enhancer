@@ -49,7 +49,7 @@ export function withValueEnhancer<TInstance, TConfig extends ValEnhancerConfig>(
   });
 }
 
-export function enhanceVal<TInstance, TKey extends string, TValue>(
+export function enhanceVal<TInstance, TKey extends string, TValue, TMeta>(
   instance: TInstance,
   key: TKey,
   val: Val<TValue>
@@ -64,7 +64,7 @@ export function enhanceVal<TInstance, TKey extends string, TValue>(
       value: val,
     },
     [`set${capitalize(key)}`]: {
-      value: (value: TValue): void => val.setValue(value),
+      value: (value: TValue, meta?: TMeta): void => val.setValue(value, meta),
     },
   });
 }
