@@ -45,15 +45,28 @@ export function withValueEnhancer<TInstance, TConfig extends ValEnhancerConfig>(
   config: TConfig
 ): void {
   Object.keys(config).forEach(key => {
-    enhanceVal(instance, key, config[key]);
+    bindInstance(instance, key, config[key]);
   });
 }
 
-export function enhanceVal<TInstance, TKey extends string, TValue, TMeta>(
+export type BindVal = <TKey extends string, TValue, TMeta>(
+  key: TKey,
+  val: Val<TValue, TMeta>
+) => Val<TValue, TMeta>;
+
+export function createInstanceBinder<TInstance>(instance: TInstance): BindVal {
+  const bindVal: BindVal = (key, val) => {
+    bindInstance(instance, key, val);
+    return val;
+  };
+  return bindVal;
+}
+
+export function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
   instance: TInstance,
   key: TKey,
-  val: Val<TValue>
-): void {
+  val: Val<TValue, TMeta>
+): ValEnhancer<TValue, TKey> & TInstance {
   Object.defineProperties(instance, {
     [key]: {
       get() {
@@ -67,6 +80,7 @@ export function enhanceVal<TInstance, TKey extends string, TValue, TMeta>(
       value: (value: TValue, meta?: TMeta): void => val.setValue(value, meta),
     },
   });
+  return instance as ValEnhancer<TValue, TKey> & TInstance;
 }
 
 function capitalize<TStr extends string>(str: TStr): Capitalize<TStr> {
