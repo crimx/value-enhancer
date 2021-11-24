@@ -53,7 +53,7 @@ export function combine<
   ];
   const combinedVal = new Val(transform(lastValue, void 0, meta), compare);
   valInputs.forEach((val, i) => {
-    const disposer = val.reaction((value, meta) => {
+    const disposer = val.reaction((value, _, meta) => {
       const newValue = lastValue.slice() as [
         ...TValInputsValueTuple<TValInputs>
       ];

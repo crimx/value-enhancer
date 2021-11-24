@@ -25,6 +25,52 @@ describe("combine", () => {
     });
   });
 
+  it("should have meta from deps", () => {
+    const val1 = new Val(1);
+    const val2 = new Val({ code: 2 });
+    const val3 = new Val<boolean, boolean>(false);
+    const val4 = new Val<string, number>("4");
+    const combined = combine(
+      [val1, val2, val3, val4],
+      ([val1, val2, val3, val4]) => {
+        return { val1, val2, val3, val4 };
+      }
+    );
+
+    const spy = jest.fn();
+    combined.subscribe(spy, 44);
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({
+        val1: 1,
+        val2: { code: 2 },
+        val3: false,
+        val4: "4",
+      }),
+      undefined,
+      44
+    );
+
+    val1.setValue(88, "meta");
+    expect(spy).toBeCalledTimes(2);
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({
+        val1: 88,
+        val2: { code: 2 },
+        val3: false,
+        val4: "4",
+      }),
+      expect.objectContaining({
+        val1: 1,
+        val2: { code: 2 },
+        val3: false,
+        val4: "4",
+      }),
+      "meta"
+    );
+  });
+
   it("should perform custom compare", () => {
     const val1 = new Val(1);
     const val2 = new Val({ code: 2 });
