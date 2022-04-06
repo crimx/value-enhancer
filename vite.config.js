@@ -21,6 +21,9 @@ export default defineConfig(({ mode }) => {
     },
     test: {
       environment: "jsdom",
+      coverage: {
+        reporter: ["lcov", "text"],
+      },
     },
   };
 });
