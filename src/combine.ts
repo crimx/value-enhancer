@@ -1,15 +1,16 @@
-import type { ValCompare } from "./typings";
-import { Val } from "./val";
+import { ReadonlyVal } from "./readonly-val";
+import type { ValConfig } from "./typings";
 
-export type TValInputsValueTuple<TValInputs extends readonly Val[]> = Readonly<{
-  [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
-}>;
+export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
+  Readonly<{
+    [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
+  }>;
 
-export type ExtractValValue<TVal> = TVal extends Val<infer TValue, any>
+export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue, any>
   ? TValue
   : never;
 
-export type ExtractValMeta<TVal> = TVal extends Val<any, infer TMeta>
+export type ExtractValMeta<TVal> = TVal extends ReadonlyVal<any, infer TMeta>
   ? TMeta
   : never;
 
@@ -19,50 +20,86 @@ export type CombineValTransform<
   TMeta = any
 > = (newValues: TValues, oldValues?: TValues, meta?: TMeta) => TDerivedValue;
 
-export type Combine = <
-  TDerivedValue = any,
-  TValInputs extends readonly Val[] = Val[],
+export class CombinedVal<
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+  TValue = any,
   TMeta = ExtractValMeta<TValInputs[number]>
->(
-  valInputs: readonly [...TValInputs],
-  transform: CombineValTransform<
-    TDerivedValue,
-    [...TValInputsValueTuple<TValInputs>],
-    TMeta
-  >,
-  compare?: ValCompare<TDerivedValue>,
-  meta?: TMeta
-) => Val<TDerivedValue, TMeta>;
+> extends ReadonlyVal<TValue, TMeta> {
+  public constructor(
+    valInputs: TValInputs,
+    transform: CombineValTransform<
+      TValue,
+      [...TValInputsValueTuple<TValInputs>],
+      TMeta
+    >,
+    config: ValConfig<TValue, TMeta> = {}
+  ) {
+    super(transform(getValues(valInputs)), {
+      ...config,
+      beforeSubscribe: setValue => {
+        let lastValueInputs = getValues(valInputs);
+        setValue(transform(lastValueInputs));
+        const disposers = valInputs.map((val, i) =>
+          val.reaction((value, meta) => {
+            lastValueInputs = lastValueInputs.slice() as [
+              ...TValInputsValueTuple<TValInputs>
+            ];
+            lastValueInputs[i] = value;
+            setValue(transform(lastValueInputs), meta);
+          })
+        );
+        const disposer = () => disposers.forEach(disposer => disposer());
+
+        if (config.beforeSubscribe) {
+          const beforeSubscribeDisposer = config.beforeSubscribe(setValue);
+          if (beforeSubscribeDisposer) {
+            return () => {
+              disposer();
+              beforeSubscribeDisposer();
+            };
+          }
+        }
+
+        return disposer;
+      },
+    });
+
+    this._srcValue = () => transform(getValues(valInputs));
+  }
+
+  public override get value(): TValue {
+    if (this._subscribers.size <= 0) {
+      const value = this._srcValue();
+      return this.compare(value, this._value) ? this._value : value;
+    }
+    return this._value;
+  }
+
+  protected _srcValue: () => TValue;
+}
+
+function getValues<TValInputs extends readonly ReadonlyVal[]>(
+  valInputs: TValInputs
+): [...TValInputsValueTuple<TValInputs>] {
+  return valInputs.map(getValue) as [...TValInputsValueTuple<TValInputs>];
+}
+
+function getValue<TValue>(val: ReadonlyVal<TValue>): TValue {
+  return val.value;
+}
 
 export function combine<
-  TDerivedValue = any,
-  TValInputs extends readonly Val[] = Val[],
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+  TValue = any,
   TMeta = ExtractValMeta<TValInputs[number]>
 >(
   valInputs: readonly [...TValInputs],
   transform: CombineValTransform<
-    TDerivedValue,
+    TValue,
     [...TValInputsValueTuple<TValInputs>],
     TMeta
   >,
-  compare?: ValCompare<TDerivedValue>,
-  meta?: TMeta
-): Val<TDerivedValue, TMeta> {
-  let lastValue = valInputs.map(val => val.value) as [
-    ...TValInputsValueTuple<TValInputs>
-  ];
-  const combinedVal = new Val(transform(lastValue, void 0, meta), compare);
-  valInputs.forEach((val, i) => {
-    const disposer = val.reaction((value, _, meta) => {
-      const newValue = lastValue.slice() as [
-        ...TValInputsValueTuple<TValInputs>
-      ];
-      newValue[i] = value;
-      const oldValue = lastValue;
-      lastValue = newValue;
-      combinedVal.setValue(transform(newValue, oldValue, meta), meta);
-    });
-    combinedVal.addBeforeDestroy(disposer);
-  });
-  return combinedVal;
+  config: ValConfig<TValue, TMeta> = {}
+): CombinedVal<TValInputs, TValue, TMeta> {
+  return new CombinedVal(valInputs, transform, config);
 }

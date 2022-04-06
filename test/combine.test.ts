@@ -48,7 +48,6 @@ describe("combine", () => {
         val3: false,
         val4: "4",
       }),
-      undefined,
       44
     );
 
@@ -57,12 +56,6 @@ describe("combine", () => {
     expect(spy).toBeCalledWith(
       expect.objectContaining({
         val1: 88,
-        val2: { code: 2 },
-        val3: false,
-        val4: "4",
-      }),
-      expect.objectContaining({
-        val1: 1,
         val2: { code: 2 },
         val3: false,
         val4: "4",
@@ -81,7 +74,7 @@ describe("combine", () => {
       ([val1, val2, val3, val4]) => {
         return { val1, val2, val3, val4 };
       },
-      (a, b) => a.val2.code === b.val2.code
+      { compare: (a, b) => a.val2.code === b.val2.code }
     );
 
     const spy = jest.fn();
