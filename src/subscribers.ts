@@ -23,10 +23,6 @@ export class Subscribers<TValue = any, TMeta = any> {
 
   public add(subscribe: ValSubscriber): void {
     if (this._bSub && (!this._subscribers || this._subscribers.size <= 0)) {
-      if (this._bSubDisposer) {
-        const _bSubDisposer = this._bSubDisposer;
-        _bSubDisposer();
-      }
       this._bSubDisposer = this._bSub();
     }
 
@@ -37,10 +33,6 @@ export class Subscribers<TValue = any, TMeta = any> {
     this._subscribers.add(subscribe);
 
     if (this._aSub && this._subscribers.size === 1) {
-      if (this._aSubDisposer) {
-        const _aSubDisposer = this._aSubDisposer;
-        _aSubDisposer();
-      }
       this._aSubDisposer = this._aSub();
     }
   }
