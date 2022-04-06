@@ -1,3 +1,5 @@
+import type { SpyInstanceFn } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { Val } from "../src/value-enhancer";
 
 describe("Val", () => {
@@ -19,7 +21,7 @@ describe("Val", () => {
 
   describe("subscribe", () => {
     it("should trigger immediate emission on subscribe", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const val = new Val(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
@@ -36,7 +38,7 @@ describe("Val", () => {
     });
 
     it("should trigger emission on setValue", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const val = new Val(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
@@ -53,7 +55,7 @@ describe("Val", () => {
     });
 
     it("should emit meta on subscribe", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const val = new Val<number, string>(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
@@ -70,7 +72,7 @@ describe("Val", () => {
     });
 
     it("should not trigger emission on setValue with same value", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
 
@@ -94,7 +96,7 @@ describe("Val", () => {
     });
 
     it("should perform custom compare", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const value1 = { value: 1 };
       const valueClone = { value: 1 };
       const compare = (a: { value: number }, b: { value: number }) =>
@@ -122,7 +124,7 @@ describe("Val", () => {
     it("should support multiple subscribers", () => {
       const spies = Array(20)
         .fill(0)
-        .map(() => jest.fn());
+        .map(() => vi.fn());
       const val = new Val(1);
 
       spies.forEach(spy => {
@@ -147,8 +149,8 @@ describe("Val", () => {
     });
 
     it("should remove subscriber if disposed", () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const val = new Val<number, string>(1);
 
       const spy1Disposer = val.subscribe(spy1);
@@ -171,7 +173,7 @@ describe("Val", () => {
     it("should remove all subscribers on destroy", () => {
       const spies = Array(20)
         .fill(0)
-        .map(() => jest.fn());
+        .map(() => vi.fn());
       const val = new Val(1);
 
       spies.forEach(spy => {
@@ -194,7 +196,7 @@ describe("Val", () => {
 
   describe("reaction", () => {
     it("should not trigger immediate emission on reaction", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const val = new Val(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
@@ -210,7 +212,7 @@ describe("Val", () => {
     });
 
     it("should trigger emission on setValue", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const val = new Val(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
@@ -226,7 +228,7 @@ describe("Val", () => {
     });
 
     it("should have old value", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const val = new Val(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
@@ -242,7 +244,7 @@ describe("Val", () => {
     });
 
     it("should emit meta on reaction", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const val = new Val<number, string>(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
@@ -258,7 +260,7 @@ describe("Val", () => {
     });
 
     it("should not trigger emission on setValue with same value", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
 
@@ -281,7 +283,7 @@ describe("Val", () => {
     });
 
     it("should perform custom compare", () => {
-      const spy = jest.fn();
+      const spy = vi.fn();
       const value1 = { value: 1 };
       const value1Clone = { value: 1 };
       const compare = (a: { value: number }, b: { value: number }) =>
@@ -307,7 +309,7 @@ describe("Val", () => {
     it("should support multiple subscribers", () => {
       const spies = Array(20)
         .fill(0)
-        .map(() => jest.fn());
+        .map(() => vi.fn());
       const val = new Val(1);
 
       spies.forEach(spy => {
@@ -331,8 +333,8 @@ describe("Val", () => {
     });
 
     it("should remove subscriber if disposed", () => {
-      const spy1 = jest.fn();
-      const spy2 = jest.fn();
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
       const val = new Val<number, string>(1);
 
       const spy1Disposer = val.reaction(spy1);
@@ -353,7 +355,7 @@ describe("Val", () => {
     it("should remove all subscribers on destroy", () => {
       const spies = Array(20)
         .fill(0)
-        .map(() => jest.fn());
+        .map(() => vi.fn());
       const val = new Val(1);
 
       spies.forEach(spy => {
@@ -376,8 +378,8 @@ describe("Val", () => {
 
   // describe("derive", () => {
   //   it("should derive a computed value", () => {
-  //     const spy = jest.fn();
-  //     const derivedSpy = jest.fn();
+  //     const spy = vi.fn();
+  //     const derivedSpy = vi.fn();
 
   //     const val = new Val(1);
   //     val.reaction(spy);
@@ -399,8 +401,8 @@ describe("Val", () => {
   //   });
 
   //   it("should perform custom compare on derived val", () => {
-  //     const spy = jest.fn();
-  //     const derivedSpy = jest.fn();
+  //     const spy = vi.fn();
+  //     const derivedSpy = vi.fn();
   //     const compare = (a: { value: boolean }, b: { value: boolean }) =>
   //       a.value === b.value;
 
@@ -431,8 +433,8 @@ describe("Val", () => {
   //   });
 
   //   it("should remove subscribers on destroy", () => {
-  //     const spy = jest.fn();
-  //     const derivedSpy = jest.fn();
+  //     const spy = vi.fn();
+  //     const derivedSpy = vi.fn();
 
   //     const val = new Val(1);
   //     val.reaction(spy);
@@ -455,7 +457,7 @@ describe("Val", () => {
   //   });
 
   //   it("should stop derivation on parent destroyed", () => {
-  //     const spy = jest.fn();
+  //     const spy = vi.fn();
   //     const derivedSpy = jest.fn();
 
   //     const val = new Val(1);
@@ -480,8 +482,8 @@ describe("Val", () => {
   // });
 });
 
-function firstParamOfLastCall<T = any, P extends any[] = any>(
-  spy: jest.Mock<T, P>
+function firstParamOfLastCall<T extends any[] = any[], P extends any[] = any>(
+  spy: SpyInstanceFn<T, P>
 ): any {
   return spy.mock.calls[spy.mock.calls.length - 1][0];
 }

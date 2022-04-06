@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from "vitest";
 import { combine, Val } from "../src/value-enhancer";
 
 describe("combine", () => {
@@ -13,7 +14,7 @@ describe("combine", () => {
       }
     );
 
-    const spy = jest.fn();
+    const spy = vi.fn();
     combined.subscribe(spy);
 
     expect(spy).toBeCalledTimes(1);
@@ -37,7 +38,7 @@ describe("combine", () => {
       }
     );
 
-    const spy = jest.fn();
+    const spy = vi.fn();
     combined.subscribe(spy, 44);
 
     expect(spy).toBeCalledTimes(1);
@@ -77,7 +78,7 @@ describe("combine", () => {
       { compare: (a, b) => a.val2.code === b.val2.code }
     );
 
-    const spy = jest.fn();
+    const spy = vi.fn();
     combined.subscribe(spy);
 
     expect(spy).toBeCalledTimes(1);
@@ -88,7 +89,7 @@ describe("combine", () => {
       val4: "4",
     });
 
-    const spy2 = jest.fn();
+    const spy2 = vi.fn();
     val2.reaction(spy2);
     expect(spy2).toBeCalledTimes(0);
 

@@ -1,7 +1,7 @@
 /* eslint-env node */
 
 import path from "path";
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig(({ mode }) => {
   const isProd = mode === "production";
@@ -18,6 +18,9 @@ export default defineConfig(({ mode }) => {
         external: ["react"],
       },
       minify: isProd,
+    },
+    test: {
+      environment: "jsdom",
     },
   };
 });

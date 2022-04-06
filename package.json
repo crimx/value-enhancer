@@ -16,7 +16,7 @@
   ],
   "scripts": {
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
-    "test": "jest --coverage",
+    "test": "vitest run --coverage",
     "docs": "typedoc --includeVersion --excludePrivate --out docs src/value-enhancer.ts",
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
     "build": "vite build && npm run types",
@@ -24,21 +24,18 @@
     "release": "standard-version"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.1",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.1",
+    "c8": "^7.11.0",
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "jest": "^27.2.0",
+    "jsdom": "^19.0.0",
     "prettier": "^2.4.0",
     "standard-version": "^9.3.1",
-    "ts-jest": "^27.0.5",
     "typedoc": "^0.22.3",
     "typescript": "^4.4.3",
-    "vite": "^2.5.6"
-  },
-  "dependencies": {
-    "side-effect-manager": "^0.1.5"
+    "vite": "^2.5.6",
+    "vitest": "^0.8.4"
   }
 }

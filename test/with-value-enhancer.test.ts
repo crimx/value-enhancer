@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from "vitest";
 import type { ValEnhancedResult } from "../src/value-enhancer";
 import {
   Val,
@@ -18,7 +19,7 @@ describe("bindInstance", () => {
 
 describe("createInstanceBinder", () => {
   it("should create instance binder", () => {
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     interface Test1 extends ValEnhancedResult<{ member: Val<number> }> {}
 
@@ -92,7 +93,7 @@ describe("withValueEnhancer", () => {
     }
 
     const test1 = new Test1();
-    const spy = jest.fn();
+    const spy = vi.fn();
 
     test1._member$.reaction(spy);
     expect(spy).toBeCalledTimes(0);
