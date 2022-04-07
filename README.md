@@ -23,7 +23,7 @@ The goal of this lib is to bring reactivity to values like MobX but without the 
 ## Usage
 
 ```js
-import { Val, combine } from "value-enhancer";
+import { Val, combine, derive } from "value-enhancer";
 
 const val = new Val(2);
 
@@ -40,7 +40,7 @@ val.setValue(3); // nothing happened
 
 val.setValue(4); // subscribe: 4, reaction: 4
 
-const derived = val.derive(value => value * 3);
+const derived = derive(val, value => value * 3);
 console.log(derived.value); // 12
 derived.subscribe(value => console.log(`derived: ${value}`)); // derived: 12
 
