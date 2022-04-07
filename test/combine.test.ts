@@ -1,7 +1,38 @@
 import { describe, it, expect, vi } from "vitest";
-import { combine, Val } from "../src/value-enhancer";
+import { combine, CombinedVal, Val } from "../src/value-enhancer";
 
 describe("combine", () => {
+  it("should get value without subscribe", () => {
+    const val1 = new Val(1);
+    const val2 = new Val(1);
+    const val3 = new Val(1);
+    const val4 = new Val(2);
+    const combined = combine(
+      [val1, val2, val3, val4],
+      ([val1, val2, val3, val4]) => {
+        return val1 + val2 + val3 + val4;
+      }
+    );
+
+    expect(combined).instanceOf(CombinedVal);
+
+    expect(combined.value).toBe(5);
+
+    val1.setValue(1);
+
+    expect(combined.value).toEqual(5);
+
+    val1.setValue(2);
+
+    expect(combined.value).toEqual(6);
+
+    combined.subscribe(vi.fn());
+
+    expect(combined.value).toEqual(6);
+
+    combined.destroy();
+  });
+
   it("should combine a val list into a single val", () => {
     const val1 = new Val(1);
     const val2 = new Val({ code: 2 });
@@ -24,6 +55,8 @@ describe("combine", () => {
       val3: false,
       val4: "4",
     });
+
+    combined.destroy();
   });
 
   it("should have meta from deps", () => {
@@ -63,6 +96,8 @@ describe("combine", () => {
       }),
       "meta"
     );
+
+    combined.destroy();
   });
 
   it("should perform custom compare", () => {
@@ -96,5 +131,61 @@ describe("combine", () => {
     val2.setValue({ code: 2 });
     expect(spy2).toBeCalledTimes(1);
     expect(spy).toBeCalledTimes(1);
+
+    combined.destroy();
+  });
+
+  it("should work with beforeSubscribe", () => {
+    const beforeSubscribe = vi.fn();
+    const val1 = new Val(1);
+    const val2 = new Val({ code: 2 });
+    const val3 = new Val<boolean, boolean>(false);
+    const val4 = new Val<string, number>("4");
+    const combined = combine(
+      [val1, val2, val3, val4],
+      ([val1, val2, val3, val4]) => {
+        return { val1, val2, val3, val4 };
+      },
+      { beforeSubscribe }
+    );
+
+    expect(beforeSubscribe).toBeCalledTimes(0);
+
+    combined.subscribe(vi.fn());
+
+    expect(beforeSubscribe).toBeCalledTimes(1);
+
+    combined.destroy();
+  });
+
+  it("should work with beforeSubscribe disposer", () => {
+    const beforeSubscribeDisposer = vi.fn();
+    const beforeSubscribe = vi.fn(() => beforeSubscribeDisposer);
+    const val1 = new Val(1);
+    const val2 = new Val({ code: 2 });
+    const val3 = new Val<boolean, boolean>(false);
+    const val4 = new Val<string, number>("4");
+    const combined = combine(
+      [val1, val2, val3, val4],
+      ([val1, val2, val3, val4]) => {
+        return { val1, val2, val3, val4 };
+      },
+      { beforeSubscribe }
+    );
+
+    expect(beforeSubscribe).toBeCalledTimes(0);
+    expect(beforeSubscribeDisposer).toBeCalledTimes(0);
+
+    const disposer = combined.subscribe(vi.fn());
+
+    expect(beforeSubscribe).toBeCalledTimes(1);
+    expect(beforeSubscribeDisposer).toBeCalledTimes(0);
+
+    disposer();
+
+    expect(beforeSubscribe).toBeCalledTimes(1);
+    expect(beforeSubscribeDisposer).toBeCalledTimes(1);
+
+    combined.destroy();
   });
 });
