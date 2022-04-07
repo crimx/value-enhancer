@@ -40,6 +40,9 @@ export type ValEnhancedResult<TConfig> = IntersectionFromUnion<
   ToValUnion<TConfig>
 >;
 
+/**
+ * Loop through a config object and `bindInstance` each val to the instance.
+ */
 export function withValueEnhancer<TInstance, TConfig extends ValEnhancerConfig>(
   instance: TInstance,
   config: TConfig
@@ -54,6 +57,9 @@ export type BindVal = <TKey extends string, TValue, TMeta>(
   val: Val<TValue, TMeta>
 ) => Val<TValue, TMeta>;
 
+/**
+ * @returns curried function of `bindInstance`
+ */
 export function createInstanceBinder<TInstance>(instance: TInstance): BindVal {
   const bindVal: BindVal = (key, val) => {
     bindInstance(instance, key, val);
@@ -62,6 +68,14 @@ export function createInstanceBinder<TInstance>(instance: TInstance): BindVal {
   return bindVal;
 }
 
+/**
+ * Bind a Val to a property of an instance.
+ * `bindInstance(Obj, "aKey", val)` results in:
+ * - `Obj.aKey`, value of `val.value`
+ * - `Obj.setAKey(value)`
+ * - `Obj._aKey$`, the `val`
+ * @returns Same instance with bound properties
+ */
 export function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
   instance: TInstance,
   key: TKey,
