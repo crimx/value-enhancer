@@ -35,6 +35,8 @@ describe("Val", () => {
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(firstParamOfLastCall(spy)).toBe(2);
+
+      val.destroy();
     });
 
     it("should trigger emission on setValue", () => {
@@ -52,6 +54,8 @@ describe("Val", () => {
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(spy.mock.calls[1][0]).toBe(2);
+
+      val.destroy();
     });
 
     it("should emit meta on subscribe", () => {
@@ -69,6 +73,8 @@ describe("Val", () => {
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(spy).lastCalledWith(2, "meta2");
+
+      val.destroy();
     });
 
     it("should not trigger emission on setValue with same value", () => {
@@ -93,6 +99,8 @@ describe("Val", () => {
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(2);
       expect(firstParamOfLastCall(spy)).toBe(value2);
+
+      val.destroy();
     });
 
     it("should perform custom compare", () => {
@@ -119,6 +127,8 @@ describe("Val", () => {
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(value1);
+
+      val.destroy();
     });
 
     it("should support multiple subscribers", () => {
@@ -146,6 +156,8 @@ describe("Val", () => {
         expect(spy).toBeCalledTimes(2);
         expect(spy).lastCalledWith(2, undefined);
       });
+
+      val.destroy();
     });
 
     it("should remove subscriber if disposed", () => {
@@ -168,6 +180,8 @@ describe("Val", () => {
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
       expect(spy2).lastCalledWith(2, "meta2");
+
+      val.destroy();
     });
 
     it("should remove all subscribers on destroy", () => {
@@ -191,6 +205,8 @@ describe("Val", () => {
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
+
+      val.destroy();
     });
   });
 
@@ -209,6 +225,8 @@ describe("Val", () => {
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(2);
+
+      val.destroy();
     });
 
     it("should trigger emission on setValue", () => {
@@ -225,6 +243,8 @@ describe("Val", () => {
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(2);
+
+      val.destroy();
     });
 
     it("should have old value", () => {
@@ -241,6 +261,8 @@ describe("Val", () => {
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(2, undefined);
+
+      val.destroy();
     });
 
     it("should emit meta on reaction", () => {
@@ -257,6 +279,8 @@ describe("Val", () => {
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(2, "meta2");
+
+      val.destroy();
     });
 
     it("should not trigger emission on setValue with same value", () => {
@@ -280,6 +304,8 @@ describe("Val", () => {
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(value2);
+
+      val.destroy();
     });
 
     it("should perform custom compare", () => {
@@ -304,6 +330,8 @@ describe("Val", () => {
       val.setValue(value1Clone);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
+
+      val.destroy();
     });
 
     it("should support multiple subscribers", () => {
@@ -330,6 +358,8 @@ describe("Val", () => {
         expect(spy).toBeCalledTimes(1);
         expect(spy).lastCalledWith(2, undefined);
       });
+
+      val.destroy();
     });
 
     it("should remove subscriber if disposed", () => {
@@ -350,6 +380,8 @@ describe("Val", () => {
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(1);
       expect(spy2).lastCalledWith(2, "meta2");
+
+      val.destroy();
     });
 
     it("should remove all subscribers on destroy", () => {
@@ -373,113 +405,10 @@ describe("Val", () => {
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
+
+      val.destroy();
     });
   });
-
-  // describe("derive", () => {
-  //   it("should derive a computed value", () => {
-  //     const spy = vi.fn();
-  //     const derivedSpy = vi.fn();
-
-  //     const val = new Val(1);
-  //     val.reaction(spy);
-
-  //     const derived = val.derive(value => value * 3);
-  //     derived.reaction(derivedSpy);
-
-  //     expect(val.value).toBe(1);
-  //     expect(derived.value).toBe(3);
-  //     expect(spy).toBeCalledTimes(0);
-  //     expect(derivedSpy).toBeCalledTimes(0);
-
-  //     val.setValue(2);
-
-  //     expect(val.value).toBe(2);
-  //     expect(derived.value).toBe(6);
-  //     expect(spy).toBeCalledTimes(1);
-  //     expect(derivedSpy).toBeCalledTimes(1);
-  //   });
-
-  //   it("should perform custom compare on derived val", () => {
-  //     const spy = vi.fn();
-  //     const derivedSpy = vi.fn();
-  //     const compare = (a: { value: boolean }, b: { value: boolean }) =>
-  //       a.value === b.value;
-
-  //     const val = new Val(1);
-  //     val.reaction(spy);
-
-  //     const derived = val.derive(value => ({ value: value > 10 }), { compare });
-  //     derived.reaction(derivedSpy);
-
-  //     expect(val.value).toBe(1);
-  //     expect(derived.value).toEqual({ value: false });
-  //     expect(spy).toBeCalledTimes(0);
-  //     expect(derivedSpy).toBeCalledTimes(0);
-
-  //     val.setValue(11);
-
-  //     expect(val.value).toBe(11);
-  //     expect(derived.value).toEqual({ value: true });
-  //     expect(spy).toBeCalledTimes(1);
-  //     expect(derivedSpy).toBeCalledTimes(1);
-
-  //     val.setValue(12);
-
-  //     expect(val.value).toBe(12);
-  //     expect(derived.value).toEqual({ value: true });
-  //     expect(spy).toBeCalledTimes(2);
-  //     expect(derivedSpy).toBeCalledTimes(1);
-  //   });
-
-  //   it("should remove subscribers on destroy", () => {
-  //     const spy = vi.fn();
-  //     const derivedSpy = vi.fn();
-
-  //     const val = new Val(1);
-  //     val.reaction(spy);
-
-  //     const derived = val.derive(value => value * 3);
-  //     derived.reaction(derivedSpy);
-
-  //     expect(val.value).toBe(1);
-  //     expect(derived.value).toBe(3);
-  //     expect(spy).toBeCalledTimes(0);
-  //     expect(derivedSpy).toBeCalledTimes(0);
-
-  //     derived.destroy();
-  //     val.setValue(2);
-
-  //     expect(val.value).toBe(2);
-  //     expect(derived.value).toBe(3);
-  //     expect(spy).toBeCalledTimes(1);
-  //     expect(derivedSpy).toBeCalledTimes(0);
-  //   });
-
-  //   it("should stop derivation on parent destroyed", () => {
-  //     const spy = vi.fn();
-  //     const derivedSpy = jest.fn();
-
-  //     const val = new Val(1);
-  //     val.reaction(spy);
-
-  //     const derived = val.derive(value => value * 3);
-  //     derived.reaction(derivedSpy);
-
-  //     expect(val.value).toBe(1);
-  //     expect(derived.value).toBe(3);
-  //     expect(spy).toBeCalledTimes(0);
-  //     expect(derivedSpy).toBeCalledTimes(0);
-
-  //     val.destroy();
-  //     val.setValue(2);
-
-  //     expect(val.value).toBe(2);
-  //     expect(derived.value).toBe(3);
-  //     expect(spy).toBeCalledTimes(0);
-  //     expect(derivedSpy).toBeCalledTimes(0);
-  //   });
-  // });
 });
 
 function firstParamOfLastCall<T extends any[] = any[], P extends any[] = any>(

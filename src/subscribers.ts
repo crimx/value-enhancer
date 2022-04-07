@@ -1,18 +1,12 @@
 import type { ValDisposer, ValSubscriber } from "./typings";
 
-export interface SubscribersConfig {
-  beforeSubscribe?: () => void | ValDisposer | undefined;
-  afterSubscribe?: () => void | ValDisposer | undefined;
-}
-
 export class Subscribers<TValue = any, TMeta = any> {
   public get size(): number {
     return this._subscribers ? this._subscribers.size : 0;
   }
 
-  public constructor(config: SubscribersConfig) {
-    this._bSub = config.beforeSubscribe;
-    this._aSub = config.afterSubscribe;
+  public constructor(beforeSubscribe?: () => void | ValDisposer | undefined) {
+    this._bSub = beforeSubscribe;
   }
 
   public invoke(newValue: TValue, meta?: TMeta): void {
@@ -31,10 +25,6 @@ export class Subscribers<TValue = any, TMeta = any> {
     }
 
     this._subscribers.add(subscribe);
-
-    if (this._aSub && this._subscribers.size === 1) {
-      this._aSubDisposer = this._aSub();
-    }
   }
 
   public remove(subscriber: ValSubscriber): void {
@@ -46,11 +36,6 @@ export class Subscribers<TValue = any, TMeta = any> {
         const _bSubDisposer = this._bSubDisposer;
         this._bSubDisposer = null;
         _bSubDisposer();
-      }
-      if (this._aSubDisposer) {
-        const _aSubDisposer = this._aSubDisposer;
-        this._aSubDisposer = null;
-        _aSubDisposer();
       }
     }
   }
@@ -64,11 +49,6 @@ export class Subscribers<TValue = any, TMeta = any> {
       this._bSubDisposer = null;
       _bSubDisposer();
     }
-    if (this._aSubDisposer) {
-      const _aSubDisposer = this._aSubDisposer;
-      this._aSubDisposer = null;
-      _aSubDisposer();
-    }
   }
 
   public destroy(): void {
@@ -79,7 +59,4 @@ export class Subscribers<TValue = any, TMeta = any> {
 
   private _bSub?: () => void | ValDisposer | undefined;
   private _bSubDisposer?: ValDisposer | void | null;
-
-  private _aSub?: () => void | ValDisposer | undefined;
-  private _aSubDisposer?: ValDisposer | void | null;
 }

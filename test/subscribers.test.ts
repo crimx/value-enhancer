@@ -3,7 +3,7 @@ import { Subscribers } from "../src/subscribers";
 
 describe("Subscribers", () => {
   it("should be able to add and remove subscribers", () => {
-    const subscribers = new Subscribers({});
+    const subscribers = new Subscribers();
     expect(subscribers.size).toBe(0);
 
     const sub1 = vi.fn();
@@ -48,7 +48,7 @@ describe("Subscribers", () => {
   });
 
   it("should be able to invoke subscribers", () => {
-    const subscribers = new Subscribers({});
+    const subscribers = new Subscribers();
     expect(subscribers.size).toBe(0);
 
     const sub1 = vi.fn();
@@ -76,9 +76,7 @@ describe("Subscribers", () => {
   describe("beforeSubscribe", () => {
     it("should add beforeSubscribe", () => {
       const spy = vi.fn();
-      const subscribers = new Subscribers({
-        beforeSubscribe: spy,
-      });
+      const subscribers = new Subscribers(spy);
       expect(spy).toHaveBeenCalledTimes(0);
 
       subscribers.add(vi.fn());
@@ -88,9 +86,7 @@ describe("Subscribers", () => {
     it("should dispose beforeSubscribe", () => {
       const disposer = vi.fn();
       const beforeSubscribe = vi.fn(() => disposer);
-      const subscribers = new Subscribers({
-        beforeSubscribe: beforeSubscribe,
-      });
+      const subscribers = new Subscribers(beforeSubscribe);
       expect(beforeSubscribe).toHaveBeenCalledTimes(0);
       expect(disposer).toHaveBeenCalledTimes(0);
 
@@ -118,77 +114,15 @@ describe("Subscribers", () => {
     });
 
     it("should be triggered before adding subscribers", () => {
-      const subscribers = new Subscribers({
-        beforeSubscribe: () => {
-          subscribers.invoke(1);
-          subscribers.invoke(2);
-          subscribers.invoke(3);
-        },
+      const subscribers = new Subscribers(() => {
+        subscribers.invoke(1);
+        subscribers.invoke(2);
+        subscribers.invoke(3);
       });
 
       const sub1 = vi.fn();
       subscribers.add(sub1);
       expect(sub1).toBeCalledTimes(0);
-    });
-  });
-
-  describe("afterSubscribe", () => {
-    it("should add afterSubscribe", () => {
-      const spy = vi.fn();
-      const subscribers = new Subscribers({
-        afterSubscribe: spy,
-      });
-      expect(spy).toHaveBeenCalledTimes(0);
-
-      subscribers.add(vi.fn());
-      expect(spy).toHaveBeenCalledTimes(1);
-    });
-
-    it("should dispose afterSubscribe", () => {
-      const disposer = vi.fn();
-      const afterSubscribe = vi.fn(() => disposer);
-      const subscribers = new Subscribers({
-        afterSubscribe: afterSubscribe,
-      });
-      expect(afterSubscribe).toHaveBeenCalledTimes(0);
-      expect(disposer).toHaveBeenCalledTimes(0);
-
-      const sub1 = vi.fn();
-      subscribers.add(sub1);
-      expect(afterSubscribe).toHaveBeenCalledTimes(1);
-      expect(disposer).toHaveBeenCalledTimes(0);
-
-      subscribers.remove(sub1);
-      expect(afterSubscribe).toHaveBeenCalledTimes(1);
-      expect(disposer).toHaveBeenCalledTimes(1);
-
-      afterSubscribe.mockClear();
-      disposer.mockClear();
-
-      subscribers.add(vi.fn());
-      subscribers.add(vi.fn());
-      subscribers.add(vi.fn());
-      expect(afterSubscribe).toHaveBeenCalledTimes(1);
-      expect(disposer).toHaveBeenCalledTimes(0);
-
-      subscribers.clear();
-      expect(afterSubscribe).toHaveBeenCalledTimes(1);
-      expect(disposer).toHaveBeenCalledTimes(1);
-    });
-
-    it("should be triggered after adding subscribers", () => {
-      const subscribers = new Subscribers({
-        afterSubscribe: () => {
-          subscribers.invoke(1);
-          subscribers.invoke(2);
-          subscribers.invoke(3);
-        },
-      });
-
-      const sub1 = vi.fn();
-      subscribers.add(sub1);
-      expect(sub1).toBeCalledTimes(3);
-      expect(sub1).toHaveBeenLastCalledWith(3, undefined);
     });
   });
 });

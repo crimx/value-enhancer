@@ -17,7 +17,6 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
     this._value = value;
 
     let beforeSubscribe: undefined | (() => void | ValDisposer | undefined);
-    let afterSubscribe: undefined | (() => void | ValDisposer | undefined);
 
     if (config) {
       if (config.compare) {
@@ -28,17 +27,9 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
         const _setValue = this._setValue.bind(this);
         beforeSubscribe = () => _beforeSubscribe(_setValue);
       }
-      if (config.afterSubscribe) {
-        const _afterSubscribe = config.afterSubscribe;
-        const _setValue = this._setValue.bind(this);
-        afterSubscribe = () => _afterSubscribe(_setValue);
-      }
     }
 
-    this._subscribers = new Subscribers<TValue, TMeta>({
-      beforeSubscribe,
-      afterSubscribe,
-    });
+    this._subscribers = new Subscribers<TValue, TMeta>(beforeSubscribe);
   }
 
   public get value(): TValue {
