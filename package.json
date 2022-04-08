@@ -16,6 +16,7 @@
   ],
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "prepublish": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
     "test": "vitest run --coverage",
     "docs": "typedoc --includeVersion --excludePrivate --out docs src/value-enhancer.ts",
