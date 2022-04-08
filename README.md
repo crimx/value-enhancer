@@ -56,3 +56,35 @@ combined.subscribe(value => console.log(`combined: ${value}`)); // combined: 16
 
 val.setValue(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
 ```
+
+`setValue` may carry any type of extra info via `meta` param.
+
+```ts
+val.subscribe((value, meta) => console.log(value, meta));
+
+val.setValue(5, { source: "remote" });
+```
+
+### Bind Instance
+
+Val can be bound to a object via `withValueEnhancer`.
+
+```ts
+import type { ValEnhancedResult } from "value-enhancer";
+import { Val, withValueEnhancer } from "value-enhancer";
+
+interface Obj extends ValEnhancedResult<{ count: Val<number> }> {}
+
+class Obj {
+  constructor() {
+    withValueEnhancer(this, {
+      count: new Val(2),
+    });
+    // Three properties are created for each bound Val
+    console.log(this.count, this.setCount, this._count$);
+  }
+  addOne(): void {
+    this.setCount(this.count + 1);
+  }
+}
+```
