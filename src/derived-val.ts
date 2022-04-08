@@ -45,8 +45,17 @@ export class DerivedVal<
 }
 
 export function derive<TSrcValue = any, TValue = any, TMeta = any>(
+  val: ReadonlyVal<TSrcValue>
+): DerivedVal<TSrcValue, TValue, TMeta>;
+export function derive<TSrcValue = any, TValue = any, TMeta = any>(
   val: ReadonlyVal<TSrcValue>,
   transform: ValTransform<TSrcValue, TValue>,
+  config?: ValConfig<TValue, TMeta>
+): DerivedVal<TSrcValue, TValue, TMeta>;
+export function derive<TSrcValue = any, TValue = any, TMeta = any>(
+  val: ReadonlyVal<TSrcValue>,
+  transform: ValTransform<TSrcValue, TValue> = value =>
+    value as unknown as TValue,
   config: ValConfig<TValue, TMeta> = {}
 ): DerivedVal<TSrcValue, TValue, TMeta> {
   return new DerivedVal(val, transform, config);
