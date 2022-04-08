@@ -188,4 +188,24 @@ describe("combine", () => {
 
     combined.destroy();
   });
+
+  it("should work without transform", () => {
+    const val1 = new Val(1);
+    const val2 = new Val(1);
+    const val3 = new Val(1);
+    const val4 = new Val(2);
+    const combined = combine([val1, val2, val3, val4]);
+
+    expect(combined.value).toEqual([1, 1, 1, 2]);
+
+    val1.setValue(1);
+
+    expect(combined.value).toEqual([1, 1, 1, 2]);
+
+    val1.setValue(2);
+
+    expect(combined.value).toEqual([2, 1, 1, 2]);
+
+    combined.destroy();
+  });
 });

@@ -129,4 +129,21 @@ describe("derive", () => {
 
     derived.destroy();
   });
+
+  it("should work without transform", () => {
+    const val1 = new Val(1);
+    const derived = derive(val1);
+
+    expect(derived.value).toBe(1);
+
+    val1.setValue(1);
+
+    expect(derived.value).toEqual(1);
+
+    val1.setValue(2);
+
+    expect(derived.value).toEqual(2);
+
+    derived.destroy();
+  });
 });
