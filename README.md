@@ -1,5 +1,9 @@
 # value-enhancer
 
+<p align="center">
+  <img width="200" src="https://raw.githubusercontent.com/crimx/value-enhancer/master/assets/value-enhancer.svg">
+</p>
+
 [![Build Status](https://github.com/crimx/value-enhancer/actions/workflows/build.yml/badge.svg)](https://github.com/crimx/value-enhancer/actions/workflows/build.yml)
 [![npm-version](https://img.shields.io/npm/v/value-enhancer.svg)](https://www.npmjs.com/package/value-enhancer)
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/value-enhancer/master)](https://coveralls.io/github/crimx/value-enhancer?branch=master)
