@@ -649,6 +649,78 @@ describe("ReadonlyVal", () => {
       val.destroy();
     });
   });
+
+  describe("unsubscribe", () => {
+    it("should unsubscribe a subscribe callback", () => {
+      let setValue = noop as ValSetValue<number, any>;
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
+      const val = new ReadonlyVal<number, string>(1, {
+        beforeSubscribe: _setValue => {
+          setValue = _setValue;
+          return () => (setValue = noop);
+        },
+      });
+
+      val.subscribe(function sub1(...args) {
+        val.unsubscribe(sub1);
+        spy1(...args);
+      });
+      val.subscribe(spy2);
+
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(1);
+
+      expect(spy1).lastCalledWith(1, undefined);
+      expect(spy2).lastCalledWith(1, undefined);
+
+      setValue(2, "meta2");
+      expect(val.value).toBe(2);
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(2);
+      expect(spy1).lastCalledWith(1, undefined);
+      expect(spy2).lastCalledWith(2, "meta2");
+
+      val.destroy();
+    });
+
+    it("should unsubscribe a reaction callback", () => {
+      let setValue = noop as ValSetValue<number, any>;
+      const spy1 = vi.fn();
+      const spy2 = vi.fn();
+      const val = new ReadonlyVal<number, string>(1, {
+        beforeSubscribe: _setValue => {
+          setValue = _setValue;
+          return () => (setValue = noop);
+        },
+      });
+
+      val.reaction(function sub1(...args) {
+        val.unsubscribe(sub1);
+        spy1(...args);
+      });
+      val.reaction(spy2);
+
+      expect(spy1).toBeCalledTimes(0);
+      expect(spy2).toBeCalledTimes(0);
+
+      setValue(2, "meta2");
+      expect(val.value).toBe(2);
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(1);
+      expect(spy1).lastCalledWith(2, "meta2");
+      expect(spy2).lastCalledWith(2, "meta2");
+
+      setValue(3, "meta3");
+      expect(val.value).toBe(3);
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(2);
+      expect(spy1).lastCalledWith(2, "meta2");
+      expect(spy2).lastCalledWith(3, "meta3");
+
+      val.destroy();
+    });
+  });
 });
 
 function firstParamOfLastCall<T extends any[] = any[], P extends any[] = any>(
