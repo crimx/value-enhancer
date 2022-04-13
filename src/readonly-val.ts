@@ -65,6 +65,10 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
     this._subscribers.destroy();
   }
 
+  public unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void {
+    this._subscribers.remove(subscriber);
+  }
+
   /**
    * Compare two values. Default `===`.
    */
