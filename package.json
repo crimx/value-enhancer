@@ -1,6 +1,6 @@
 {
   "name": "value-enhancer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": false,
   "description": "A tiny library to enhance value with reactive wrapper.",
   "license": "MIT",
@@ -15,7 +15,6 @@
     "dist"
   ],
   "scripts": {
-    "preinstall": "npx only-allow pnpm",
     "prepublish": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
     "test": "vitest run --coverage",
