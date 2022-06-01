@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/crimx/value-enhancer/compare/v1.0.3...v1.1.0) (2022-06-01)
+
+
+### Features
+
+* add with readonly value enhancer ([1b96c9a](https://github.com/crimx/value-enhancer/commit/1b96c9abcc8b98a29c9c39af5044f5dfbc392722))
+
 ### [1.0.3](https://github.com/crimx/value-enhancer/compare/v1.0.2...v1.0.3) (2022-04-13)
 
 ### [1.0.2](https://github.com/crimx/value-enhancer/compare/v1.0.1...v1.0.2) (2022-04-08)
