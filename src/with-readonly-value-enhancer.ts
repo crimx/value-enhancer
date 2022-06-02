@@ -19,8 +19,7 @@ type ExtractReadonlyValKeys<
   : never;
 
 export type ReadonlyValEnhancer<TVal, TKey extends string> = Readonly<
-  Record<TKey, ExtractValValue<TVal>> &
-    Record<`_${TKey}$`, TVal>
+  Record<TKey, ExtractValValue<TVal>> & Record<`_${TKey}$`, TVal>
 >;
 
 export type ReadonlyValEnhancerConfig = Record<string, ReadonlyVal>;
