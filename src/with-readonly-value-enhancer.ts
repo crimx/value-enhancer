@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
-import type { ExtractValMeta, ExtractValValue } from "./combine";
+import type { ExtractValValue } from "./combine";
 import type { ReadonlyVal } from "./readonly-val";
 
 type IntersectionFromUnion<TUnion> = (
@@ -20,11 +20,7 @@ type ExtractReadonlyValKeys<
 
 export type ReadonlyValEnhancer<TVal, TKey extends string> = Readonly<
   Record<TKey, ExtractValValue<TVal>> &
-    Record<`_${TKey}$`, TVal> &
-    Record<
-      `set${Capitalize<TKey>}`,
-      (value: ExtractValValue<TVal>, meta?: ExtractValMeta<TVal>) => void
-    >
+    Record<`_${TKey}$`, TVal>
 >;
 
 export type ReadonlyValEnhancerConfig = Record<string, ReadonlyVal>;
