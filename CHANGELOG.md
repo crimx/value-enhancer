@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/crimx/value-enhancer/compare/v1.1.0...v1.1.1) (2022-06-02)
+
+
+### Bug Fixes
+
+* remove readonly val enhancer setter ([62aaf22](https://github.com/crimx/value-enhancer/commit/62aaf22fd099c1234d6de32c2692e837f16b9e5a))
+
 ## [1.1.0](https://github.com/crimx/value-enhancer/compare/v1.0.3...v1.1.0) (2022-06-01)
 
 
