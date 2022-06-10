@@ -36,7 +36,38 @@ export type ReadonlyValEnhancedResult<TConfig> = IntersectionFromUnion<
 >;
 
 /**
- * Loop through a config object and `bindInstance` each val to the instance.
+ * Bind ReadonlyVals/Vals `value` and itself to properties of an instance.
+ *
+ * @example
+ * ```ts
+ * import type { ReadonlyValEnhancedResult } from "value-enhancer";
+ * import { Val, withReadonlyValueEnhancer } from "value-enhancer";
+ *
+ * type ReadonlyValConfig = {
+ *   apple: Val<string>
+ *   isApple: ReadonlyVal<boolean>
+ * };
+ *
+ * interface Obj extends ReadonlyValEnhancedResult<ReadonlyValConfig> {}
+ *
+ * class Obj {
+ *   constructor() {
+ *     const apple$ = new Val("apple");
+ *     const isApple$ = derive(apple$, (apple) => apple === "apple");
+ *
+ *     withReadonlyValueEnhancer(this, {
+ *       apple: apple$,
+ *       isApple: isApple$,
+ *     })
+ *   }
+ * }
+ * ```
+ *
+ * `const obj = new Obj()` results in:
+ * - `obj.apple`, a getter returns `apple$.value`
+ * - `obj._apple$`, the `apple$`
+ * - `obj.isApple`, a getter returns `isApple$.value`
+ * - `obj._isApple$`, the `isApple$`
  */
 export function withReadonlyValueEnhancer<
   TInstance,
@@ -48,10 +79,11 @@ export function withReadonlyValueEnhancer<
 }
 
 /**
- * Bind a Val to a property of an instance.
+ * Bind a ReadonlyVal/Val to a property of an instance.
+ *
+ * @example
  * `bindInstance(Obj, "aKey", val)` results in:
  * - `Obj.aKey`, value of `val.value`
- * - `Obj.setAKey(value)`
  * - `Obj._aKey$`, the `val`
  * @returns Same instance with bound properties
  */

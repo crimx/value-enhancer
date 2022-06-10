@@ -7,6 +7,7 @@
     "pnpm",
     "preinstall",
     "typedoc",
+    "Vals",
     "vite",
     "vitest"
   ],

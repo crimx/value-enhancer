@@ -64,26 +64,74 @@ val.subscribe((value, meta) => console.log(value, meta));
 val.setValue(5, { source: "remote" });
 ```
 
-### Bind Instance
+### Bind Vals To An Instance
 
-Val can be bound to a object via `withValueEnhancer`.
+Bind Vals `value`, `setValue` and itself to properties of an instance.
 
 ```ts
 import type { ValEnhancedResult } from "value-enhancer";
 import { Val, withValueEnhancer } from "value-enhancer";
 
-interface Obj extends ValEnhancedResult<{ count: Val<number> }> {}
+type ValConfig = {
+  apple: Val<string>;
+  banana: Val<string>;
+};
+
+interface Obj extends ValEnhancedResult<ValConfig> {}
 
 class Obj {
   constructor() {
+    const apple$ = new Val("apple");
+    const banana$ = new Val("banana");
+
     withValueEnhancer(this, {
-      count: new Val(2),
+      apple: apple$,
+      banana: banana$,
     });
-    // Three properties are created for each bound Val
-    console.log(this.count, this.setCount, this._count$);
-  }
-  addOne(): void {
-    this.setCount(this.count + 1);
   }
 }
 ```
+
+`const obj = new Obj()` results in:
+
+- `obj.apple`, a getter returns `apple$.value`
+- `obj._apple$`, the `apple$`
+- `obj.setApple(value)`, same as `apple$.setValue(value)`
+- `obj.banana`, a getter returns `banana$.value`
+- `obj.setBanana(value)`, same as `banana$.setValue(value)`
+- `obj._banana$`, the `banana$`
+
+### Bind ReadonlyVals/Vals To An Instance
+
+Like `withValueEnhancer`, `withReadonlyValueEnhancer` binds ReadonlyVals/Vals to a instance but without setters
+
+```ts
+import type { ReadonlyValEnhancedResult } from "value-enhancer";
+import { Val, withReadonlyValueEnhancer } from "value-enhancer";
+
+type ReadonlyValConfig = {
+  apple: Val<string>;
+  isApple: ReadonlyVal<boolean>;
+};
+
+interface Obj extends ReadonlyValEnhancedResult<ReadonlyValConfig> {}
+
+class Obj {
+  constructor() {
+    const apple$ = new Val("apple");
+    const isApple$ = derive(apple$, apple => apple === "apple");
+
+    withReadonlyValueEnhancer(this, {
+      apple: apple$,
+      isApple: isApple$,
+    });
+  }
+}
+```
+
+`const obj = new Obj()` results in:
+
+- `obj.apple`, a getter returns `apple$.value`
+- `obj._apple$`, the `apple$`
+- `obj.isApple`, a getter returns `isApple$.value`
+- `obj._isApple$`, the `isApple$`
