@@ -5,3 +5,4 @@ export * from "./derived-val";
 export * from "./combine";
 export * from "./with-readonly-value-enhancer";
 export * from "./with-value-enhancer";
+export * from "./val-manager";

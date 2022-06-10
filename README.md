@@ -135,3 +135,17 @@ class Obj {
 - `obj._apple$`, the `apple$`
 - `obj.isApple`, a getter that returns `isApple$.value`
 - `obj._isApple$`, the `isApple$`
+
+### ValManager
+
+Manage life-cycles of a list of Vals (e.g. auto cleanup).
+
+```ts
+import { Val, ValManager } from "value-enhancer";
+
+const valManager = new ValManager();
+const val1 = valManager.attach(new Val("12345"));
+const val2 = valManager.attach(new Val(""));
+
+valManager.destroy(); // val1.destroy() and val2.destroy() are called
+```
