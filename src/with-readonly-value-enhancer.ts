@@ -2,6 +2,7 @@
 
 import type { ExtractValValue } from "./combine";
 import type { ReadonlyVal } from "./readonly-val";
+import type { ValManager } from "./val-manager";
 
 type IntersectionFromUnion<TUnion> = (
   TUnion extends any ? (arg: TUnion) => void : never
@@ -72,9 +73,12 @@ export type ReadonlyValEnhancedResult<TConfig> = IntersectionFromUnion<
 export function withReadonlyValueEnhancer<
   TInstance,
   TConfig extends ReadonlyValEnhancerConfig
->(instance: TInstance, config: TConfig): void {
+>(instance: TInstance, config: TConfig, valManager?: ValManager): void {
   Object.keys(config).forEach(key => {
     bindInstance(instance, key, config[key]);
+    if (valManager) {
+      valManager.attach(config[key]);
+    }
   });
 }
 

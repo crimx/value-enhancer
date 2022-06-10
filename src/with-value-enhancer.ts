@@ -2,6 +2,7 @@
 
 import type { ExtractValMeta, ExtractValValue } from "./combine";
 import type { Val } from "./val";
+import type { ValManager } from "./val-manager";
 
 type IntersectionFromUnion<TUnion> = (
   TUnion extends any ? (arg: TUnion) => void : never
@@ -78,10 +79,14 @@ export type ValEnhancedResult<TConfig> = IntersectionFromUnion<
  */
 export function withValueEnhancer<TInstance, TConfig extends ValEnhancerConfig>(
   instance: TInstance,
-  config: TConfig
+  config: TConfig,
+  valManager?: ValManager
 ): void {
   Object.keys(config).forEach(key => {
     bindInstance(instance, key, config[key]);
+    if (valManager) {
+      valManager.attach(config[key]);
+    }
   });
 }
 

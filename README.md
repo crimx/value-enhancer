@@ -149,3 +149,65 @@ const val2 = valManager.attach(new Val(""));
 
 valManager.destroy(); // val1.destroy() and val2.destroy() are called
 ```
+
+Combined with `withValueEnhancer` or `withReadonlyValueEnhancer`:
+
+```js
+import type { ValEnhancedResult } from "value-enhancer";
+import { Val, withValueEnhancer, ValManager } from "value-enhancer";
+
+class Obj {
+  constructor() {
+    this.valManager = new ValManager();
+
+    const apple$ = new Val("apple");
+    const banana$ = new Val("banana");
+
+    withValueEnhancer(
+      this,
+      {
+        apple: apple$,
+        banana: banana$,
+      },
+      this.valManager
+    );
+  }
+
+  destroy() {
+    this.valManager.destroy();
+  }
+}
+```
+
+And `valManager` may keep private with [`side-effect-manager`](https://github.com/crimx/side-effect-manager):
+
+```js
+import type { ValEnhancedResult } from "value-enhancer";
+import { Val, withValueEnhancer, ValManager } from "value-enhancer";
+import { SideEffectManager } from "side-effect-manager";
+
+class Obj {
+  constructor() {
+    this.sideEffect = new SideEffectManager();
+
+    const valManager = new ValManager();
+    this.sideEffect.addDisposer(() => valManager.destroy());
+
+    const apple$ = new Val("apple");
+    const banana$ = new Val("banana");
+
+    withValueEnhancer(
+      this,
+      {
+        apple: apple$,
+        banana: banana$,
+      },
+      valManager
+    );
+  }
+
+  destroy() {
+    this.sideEffect.flushAll();
+  }
+}
+```
