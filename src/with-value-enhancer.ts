@@ -19,13 +19,13 @@ type ExtractValKeys<TInstance, TKey = keyof TInstance> = TKey extends Extract<
   : never;
 
 export type ValEnhancer<TVal, TKey extends string> = Readonly<
-  Record<TKey, ExtractValValue<TVal>> &
-    Record<`_${TKey}$`, TVal> &
+  Record<`_${TKey}$`, TVal> &
     Record<
       `set${Capitalize<TKey>}`,
       (value: ExtractValValue<TVal>, meta?: ExtractValMeta<TVal>) => void
     >
->;
+> &
+  Record<TKey, ExtractValValue<TVal>>;
 
 export type ValEnhancerConfig = Record<string, Val>;
 
@@ -69,10 +69,10 @@ export type ValEnhancedResult<TConfig> = IntersectionFromUnion<
  * ```
  *
  * `const obj = new Obj()` results in:
- * - `obj.apple`, a getter returns `apple$.value`
+ * - `obj.apple`, a getter that returns `apple$.value`, setter same as `apple$.setValue(value)`
  * - `obj._apple$`, the `apple$`
  * - `obj.setApple(value)`, same as `apple$.setValue(value)`
- * - `obj.banana`, a getter returns `banana$.value`
+ * - `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.setValue(value)`
  * - `obj.setBanana(value)`, same as `banana$.setValue(value)`
  * - `obj._banana$`, the `banana$`
  */
@@ -94,10 +94,10 @@ export type BindVal = <TKey extends string, TValue, TMeta>(
  * Bind a Val to a property of an instance.
  *
  * @example
- * `bindInstance(Obj, "aKey", val)` results in:
- * - `Obj.aKey`, value of `val.value`
- * - `Obj.setAKey(value)`
- * - `Obj._aKey$`, the `val`
+ * `bindInstance(obj, "aKey", val)` results in:
+ * - `obj.aKey`, getter that returns `val.value`, setter same as `val.setValue(value)`
+ * - `obj.setAKey(value)`, same as `val.setValue(value)`
+ * - `obj._aKey$`, the `val`
  * @returns Same instance with bound properties
  */
 export function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
@@ -109,6 +109,9 @@ export function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
     [key]: {
       get() {
         return val.value;
+      },
+      set(value) {
+        val.setValue(value);
       },
     },
     [`_${key}$`]: {

@@ -94,10 +94,10 @@ class Obj {
 
 `const obj = new Obj()` results in:
 
-- `obj.apple`, a getter returns `apple$.value`
+- `obj.apple`, a getter that returns `apple$.value`, setter same as `apple$.setValue(value)`
 - `obj._apple$`, the `apple$`
 - `obj.setApple(value)`, same as `apple$.setValue(value)`
-- `obj.banana`, a getter returns `banana$.value`
+- `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.setValue(value)`
 - `obj.setBanana(value)`, same as `banana$.setValue(value)`
 - `obj._banana$`, the `banana$`
 
@@ -131,7 +131,7 @@ class Obj {
 
 `const obj = new Obj()` results in:
 
-- `obj.apple`, a getter returns `apple$.value`
+- `obj.apple`, a getter that returns `apple$.value`
 - `obj._apple$`, the `apple$`
-- `obj.isApple`, a getter returns `isApple$.value`
+- `obj.isApple`, a getter that returns `isApple$.value`
 - `obj._isApple$`, the `isApple$`

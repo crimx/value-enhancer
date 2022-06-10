@@ -64,9 +64,9 @@ export type ReadonlyValEnhancedResult<TConfig> = IntersectionFromUnion<
  * ```
  *
  * `const obj = new Obj()` results in:
- * - `obj.apple`, a getter returns `apple$.value`
+ * - `obj.apple`, a getter that returns `apple$.value`
  * - `obj._apple$`, the `apple$`
- * - `obj.isApple`, a getter returns `isApple$.value`
+ * - `obj.isApple`, a getter that returns `isApple$.value`
  * - `obj._isApple$`, the `isApple$`
  */
 export function withReadonlyValueEnhancer<
