@@ -77,11 +77,10 @@ export type ValEnhancedResult<TConfig> = IntersectionFromUnion<
  * - `obj.setBanana(value)`, same as `banana$.setValue(value)`
  * - `obj._banana$`, the `banana$`
  */
-export function withValueEnhancer<TInstance, TConfig extends ValEnhancerConfig>(
-  instance: TInstance,
-  config: TConfig,
-  valManager?: ValManager
-): void {
+export function withValueEnhancer<
+  TInstance extends ValEnhancedResult<TConfig>,
+  TConfig extends ValEnhancerConfig
+>(instance: TInstance, config: TConfig, valManager?: ValManager): void {
   Object.keys(config).forEach(key => {
     bindInstance(instance, key, config[key]);
     if (valManager) {

@@ -71,7 +71,7 @@ export type ReadonlyValEnhancedResult<TConfig> = IntersectionFromUnion<
  * - `obj._isApple$`, the `isApple$`
  */
 export function withReadonlyValueEnhancer<
-  TInstance,
+  TInstance extends ReadonlyValEnhancedResult<TConfig>,
   TConfig extends ReadonlyValEnhancerConfig
 >(instance: TInstance, config: TConfig, valManager?: ValManager): void {
   Object.keys(config).forEach(key => {
