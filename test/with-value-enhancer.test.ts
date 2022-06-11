@@ -1,6 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 import type { ValEnhancedResult } from "../src/value-enhancer";
-import { Val, withValueEnhancer, bindInstance } from "../src/value-enhancer";
+import {
+  Val,
+  withValueEnhancer,
+  bindInstance,
+  ValManager,
+} from "../src/value-enhancer";
 
 describe("bindInstance", () => {
   it("should bind instance", () => {
@@ -63,5 +68,29 @@ describe("withValueEnhancer", () => {
 
     test1.setMember(3);
     expect(spy).toBeCalledTimes(1);
+  });
+
+  it("should attach to val manager if provided", () => {
+    interface Test1 extends ValEnhancedResult<{ member: Val<number> }> {}
+
+    class Test1 {
+      public exposedValManagerForTesting: ValManager;
+
+      constructor() {
+        const valManager = new ValManager();
+        this.exposedValManagerForTesting = valManager;
+
+        withValueEnhancer(
+          this,
+          {
+            member: new Val(2),
+          },
+          valManager
+        );
+      }
+    }
+
+    const test1 = new Test1();
+    expect(test1.exposedValManagerForTesting.vals).toHaveLength(1);
   });
 });

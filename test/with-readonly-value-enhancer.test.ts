@@ -1,6 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import type { ReadonlyValEnhancedResult } from "../src/value-enhancer";
-import { Val, withReadonlyValueEnhancer } from "../src/value-enhancer";
+import {
+  Val,
+  withReadonlyValueEnhancer,
+  ValManager,
+} from "../src/value-enhancer";
 
 describe("withReadonlyValueEnhancer", () => {
   it("should add attributes to class", () => {
@@ -55,5 +59,30 @@ describe("withReadonlyValueEnhancer", () => {
 
     test1._member$.setValue(3);
     expect(spy).toBeCalledTimes(1);
+  });
+
+  it("should attach to val manager if provided", () => {
+    interface Test1
+      extends ReadonlyValEnhancedResult<{ member: Val<number> }> {}
+
+    class Test1 {
+      public exposedValManagerForTesting: ValManager;
+
+      constructor() {
+        const valManager = new ValManager();
+        this.exposedValManagerForTesting = valManager;
+
+        withReadonlyValueEnhancer(
+          this,
+          {
+            member: new Val(2),
+          },
+          valManager
+        );
+      }
+    }
+
+    const test1 = new Test1();
+    expect(test1.exposedValManagerForTesting.vals).toHaveLength(1);
   });
 });
