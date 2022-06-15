@@ -3,6 +3,8 @@
 import type { ExtractValMeta, ExtractValValue } from "./combine";
 import type { Val } from "./val";
 import type { ValManager } from "./val-manager";
+import type { WithOnValChanged } from "./with-on-val-changed";
+import { withOnValChanged } from "./with-on-val-changed";
 
 type IntersectionFromUnion<TUnion> = (
   TUnion extends any ? (arg: TUnion) => void : never
@@ -19,7 +21,7 @@ type ExtractValKeys<TInstance, TKey = keyof TInstance> = TKey extends Extract<
     : never
   : never;
 
-export type ValEnhancer<TVal, TKey extends string> = Readonly<
+type ValEnhancedProps<TVal, TKey extends string> = Readonly<
   Record<`_${TKey}$`, TVal> &
     Record<
       `set${Capitalize<TKey>}`,
@@ -34,11 +36,12 @@ type ToValUnion<
   TConfig,
   TKey = ExtractValKeys<TConfig>
 > = TKey extends ExtractValKeys<TConfig>
-  ? ValEnhancer<TConfig[TKey], TKey>
+  ? ValEnhancedProps<TConfig[TKey], TKey>
   : never;
 
-export type ValEnhancedResult<TConfig> = IntersectionFromUnion<
-  ToValUnion<TConfig>
+export type ValEnhancedResult<TConfig> = WithOnValChanged<
+  TConfig,
+  IntersectionFromUnion<ToValUnion<TConfig>>
 >;
 
 /**
@@ -76,6 +79,7 @@ export type ValEnhancedResult<TConfig> = IntersectionFromUnion<
  * - `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.setValue(value)`
  * - `obj.setBanana(value)`, same as `banana$.setValue(value)`
  * - `obj._banana$`, the `banana$`
+ * - `obj.onValChanged(key: "apple" | "isApple", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
  */
 export function withValueEnhancer<
   TInstance extends ValEnhancedResult<TConfig>,
@@ -87,6 +91,7 @@ export function withValueEnhancer<
       valManager.attach(config[key]);
     }
   });
+  withOnValChanged(instance);
 }
 
 export type BindVal = <TKey extends string, TValue, TMeta>(
@@ -108,7 +113,7 @@ export function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
   instance: TInstance,
   key: TKey,
   val: Val<TValue, TMeta>
-): ValEnhancer<TValue, TKey> & TInstance {
+): ValEnhancedProps<TValue, TKey> & TInstance {
   Object.defineProperties(instance, {
     [key]: {
       get() {
@@ -125,7 +130,7 @@ export function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
       value: (value: TValue, meta?: TMeta): void => val.setValue(value, meta),
     },
   });
-  return instance as ValEnhancer<TValue, TKey> & TInstance;
+  return instance as ValEnhancedProps<TValue, TKey> & TInstance;
 }
 
 function capitalize<TStr extends string>(str: TStr): Capitalize<TStr> {

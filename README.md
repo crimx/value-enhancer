@@ -100,6 +100,7 @@ class Obj {
 - `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.setValue(value)`
 - `obj.setBanana(value)`, same as `banana$.setValue(value)`
 - `obj._banana$`, the `banana$`
+- `obj.onValChanged(key: "apple" | "banana", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
 
 ### Bind ReadonlyVals/Vals To An Instance
 
@@ -135,6 +136,7 @@ class Obj {
 - `obj._apple$`, the `apple$`
 - `obj.isApple`, a getter that returns `isApple$.value`
 - `obj._isApple$`, the `isApple$`
+- `obj.onValChanged(key: "apple" | "isApple", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
 
 ### ValManager
 

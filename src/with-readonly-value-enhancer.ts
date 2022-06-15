@@ -3,6 +3,8 @@
 import type { ExtractValValue } from "./combine";
 import type { ReadonlyVal } from "./readonly-val";
 import type { ValManager } from "./val-manager";
+import type { WithOnValChanged } from "./with-on-val-changed";
+import { withOnValChanged } from "./with-on-val-changed";
 
 type IntersectionFromUnion<TUnion> = (
   TUnion extends any ? (arg: TUnion) => void : never
@@ -19,7 +21,7 @@ type ExtractReadonlyValKeys<
     : never
   : never;
 
-export type ReadonlyValEnhancer<TVal, TKey extends string> = Readonly<
+export type ReadonlyValEnhancedProps<TVal, TKey extends string> = Readonly<
   Record<TKey, ExtractValValue<TVal>> & Record<`_${TKey}$`, TVal>
 >;
 
@@ -29,11 +31,12 @@ type ToReadonlyValUnion<
   TConfig,
   TKey = ExtractReadonlyValKeys<TConfig>
 > = TKey extends ExtractReadonlyValKeys<TConfig>
-  ? ReadonlyValEnhancer<TConfig[TKey], TKey>
+  ? ReadonlyValEnhancedProps<TConfig[TKey], TKey>
   : never;
 
-export type ReadonlyValEnhancedResult<TConfig> = IntersectionFromUnion<
-  ToReadonlyValUnion<TConfig>
+export type ReadonlyValEnhancedResult<TConfig> = WithOnValChanged<
+  TConfig,
+  IntersectionFromUnion<ToReadonlyValUnion<TConfig>>
 >;
 
 /**
@@ -69,6 +72,7 @@ export type ReadonlyValEnhancedResult<TConfig> = IntersectionFromUnion<
  * - `obj._apple$`, the `apple$`
  * - `obj.isApple`, a getter that returns `isApple$.value`
  * - `obj._isApple$`, the `isApple$`
+ * - `obj.onValChanged(key: "apple" | "isApple", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
  */
 export function withReadonlyValueEnhancer<
   TInstance extends ReadonlyValEnhancedResult<TConfig>,
@@ -80,6 +84,7 @@ export function withReadonlyValueEnhancer<
       valManager.attach(config[key]);
     }
   });
+  withOnValChanged(instance);
 }
 
 /**
@@ -95,7 +100,7 @@ function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
   instance: TInstance,
   key: TKey,
   val: ReadonlyVal<TValue, TMeta>
-): ReadonlyValEnhancer<TValue, TKey> & TInstance {
+): ReadonlyValEnhancedProps<TValue, TKey> & TInstance {
   Object.defineProperties(instance, {
     [key]: {
       get() {
@@ -106,5 +111,5 @@ function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
       value: val,
     },
   });
-  return instance as ReadonlyValEnhancer<TValue, TKey> & TInstance;
+  return instance as ReadonlyValEnhancedProps<TValue, TKey> & TInstance;
 }
