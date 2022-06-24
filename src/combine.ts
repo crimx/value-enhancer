@@ -75,7 +75,7 @@ export class CombinedVal<
     return this._value;
   }
 
-  protected _srcValue: () => TValue;
+  private _srcValue: () => TValue;
 }
 
 function getValues<TValInputs extends readonly ReadonlyVal[]>(

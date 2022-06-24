@@ -41,7 +41,7 @@ export class DerivedVal<
     return this._value;
   }
 
-  protected _srcValue: () => TValue;
+  private _srcValue: () => TValue;
 }
 
 export function derive<TSrcValue = any, TValue = any, TMeta = any>(
