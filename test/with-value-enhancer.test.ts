@@ -3,6 +3,7 @@ import type {
   ReadonlyValEnhancedResult,
   ValEnhancedResult,
 } from "../src/value-enhancer";
+import { combine, derive, ReadonlyVal } from "../src/value-enhancer";
 import { withReadonlyValueEnhancer } from "../src/value-enhancer";
 import {
   Val,
@@ -96,6 +97,49 @@ describe("withValueEnhancer", () => {
 
     const test1 = new Test1();
     expect(test1.exposedValManagerForTesting.vals).toHaveLength(1);
+  });
+
+  it("should not pass tsc for mismatched val types", () => {
+    interface Test1 extends ValEnhancedResult<{ member: Val<number> }> {}
+
+    class Test1 {
+      str: string;
+      constructor() {
+        this.str = "str";
+        // @ts-expect-error - mismatched val type
+        withValueEnhancer(this, {
+          member: new Val("ee"),
+        });
+      }
+    }
+
+    const test1 = new Test1();
+    expect(test1.member).toBe("ee");
+  });
+
+  it("should not work with derive and combine", () => {
+    type ValConfig = {
+      a: Val<number>;
+      c: Val<number>;
+      d: Val<[string]>;
+    };
+
+    interface Test1 extends ValEnhancedResult<ValConfig> {}
+
+    class Test1 {
+      str: string;
+      constructor() {
+        this.str = "str";
+        // @ts-expect-error - mismatched val type
+        withValueEnhancer(this, {
+          a: new Val(2),
+          c: derive(new Val("1"), val => Number(val)),
+          d: combine([new Val("str")]),
+        });
+      }
+    }
+    const test1 = new Test1();
+    expect(test1.a).toBe(2);
   });
 
   describe("subscribe", () => {

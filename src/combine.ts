@@ -89,10 +89,13 @@ function getValue<TValue>(val: ReadonlyVal<TValue>): TValue {
 }
 
 export function combine<
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-  TValue = [...TValInputsValueTuple<TValInputs>],
-  TMeta = ExtractValMeta<TValInputs[number]>
->(valInputs: readonly [...TValInputs]): CombinedVal<TValInputs, TValue, TMeta>;
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
+>(
+  valInputs: readonly [...TValInputs]
+): ReadonlyVal<
+  [...TValInputsValueTuple<TValInputs>],
+  ExtractValMeta<TValInputs[number]>
+>;
 export function combine<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
   TValue = any,
@@ -105,7 +108,7 @@ export function combine<
     TMeta
   >,
   config?: ValConfig<TValue, TMeta>
-): CombinedVal<TValInputs, TValue, TMeta>;
+): ReadonlyVal<TValue, TMeta>;
 export function combine<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
   TValue = any,
@@ -118,6 +121,6 @@ export function combine<
     TMeta
   > = value => value as TValue,
   config: ValConfig<TValue, TMeta> = {}
-): CombinedVal<TValInputs, TValue, TMeta> {
+): ReadonlyVal<TValue, TMeta> {
   return new CombinedVal(valInputs, transform, config);
 }
