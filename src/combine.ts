@@ -68,7 +68,7 @@ export class CombinedVal<
   }
 
   public override get value(): TValue {
-    if (this._subscribers.size <= 0) {
+    if (this.size <= 0) {
       const value = this._srcValue();
       return this.compare(value, this._value) ? this._value : value;
     }

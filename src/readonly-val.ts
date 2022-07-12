@@ -2,7 +2,7 @@ import { Subscribers } from "./subscribers";
 import type { ValDisposer, ValSubscriber, ValConfig } from "./typings";
 
 export class ReadonlyVal<TValue = any, TMeta = any> {
-  protected _subscribers: Subscribers<TValue, TMeta>;
+  private _subscribers: Subscribers<TValue, TMeta>;
 
   protected _value: TValue;
 
@@ -67,6 +67,10 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
 
   public unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void {
     this._subscribers.remove(subscriber);
+  }
+
+  public get size(): number {
+    return this._subscribers.size;
   }
 
   /**
