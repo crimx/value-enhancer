@@ -25,14 +25,14 @@ describe("withReadonlyValueEnhancer", () => {
         });
       }
       addOne(): void {
-        this._member$.setValue(this.member + 1);
+        this._member$.set(this.member + 1);
       }
     }
 
     const test1 = new Test1();
     expect(test1.member).toBe(2);
 
-    // @ts-expect-error - readonly val does not expose setValue
+    // @ts-expect-error - readonly val does not expose set
     expect(test1.setMember).toBeUndefined();
 
     expect(test1).not.toEqual(
@@ -65,7 +65,7 @@ describe("withReadonlyValueEnhancer", () => {
     test1._member$.reaction(spy);
     expect(spy).toBeCalledTimes(0);
 
-    test1._member$.setValue(3);
+    test1._member$.set(3);
     expect(spy).toBeCalledTimes(1);
   });
 
@@ -158,11 +158,11 @@ describe("withReadonlyValueEnhancer", () => {
 
       expect(spy).toBeCalledTimes(0);
 
-      member$.setValue(3);
+      member$.set(3);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(3, undefined);
 
-      member$.setValue(4, "t");
+      member$.set(4, "t");
       expect(spy).toBeCalledTimes(2);
       expect(spy).lastCalledWith(4, "t");
     });
@@ -196,15 +196,15 @@ describe("withReadonlyValueEnhancer", () => {
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(0);
 
-      a$.setValue(3);
-      b$.setValue(false);
+      a$.set(3);
+      b$.set(false);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
       expect(spy1).lastCalledWith(3, undefined);
       expect(spy2).lastCalledWith(false, undefined);
 
-      a$.setValue(4, "a");
-      b$.setValue(true, "b");
+      a$.set(4, "a");
+      b$.set(true, "b");
       expect(spy1).toBeCalledTimes(2);
       expect(spy2).toBeCalledTimes(2);
       expect(spy1).lastCalledWith(4, "a");

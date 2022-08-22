@@ -13,7 +13,7 @@ describe("ValManager", () => {
     const val1 = valManager.attach(new Val("12345"));
     const val2 = valManager.attach(new Val(""));
     val1.subscribe(str => {
-      val2.setValue(str.split("").reverse().join(""));
+      val2.set(str.split("").reverse().join(""));
     });
 
     expect(valManager.vals.has(val1)).toBe(true);
@@ -22,13 +22,13 @@ describe("ValManager", () => {
     expect(val1.value).toBe("12345");
     expect(val2.value).toBe("54321");
 
-    val1.setValue("23456");
+    val1.set("23456");
     expect(val1.value).toBe("23456");
     expect(val2.value).toBe("65432");
 
     valManager.destroy();
 
-    val1.setValue("34567");
+    val1.set("34567");
     expect(val1.value).toBe("34567");
     expect(val2.value).toBe("65432");
   });
@@ -38,7 +38,7 @@ describe("ValManager", () => {
     const val1 = valManager.attach(new Val("12345"));
     const val2 = valManager.attach(new Val(""));
     val1.subscribe(str => {
-      val2.setValue(str.split("").reverse().join(""));
+      val2.set(str.split("").reverse().join(""));
     });
 
     expect(valManager.vals.has(val1)).toBe(true);
@@ -47,7 +47,7 @@ describe("ValManager", () => {
     expect(val1.value).toBe("12345");
     expect(val2.value).toBe("54321");
 
-    val1.setValue("23456");
+    val1.set("23456");
     expect(val1.value).toBe("23456");
     expect(val2.value).toBe("65432");
 
@@ -55,7 +55,7 @@ describe("ValManager", () => {
 
     valManager.destroy();
 
-    val1.setValue("34567");
+    val1.set("34567");
     expect(val1.value).toBe("34567");
     expect(val2.value).toBe("76543");
   });

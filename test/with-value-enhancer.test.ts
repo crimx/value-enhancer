@@ -246,7 +246,7 @@ describe("withValueEnhancer", () => {
       }
 
       const test1 = new Test1();
-      // @ts-expect-error - no setValue for readonly val
+      // @ts-expect-error - no set for readonly val
       expect(test1.setB).toBeUndefined();
 
       test1.onValChanged("a", spy1);
@@ -255,15 +255,15 @@ describe("withValueEnhancer", () => {
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(0);
 
-      a$.setValue(3);
-      b$.setValue(false);
+      a$.set(3);
+      b$.set(false);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
       expect(spy1).lastCalledWith(3, undefined);
       expect(spy2).lastCalledWith(false, undefined);
 
-      a$.setValue(4, "a");
-      b$.setValue(true, "b");
+      a$.set(4, "a");
+      b$.set(true, "b");
       expect(spy1).toBeCalledTimes(2);
       expect(spy2).toBeCalledTimes(2);
       expect(spy1).lastCalledWith(4, "a");

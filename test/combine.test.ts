@@ -18,11 +18,11 @@ describe("combine", () => {
 
     expect(combined.value).toBe(5);
 
-    val1.setValue(1);
+    val1.set(1);
 
     expect(combined.value).toEqual(5);
 
-    val1.setValue(2);
+    val1.set(2);
 
     expect(combined.value).toEqual(6);
 
@@ -85,7 +85,7 @@ describe("combine", () => {
       44
     );
 
-    val1.setValue(88, "meta");
+    val1.set(88, "meta");
     expect(spy).toBeCalledTimes(2);
     expect(spy).toBeCalledWith(
       expect.objectContaining({
@@ -128,7 +128,7 @@ describe("combine", () => {
     val2.reaction(spy2);
     expect(spy2).toBeCalledTimes(0);
 
-    val2.setValue({ code: 2 });
+    val2.set({ code: 2 });
     expect(spy2).toBeCalledTimes(1);
     expect(spy).toBeCalledTimes(1);
 
@@ -198,11 +198,11 @@ describe("combine", () => {
 
     expect(combined.value).toEqual([1, 1, 1, 2]);
 
-    val1.setValue(1);
+    val1.set(1);
 
     expect(combined.value).toEqual([1, 1, 1, 2]);
 
-    val1.setValue(2);
+    val1.set(2);
 
     expect(combined.value).toEqual([2, 1, 1, 2]);
 

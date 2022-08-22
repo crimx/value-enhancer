@@ -10,11 +10,20 @@ describe("Val", () => {
     });
   });
 
-  describe("setValue", () => {
-    it("should update value from 1 to 2 when setValue(2)", () => {
+  describe("setter", () => {
+    it("should update value from 1 to 2 when set(2)", () => {
       const val = new Val(1);
       expect(val.value).toBe(1);
-      val.setValue(2);
+      val.value = 2;
+      expect(val.value).toBe(2);
+    });
+  });
+
+  describe("set", () => {
+    it("should update value from 1 to 2 when set(2)", () => {
+      const val = new Val(1);
+      expect(val.value).toBe(1);
+      val.set(2);
       expect(val.value).toBe(2);
     });
   });
@@ -31,7 +40,7 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(1);
 
-      val.setValue(2);
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(firstParamOfLastCall(spy)).toBe(2);
@@ -39,7 +48,7 @@ describe("Val", () => {
       val.destroy();
     });
 
-    it("should trigger emission on setValue", () => {
+    it("should trigger emission on set", () => {
       const spy = vi.fn();
       const val = new Val(1);
       expect(val.value).toBe(1);
@@ -50,7 +59,7 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(1);
       expect(spy.mock.calls[0][0]).toBe(1);
 
-      val.setValue(2);
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(spy.mock.calls[1][0]).toBe(2);
@@ -69,7 +78,7 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(1, "meta");
 
-      val.setValue(2, "meta2");
+      val.set(2, "meta2");
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(spy).lastCalledWith(2, "meta2");
@@ -77,7 +86,7 @@ describe("Val", () => {
       val.destroy();
     });
 
-    it("should not trigger emission on setValue with same value", () => {
+    it("should not trigger emission on set with same value", () => {
       const spy = vi.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
@@ -91,11 +100,11 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(value1);
 
-      val.setValue(value1);
+      val.set(value1);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
-      val.setValue(value2);
+      val.set(value2);
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(2);
       expect(firstParamOfLastCall(spy)).toBe(value2);
@@ -119,11 +128,11 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(value1);
 
-      val.setValue(value1);
+      val.set(value1);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
-      val.setValue(valueClone);
+      val.set(valueClone);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(value1);
@@ -146,12 +155,12 @@ describe("Val", () => {
         expect(spy).lastCalledWith(1, undefined);
       });
 
-      val.setValue(1);
+      val.set(1);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
 
-      val.setValue(2);
+      val.set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(2);
         expect(spy).lastCalledWith(2, undefined);
@@ -175,7 +184,7 @@ describe("Val", () => {
 
       spy1Disposer();
 
-      val.setValue(2, "meta2");
+      val.set(2, "meta2");
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
@@ -194,14 +203,14 @@ describe("Val", () => {
         val.subscribe(spy);
       });
 
-      val.setValue(1);
+      val.set(1);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
 
       val.destroy();
 
-      val.setValue(2);
+      val.set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
@@ -221,7 +230,7 @@ describe("Val", () => {
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(2);
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(2);
@@ -229,7 +238,7 @@ describe("Val", () => {
       val.destroy();
     });
 
-    it("should trigger emission on setValue", () => {
+    it("should trigger emission on set", () => {
       const spy = vi.fn();
       const val = new Val(1);
       expect(val.value).toBe(1);
@@ -239,7 +248,7 @@ describe("Val", () => {
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(2);
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(2);
@@ -257,7 +266,7 @@ describe("Val", () => {
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(2);
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(2, undefined);
@@ -275,7 +284,7 @@ describe("Val", () => {
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(2, "meta2");
+      val.set(2, "meta2");
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(2, "meta2");
@@ -283,7 +292,7 @@ describe("Val", () => {
       val.destroy();
     });
 
-    it("should not trigger emission on setValue with same value", () => {
+    it("should not trigger emission on set with same value", () => {
       const spy = vi.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
@@ -296,11 +305,11 @@ describe("Val", () => {
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(value1);
+      val.set(value1);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(value2);
+      val.set(value2);
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(1);
       expect(firstParamOfLastCall(spy)).toBe(value2);
@@ -323,11 +332,11 @@ describe("Val", () => {
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(value1);
+      val.set(value1);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
-      val.setValue(value1Clone);
+      val.set(value1Clone);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -348,12 +357,12 @@ describe("Val", () => {
         expect(spy).toBeCalledTimes(0);
       });
 
-      val.setValue(1);
+      val.set(1);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
 
-      val.setValue(2);
+      val.set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
         expect(spy).lastCalledWith(2, undefined);
@@ -375,7 +384,7 @@ describe("Val", () => {
 
       spy1Disposer();
 
-      val.setValue(2, "meta2");
+      val.set(2, "meta2");
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(1);
@@ -394,14 +403,14 @@ describe("Val", () => {
         val.reaction(spy);
       });
 
-      val.setValue(1);
+      val.set(1);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
 
       val.destroy();
 
-      val.setValue(2);
+      val.set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });

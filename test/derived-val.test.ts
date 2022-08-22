@@ -10,11 +10,11 @@ describe("derive", () => {
 
     expect(derived.value).toBe(2);
 
-    val1.setValue(1);
+    val1.set(1);
 
     expect(derived.value).toEqual(2);
 
-    val1.setValue(2);
+    val1.set(2);
 
     expect(derived.value).toEqual(3);
 
@@ -48,7 +48,7 @@ describe("derive", () => {
     expect(spy).toBeCalledTimes(1);
     expect(spy).toBeCalledWith(2, 44);
 
-    val1.setValue(88, "meta");
+    val1.set(88, "meta");
     expect(spy).toBeCalledTimes(2);
     expect(spy).toBeCalledWith(89, "meta");
 
@@ -77,7 +77,7 @@ describe("derive", () => {
     val1.reaction(sub1);
     expect(sub1).toBeCalledTimes(0);
 
-    val1.setValue({ code: 2 });
+    val1.set({ code: 2 });
     expect(sub).toBeCalledTimes(0);
     expect(sub1).toBeCalledTimes(1);
     expect(sub1.mock.calls[0][0]).toEqual({ code: 2 });
@@ -85,7 +85,7 @@ describe("derive", () => {
     sub.mockClear();
     sub1.mockClear();
 
-    val1.setValue({ code: 3 });
+    val1.set({ code: 3 });
     expect(sub).toBeCalledTimes(1);
     expect(sub1).toBeCalledTimes(1);
     expect(sub.mock.calls[0][0]).toEqual({ content: "3" });
@@ -136,11 +136,11 @@ describe("derive", () => {
 
     expect(derived.value).toBe(1);
 
-    val1.setValue(1);
+    val1.set(1);
 
     expect(derived.value).toEqual(1);
 
-    val1.setValue(2);
+    val1.set(2);
 
     expect(derived.value).toEqual(2);
 

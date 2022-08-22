@@ -45,7 +45,7 @@ export type ValEnhancedResult<TConfig> = WithOnValChanged<
 >;
 
 /**
- * Bind Vals `value`, `setValue` and itself to properties of an instance.
+ * Bind Vals `value`, `set` and itself to properties of an instance.
  *
  * @example
  * ```ts
@@ -73,11 +73,11 @@ export type ValEnhancedResult<TConfig> = WithOnValChanged<
  * ```
  *
  * `const obj = new Obj()` results in:
- * - `obj.apple`, a getter that returns `apple$.value`, setter same as `apple$.setValue(value)`
+ * - `obj.apple`, a getter that returns `apple$.value`, setter same as `apple$.set(value)`
  * - `obj._apple$`, the `apple$`
- * - `obj.setApple(value)`, same as `apple$.setValue(value)`
- * - `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.setValue(value)`
- * - `obj.setBanana(value)`, same as `banana$.setValue(value)`
+ * - `obj.setApple(value)`, same as `apple$.set(value)`
+ * - `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.set(value)`
+ * - `obj.setBanana(value)`, same as `banana$.set(value)`
  * - `obj._banana$`, the `banana$`
  * - `obj.onValChanged(key: "apple" | "isApple", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
  */
@@ -104,8 +104,8 @@ export type BindVal = <TKey extends string, TValue, TMeta>(
  *
  * @example
  * `bindInstance(obj, "aKey", val)` results in:
- * - `obj.aKey`, getter that returns `val.value`, setter same as `val.setValue(value)`
- * - `obj.setAKey(value)`, same as `val.setValue(value)`
+ * - `obj.aKey`, getter that returns `val.value`, setter same as `val.set(value)`
+ * - `obj.setAKey(value)`, same as `val.set(value)`
  * - `obj._aKey$`, the `val`
  * @returns Same instance with bound properties
  */
@@ -120,14 +120,14 @@ export function bindInstance<TInstance, TKey extends string, TValue, TMeta>(
         return val.value;
       },
       set(value) {
-        val.setValue(value);
+        val.set(value);
       },
     },
     [`_${key}$`]: {
       value: val,
     },
     [`set${capitalize(key)}`]: {
-      value: (value: TValue, meta?: TMeta): void => val.setValue(value, meta),
+      value: (value: TValue, meta?: TMeta): void => val.set(value, meta),
     },
   });
   return instance as ValEnhancedProps<TValue, TKey> & TInstance;

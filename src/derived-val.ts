@@ -13,12 +13,12 @@ export class DerivedVal<
   ) {
     super(transform(val.value), {
       ...config,
-      beforeSubscribe: setValue => {
+      beforeSubscribe: set => {
         const disposer = val.subscribe((newValue, meta) =>
-          setValue(transform(newValue), meta)
+          set(transform(newValue), meta)
         );
         if (config.beforeSubscribe) {
-          const beforeSubscribeDisposer = config.beforeSubscribe(setValue);
+          const beforeSubscribeDisposer = config.beforeSubscribe(set);
           if (beforeSubscribeDisposer) {
             return () => {
               disposer();
@@ -36,7 +36,7 @@ export class DerivedVal<
   public override get value(): TValue {
     if (this.size <= 0) {
       const value = this._srcValue();
-      return this.compare(value, this._value) ? this._value : value;
+      return this._cp(value, this._value) ? this._value : value;
     }
     return this._value;
   }

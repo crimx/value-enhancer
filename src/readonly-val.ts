@@ -2,34 +2,34 @@ import { Subscribers } from "./subscribers";
 import type { ValDisposer, ValSubscriber, ValConfig } from "./typings";
 
 export class ReadonlyVal<TValue = any, TMeta = any> {
-  private _subscribers: Subscribers<TValue, TMeta>;
+  private _subs: Subscribers<TValue, TMeta>;
 
   protected _value: TValue;
 
-  protected _setValue(value: TValue, meta?: TMeta): void {
-    if (!this.compare(value, this._value)) {
-      this._value = value;
-      this._subscribers.invoke(value, meta);
-    }
+  protected _cp(newValue: TValue, oldValue: TValue): boolean {
+    return newValue === oldValue;
   }
 
-  public constructor(value: TValue, config?: ValConfig<TValue, TMeta>) {
+  protected _set = (value: TValue, meta?: TMeta): void => {
+    if (!this._cp(value, this._value)) {
+      this._value = value;
+      this._subs.invoke(value, meta);
+    }
+  };
+
+  public constructor(
+    value: TValue,
+    { compare, beforeSubscribe }: ValConfig<TValue, TMeta> = {}
+  ) {
     this._value = value;
 
-    let beforeSubscribe: undefined | (() => void | ValDisposer | undefined);
-
-    if (config) {
-      if (config.compare) {
-        this.compare = config.compare;
-      }
-      if (config.beforeSubscribe) {
-        const _beforeSubscribe = config.beforeSubscribe;
-        const _setValue = this._setValue.bind(this);
-        beforeSubscribe = () => _beforeSubscribe(_setValue);
-      }
+    if (compare) {
+      this._cp = compare;
     }
 
-    this._subscribers = new Subscribers<TValue, TMeta>(beforeSubscribe);
+    this._subs = new Subscribers<TValue, TMeta>(
+      beforeSubscribe ? () => beforeSubscribe(this._set) : null
+    );
   }
 
   public get value(): TValue {
@@ -40,11 +40,8 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
    * Subscribe to value changes without immediate emission.
    */
   public reaction(subscriber: ValSubscriber<TValue, TMeta>): ValDisposer {
-    this._subscribers.add(subscriber);
-
-    return (): void => {
-      this._subscribers.remove(subscriber);
-    };
+    this._subs.add(subscriber);
+    return (): void => this._subs.remove(subscriber);
   }
 
   /**
@@ -62,21 +59,14 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
   }
 
   public destroy(): void {
-    this._subscribers.destroy();
+    this._subs.clear();
   }
 
   public unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void {
-    this._subscribers.remove(subscriber);
+    this._subs.remove(subscriber);
   }
 
   public get size(): number {
-    return this._subscribers.size;
-  }
-
-  /**
-   * Compare two values. Default `===`.
-   */
-  public compare(newValue: TValue, oldValue: TValue): boolean {
-    return newValue === oldValue;
+    return this._subs.size;
   }
 }

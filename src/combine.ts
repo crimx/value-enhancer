@@ -36,22 +36,22 @@ export class CombinedVal<
   ) {
     super(transform(getValues(valInputs)), {
       ...config,
-      beforeSubscribe: setValue => {
+      beforeSubscribe: set => {
         let lastValueInputs = getValues(valInputs);
-        setValue(transform(lastValueInputs));
+        set(transform(lastValueInputs));
         const disposers = valInputs.map((val, i) =>
           val.reaction((value, meta) => {
             lastValueInputs = lastValueInputs.slice() as [
               ...TValInputsValueTuple<TValInputs>
             ];
             lastValueInputs[i] = value;
-            setValue(transform(lastValueInputs), meta);
+            set(transform(lastValueInputs), meta);
           })
         );
         const disposer = () => disposers.forEach(disposer => disposer());
 
         if (config.beforeSubscribe) {
-          const beforeSubscribeDisposer = config.beforeSubscribe(setValue);
+          const beforeSubscribeDisposer = config.beforeSubscribe(set);
           if (beforeSubscribeDisposer) {
             return () => {
               disposer();
@@ -70,7 +70,7 @@ export class CombinedVal<
   public override get value(): TValue {
     if (this.size <= 0) {
       const value = this._srcValue();
-      return this.compare(value, this._value) ? this._value : value;
+      return this._cp(value, this._value) ? this._value : value;
     }
     return this._value;
   }

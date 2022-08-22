@@ -34,16 +34,16 @@ const val = new Val(2);
 
 console.log(val.value); // 2
 
-val.setValue(3);
+val.set(3);
 console.log(val.value); // 3
 
 val.subscribe(value => console.log(`subscribe: ${value}`)); // subscribe: 3
 
 val.reaction(value => console.log(`reaction: ${value}`)); // (nothing printed)
 
-val.setValue(3); // nothing happened
+val.set(3); // nothing happened
 
-val.setValue(4); // subscribe: 4, reaction: 4
+val.set(4); // subscribe: 4, reaction: 4
 
 const derived = derive(val, value => value * 3);
 console.log(derived.value); // 12
@@ -53,20 +53,20 @@ const combined = combine([val, derived], ([val, derived]) => val + derived);
 console.log(combined.value); // 16
 combined.subscribe(value => console.log(`combined: ${value}`)); // combined: 16
 
-val.setValue(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
+val.set(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
 ```
 
-`setValue` may carry any type of extra info via `meta` param.
+`set` may carry any type of extra info via `meta` param.
 
 ```ts
 val.subscribe((value, meta) => console.log(value, meta));
 
-val.setValue(5, { source: "remote" });
+val.set(5, { source: "remote" });
 ```
 
 ### Bind Vals To An Instance
 
-Bind Vals `value`, `setValue` and itself to properties of an instance.
+Bind Vals `value`, `set` and itself to properties of an instance.
 
 ```ts
 import type { ValEnhancedResult } from "value-enhancer";
@@ -94,11 +94,11 @@ class Obj {
 
 `const obj = new Obj()` results in:
 
-- `obj.apple`, a getter that returns `apple$.value`, setter same as `apple$.setValue(value)`
+- `obj.apple`, a getter that returns `apple$.value`, setter same as `apple$.set(value)`
 - `obj._apple$`, the `apple$`
-- `obj.setApple(value)`, same as `apple$.setValue(value)`
-- `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.setValue(value)`
-- `obj.setBanana(value)`, same as `banana$.setValue(value)`
+- `obj.setApple(value)`, same as `apple$.set(value)`
+- `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.set(value)`
+- `obj.setBanana(value)`, same as `banana$.set(value)`
 - `obj._banana$`, the `banana$`
 - `obj.onValChanged(key: "apple" | "banana", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
 
