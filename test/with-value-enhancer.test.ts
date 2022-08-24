@@ -3,7 +3,7 @@ import type {
   ReadonlyValEnhancedResult,
   ValEnhancedResult,
 } from "../src/value-enhancer";
-import { combine, derive, ReadonlyVal } from "../src/value-enhancer";
+import { combine, derive } from "../src/value-enhancer";
 import { withReadonlyValueEnhancer } from "../src/value-enhancer";
 import {
   Val,
@@ -163,11 +163,11 @@ describe("withValueEnhancer", () => {
 
       test1.setMember(3);
       expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(3, undefined);
+      expect(spy).lastCalledWith(3);
 
-      test1.setMember(4, "t");
+      test1.setMember(4);
       expect(spy).toBeCalledTimes(2);
-      expect(spy).lastCalledWith(4, "t");
+      expect(spy).lastCalledWith(4);
     });
 
     it("should work with multiple val configs", () => {
@@ -201,15 +201,15 @@ describe("withValueEnhancer", () => {
       test1.setB(false);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy1).lastCalledWith(3, undefined);
-      expect(spy2).lastCalledWith(false, undefined);
+      expect(spy1).lastCalledWith(3);
+      expect(spy2).lastCalledWith(false);
 
-      test1.setA(4, "a");
-      test1.setB(true, "b");
+      test1.setA(4);
+      test1.setB(true);
       expect(spy1).toBeCalledTimes(2);
       expect(spy2).toBeCalledTimes(2);
-      expect(spy1).lastCalledWith(4, "a");
-      expect(spy2).lastCalledWith(true, "b");
+      expect(spy1).lastCalledWith(4);
+      expect(spy2).lastCalledWith(true);
 
       try {
         // @ts-expect-error - no c val
@@ -259,15 +259,15 @@ describe("withValueEnhancer", () => {
       b$.set(false);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy1).lastCalledWith(3, undefined);
-      expect(spy2).lastCalledWith(false, undefined);
+      expect(spy1).lastCalledWith(3);
+      expect(spy2).lastCalledWith(false);
 
-      a$.set(4, "a");
-      b$.set(true, "b");
+      a$.set(4);
+      b$.set(true);
       expect(spy1).toBeCalledTimes(2);
       expect(spy2).toBeCalledTimes(2);
-      expect(spy1).lastCalledWith(4, "a");
-      expect(spy2).lastCalledWith(true, "b");
+      expect(spy1).lastCalledWith(4);
+      expect(spy2).lastCalledWith(true);
 
       try {
         // @ts-expect-error - no c val

@@ -160,11 +160,11 @@ describe("withReadonlyValueEnhancer", () => {
 
       member$.set(3);
       expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(3, undefined);
+      expect(spy).lastCalledWith(3);
 
-      member$.set(4, "t");
+      member$.set(4);
       expect(spy).toBeCalledTimes(2);
-      expect(spy).lastCalledWith(4, "t");
+      expect(spy).lastCalledWith(4);
     });
 
     it("should work with multiple val configs", () => {
@@ -200,15 +200,15 @@ describe("withReadonlyValueEnhancer", () => {
       b$.set(false);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy1).lastCalledWith(3, undefined);
-      expect(spy2).lastCalledWith(false, undefined);
+      expect(spy1).lastCalledWith(3);
+      expect(spy2).lastCalledWith(false);
 
-      a$.set(4, "a");
-      b$.set(true, "b");
+      a$.set(4);
+      b$.set(true);
       expect(spy1).toBeCalledTimes(2);
       expect(spy2).toBeCalledTimes(2);
-      expect(spy1).lastCalledWith(4, "a");
-      expect(spy2).lastCalledWith(true, "b");
+      expect(spy1).lastCalledWith(4);
+      expect(spy2).lastCalledWith(true);
 
       try {
         // @ts-expect-error - no c val

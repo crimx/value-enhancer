@@ -36,8 +36,8 @@ describe("combine", () => {
   it("should combine a val list into a single val", () => {
     const val1 = new Val(1);
     const val2 = new Val({ code: 2 });
-    const val3 = new Val<boolean, boolean>(false);
-    const val4 = new Val<string, number>("4");
+    const val3 = new Val<boolean>(false);
+    const val4 = new Val<string>("4");
     const combined = combine(
       [val1, val2, val3, val4],
       ([val1, val2, val3, val4]) => {
@@ -62,8 +62,8 @@ describe("combine", () => {
   it("should have meta from deps", () => {
     const val1 = new Val(1);
     const val2 = new Val({ code: 2 });
-    const val3 = new Val<boolean, boolean>(false);
-    const val4 = new Val<string, number>("4");
+    const val3 = new Val<boolean>(false);
+    const val4 = new Val<string>("4");
     const combined = combine(
       [val1, val2, val3, val4],
       ([val1, val2, val3, val4]) => {
@@ -72,7 +72,7 @@ describe("combine", () => {
     );
 
     const spy = vi.fn();
-    combined.subscribe(spy, 44);
+    combined.subscribe(spy);
 
     expect(spy).toBeCalledTimes(1);
     expect(spy).toBeCalledWith(
@@ -81,11 +81,10 @@ describe("combine", () => {
         val2: { code: 2 },
         val3: false,
         val4: "4",
-      }),
-      44
+      })
     );
 
-    val1.set(88, "meta");
+    val1.set(88);
     expect(spy).toBeCalledTimes(2);
     expect(spy).toBeCalledWith(
       expect.objectContaining({
@@ -93,8 +92,7 @@ describe("combine", () => {
         val2: { code: 2 },
         val3: false,
         val4: "4",
-      }),
-      "meta"
+      })
     );
 
     combined.destroy();
@@ -103,8 +101,8 @@ describe("combine", () => {
   it("should perform custom compare", () => {
     const val1 = new Val(1);
     const val2 = new Val({ code: 2 });
-    const val3 = new Val<boolean, boolean>(false);
-    const val4 = new Val<string, number>("4");
+    const val3 = new Val<boolean>(false);
+    const val4 = new Val<string>("4");
     const combined = combine(
       [val1, val2, val3, val4],
       ([val1, val2, val3, val4]) => {
@@ -139,8 +137,8 @@ describe("combine", () => {
     const beforeSubscribe = vi.fn();
     const val1 = new Val(1);
     const val2 = new Val({ code: 2 });
-    const val3 = new Val<boolean, boolean>(false);
-    const val4 = new Val<string, number>("4");
+    const val3 = new Val<boolean>(false);
+    const val4 = new Val<string>("4");
     const combined = combine(
       [val1, val2, val3, val4],
       ([val1, val2, val3, val4]) => {
@@ -163,8 +161,8 @@ describe("combine", () => {
     const beforeSubscribe = vi.fn(() => beforeSubscribeDisposer);
     const val1 = new Val(1);
     const val2 = new Val({ code: 2 });
-    const val3 = new Val<boolean, boolean>(false);
-    const val4 = new Val<string, number>("4");
+    const val3 = new Val<boolean>(false);
+    const val4 = new Val<string>("4");
     const combined = combine(
       [val1, val2, val3, val4],
       ([val1, val2, val3, val4]) => {

@@ -83,22 +83,22 @@ describe("ReadonlyVal", () => {
     it("should not trigger extra emissions on sync set", () => {
       const val = new ReadonlyVal(1, {
         beforeSubscribe: set => {
-          set(1, 1);
-          set(2, 2);
-          set(3, 3);
-          set(4, 4);
+          set(1);
+          set(2);
+          set(3);
+          set(4);
         },
       });
 
       const sub1 = vi.fn();
       const dispose1 = val.subscribe(sub1);
       expect(sub1).toHaveBeenCalledTimes(1);
-      expect(sub1).toBeCalledWith(4, undefined);
+      expect(sub1).toBeCalledWith(4);
 
       const sub2 = vi.fn();
-      const dispose2 = val.subscribe(sub2, "meta2");
+      const dispose2 = val.subscribe(sub2);
       expect(sub2).toHaveBeenCalledTimes(1);
-      expect(sub2).toBeCalledWith(4, "meta2");
+      expect(sub2).toBeCalledWith(4);
 
       sub1.mockClear();
       sub2.mockClear();
@@ -112,9 +112,9 @@ describe("ReadonlyVal", () => {
       expect(sub2).toHaveBeenCalledTimes(0);
 
       const sub3 = vi.fn();
-      const dispose3 = val.subscribe(sub3, "meta3");
+      const dispose3 = val.subscribe(sub3);
       expect(sub3).toHaveBeenCalledTimes(1);
-      expect(sub3).toBeCalledWith(4, "meta3");
+      expect(sub3).toBeCalledWith(4);
 
       sub3.mockClear();
 
@@ -128,10 +128,10 @@ describe("ReadonlyVal", () => {
       const val = new ReadonlyVal(1, {
         beforeSubscribe: set => {
           setTimeout(() => {
-            set(1, 1);
-            set(2, 2);
-            set(3, 3);
-            set(4, 4);
+            set(1);
+            set(2);
+            set(3);
+            set(4);
           }, 0);
         },
       });
@@ -139,17 +139,17 @@ describe("ReadonlyVal", () => {
       const sub1 = vi.fn();
       const dispose1 = val.subscribe(sub1);
       expect(sub1).toHaveBeenCalledTimes(1);
-      expect(sub1).toBeCalledWith(1, undefined);
+      expect(sub1).toBeCalledWith(1);
 
       await new Promise(resolve => setTimeout(resolve, 0));
 
       expect(sub1).toHaveBeenCalledTimes(4);
-      expect(sub1).toBeCalledWith(4, 4);
+      expect(sub1).toBeCalledWith(4);
 
       const sub2 = vi.fn();
-      const dispose2 = val.subscribe(sub2, "meta2");
+      const dispose2 = val.subscribe(sub2);
       expect(sub2).toHaveBeenCalledTimes(1);
-      expect(sub2).toBeCalledWith(4, "meta2");
+      expect(sub2).toBeCalledWith(4);
 
       sub1.mockClear();
       sub2.mockClear();
@@ -182,7 +182,7 @@ describe("ReadonlyVal", () => {
     });
 
     it("should trigger emission on set", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy = vi.fn();
       const val = new ReadonlyVal(1, {
         beforeSubscribe: _setValue => {
@@ -206,33 +206,8 @@ describe("ReadonlyVal", () => {
       val.destroy();
     });
 
-    it("should emit meta on subscribe", () => {
-      let set = noop as ValSetValue<number, any>;
-      const spy = vi.fn();
-      const val = new ReadonlyVal<number, string>(1, {
-        beforeSubscribe: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
-      expect(val.value).toBe(1);
-      expect(spy).toBeCalledTimes(0);
-
-      val.subscribe(spy, "meta");
-      expect(val.value).toBe(1);
-      expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(1, "meta");
-
-      set(2, "meta2");
-      expect(val.value).toBe(2);
-      expect(spy).toBeCalledTimes(2);
-      expect(spy).lastCalledWith(2, "meta2");
-
-      val.destroy();
-    });
-
     it("should not trigger emission on set with same value", () => {
-      let set = noop as ValSetValue<{ value: number }, any>;
+      let set = noop as ValSetValue<{ value: number }>;
       const spy = vi.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
@@ -264,7 +239,7 @@ describe("ReadonlyVal", () => {
     });
 
     it("should perform custom compare", () => {
-      let set = noop as ValSetValue<{ value: number }, any>;
+      let set = noop as ValSetValue<{ value: number }>;
       const spy = vi.fn();
       const value1 = { value: 1 };
       const valueClone = { value: 1 };
@@ -299,7 +274,7 @@ describe("ReadonlyVal", () => {
     });
 
     it("should support multiple subscribers", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => vi.fn());
@@ -316,7 +291,7 @@ describe("ReadonlyVal", () => {
 
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
-        expect(spy).lastCalledWith(1, undefined);
+        expect(spy).lastCalledWith(1);
       });
 
       set(1);
@@ -327,17 +302,17 @@ describe("ReadonlyVal", () => {
       set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(2);
-        expect(spy).lastCalledWith(2, undefined);
+        expect(spy).lastCalledWith(2);
       });
 
       val.destroy();
     });
 
     it("should remove subscriber if disposed", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy1 = vi.fn();
       const spy2 = vi.fn();
-      const val = new ReadonlyVal<number, string>(1, {
+      const val = new ReadonlyVal<number>(1, {
         beforeSubscribe: _setValue => {
           set = _setValue;
           return () => (set = noop);
@@ -348,23 +323,23 @@ describe("ReadonlyVal", () => {
       val.subscribe(spy2);
 
       expect(spy1).toBeCalledTimes(1);
-      expect(spy1).lastCalledWith(1, undefined);
+      expect(spy1).lastCalledWith(1);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy2).lastCalledWith(1, undefined);
+      expect(spy2).lastCalledWith(1);
 
       spy1Disposer();
 
-      set(2, "meta2");
+      set(2);
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
-      expect(spy2).lastCalledWith(2, "meta2");
+      expect(spy2).lastCalledWith(2);
 
       val.destroy();
     });
 
     it("should remove all subscribers on destroy", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => vi.fn());
@@ -397,7 +372,7 @@ describe("ReadonlyVal", () => {
 
   describe("reaction", () => {
     it("should not trigger immediate emission on reaction", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy = vi.fn();
       const val = new ReadonlyVal(1, {
         beforeSubscribe: _setValue => {
@@ -421,7 +396,7 @@ describe("ReadonlyVal", () => {
     });
 
     it("should trigger emission on set", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy = vi.fn();
       const val = new ReadonlyVal(1, {
         beforeSubscribe: _setValue => {
@@ -445,7 +420,7 @@ describe("ReadonlyVal", () => {
     });
 
     it("should have old value", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy = vi.fn();
       const val = new ReadonlyVal(1, {
         beforeSubscribe: _setValue => {
@@ -463,15 +438,15 @@ describe("ReadonlyVal", () => {
       set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(2, undefined);
+      expect(spy).lastCalledWith(2);
 
       val.destroy();
     });
 
     it("should emit meta on reaction", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy = vi.fn();
-      const val = new ReadonlyVal<number, string>(1, {
+      const val = new ReadonlyVal<number>(1, {
         beforeSubscribe: _setValue => {
           set = _setValue;
           return () => (set = noop);
@@ -484,16 +459,16 @@ describe("ReadonlyVal", () => {
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
-      set(2, "meta2");
+      set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(2, "meta2");
+      expect(spy).lastCalledWith(2);
 
       val.destroy();
     });
 
     it("should not trigger emission on set with same value", () => {
-      let set = noop as ValSetValue<{ value: number }, any>;
+      let set = noop as ValSetValue<{ value: number }>;
       const spy = vi.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
@@ -524,7 +499,7 @@ describe("ReadonlyVal", () => {
     });
 
     it("should perform custom compare", () => {
-      let set = noop as ValSetValue<{ value: number }, any>;
+      let set = noop as ValSetValue<{ value: number }>;
       const spy = vi.fn();
       const value1 = { value: 1 };
       const value1Clone = { value: 1 };
@@ -557,7 +532,7 @@ describe("ReadonlyVal", () => {
     });
 
     it("should support multiple subscribers", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => vi.fn());
@@ -584,17 +559,17 @@ describe("ReadonlyVal", () => {
       set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
-        expect(spy).lastCalledWith(2, undefined);
+        expect(spy).lastCalledWith(2);
       });
 
       val.destroy();
     });
 
     it("should remove subscriber if disposed", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy1 = vi.fn();
       const spy2 = vi.fn();
-      const val = new ReadonlyVal<number, string>(1, {
+      const val = new ReadonlyVal<number>(1, {
         beforeSubscribe: _setValue => {
           set = _setValue;
           return () => (set = noop);
@@ -609,17 +584,17 @@ describe("ReadonlyVal", () => {
 
       spy1Disposer();
 
-      set(2, "meta2");
+      set(2);
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy2).lastCalledWith(2, "meta2");
+      expect(spy2).lastCalledWith(2);
 
       val.destroy();
     });
 
     it("should remove all subscribers on destroy", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => vi.fn());
@@ -652,10 +627,10 @@ describe("ReadonlyVal", () => {
 
   describe("unsubscribe", () => {
     it("should unsubscribe a subscribe callback", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy1 = vi.fn();
       const spy2 = vi.fn();
-      const val = new ReadonlyVal<number, string>(1, {
+      const val = new ReadonlyVal<number>(1, {
         beforeSubscribe: _setValue => {
           set = _setValue;
           return () => (set = noop);
@@ -671,24 +646,24 @@ describe("ReadonlyVal", () => {
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
 
-      expect(spy1).lastCalledWith(1, undefined);
-      expect(spy2).lastCalledWith(1, undefined);
+      expect(spy1).lastCalledWith(1);
+      expect(spy2).lastCalledWith(1);
 
-      set(2, "meta2");
+      set(2);
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
-      expect(spy1).lastCalledWith(1, undefined);
-      expect(spy2).lastCalledWith(2, "meta2");
+      expect(spy1).lastCalledWith(1);
+      expect(spy2).lastCalledWith(2);
 
       val.destroy();
     });
 
     it("should unsubscribe a reaction callback", () => {
-      let set = noop as ValSetValue<number, any>;
+      let set = noop as ValSetValue<number>;
       const spy1 = vi.fn();
       const spy2 = vi.fn();
-      const val = new ReadonlyVal<number, string>(1, {
+      const val = new ReadonlyVal<number>(1, {
         beforeSubscribe: _setValue => {
           set = _setValue;
           return () => (set = noop);
@@ -704,19 +679,19 @@ describe("ReadonlyVal", () => {
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(0);
 
-      set(2, "meta2");
+      set(2);
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy1).lastCalledWith(2, "meta2");
-      expect(spy2).lastCalledWith(2, "meta2");
+      expect(spy1).lastCalledWith(2);
+      expect(spy2).lastCalledWith(2);
 
-      set(3, "meta3");
+      set(3);
       expect(val.value).toBe(3);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
-      expect(spy1).lastCalledWith(2, "meta2");
-      expect(spy2).lastCalledWith(3, "meta3");
+      expect(spy1).lastCalledWith(2);
+      expect(spy2).lastCalledWith(3);
 
       val.destroy();
     });

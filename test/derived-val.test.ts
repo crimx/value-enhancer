@@ -43,14 +43,14 @@ describe("derive", () => {
     const derived = derive(val1, value => value + 1);
 
     const spy = vi.fn();
-    derived.subscribe(spy, 44);
+    derived.subscribe(spy);
 
     expect(spy).toBeCalledTimes(1);
-    expect(spy).toBeCalledWith(2, 44);
+    expect(spy).toBeCalledWith(2);
 
-    val1.set(88, "meta");
+    val1.set(88);
     expect(spy).toBeCalledTimes(2);
-    expect(spy).toBeCalledWith(89, "meta");
+    expect(spy).toBeCalledWith(89);
 
     derived.destroy();
   });

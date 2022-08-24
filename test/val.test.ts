@@ -67,25 +67,6 @@ describe("Val", () => {
       val.destroy();
     });
 
-    it("should emit meta on subscribe", () => {
-      const spy = vi.fn();
-      const val = new Val<number, string>(1);
-      expect(val.value).toBe(1);
-      expect(spy).toBeCalledTimes(0);
-
-      val.subscribe(spy, "meta");
-      expect(val.value).toBe(1);
-      expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(1, "meta");
-
-      val.set(2, "meta2");
-      expect(val.value).toBe(2);
-      expect(spy).toBeCalledTimes(2);
-      expect(spy).lastCalledWith(2, "meta2");
-
-      val.destroy();
-    });
-
     it("should not trigger emission on set with same value", () => {
       const spy = vi.fn();
       const value1 = { value: 1 };
@@ -152,7 +133,7 @@ describe("Val", () => {
 
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
-        expect(spy).lastCalledWith(1, undefined);
+        expect(spy).lastCalledWith(1);
       });
 
       val.set(1);
@@ -163,7 +144,7 @@ describe("Val", () => {
       val.set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(2);
-        expect(spy).lastCalledWith(2, undefined);
+        expect(spy).lastCalledWith(2);
       });
 
       val.destroy();
@@ -172,23 +153,23 @@ describe("Val", () => {
     it("should remove subscriber if disposed", () => {
       const spy1 = vi.fn();
       const spy2 = vi.fn();
-      const val = new Val<number, string>(1);
+      const val = new Val(1);
 
       const spy1Disposer = val.subscribe(spy1);
       val.subscribe(spy2);
 
       expect(spy1).toBeCalledTimes(1);
-      expect(spy1).lastCalledWith(1, undefined);
+      expect(spy1).lastCalledWith(1);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy2).lastCalledWith(1, undefined);
+      expect(spy2).lastCalledWith(1);
 
       spy1Disposer();
 
-      val.set(2, "meta2");
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
-      expect(spy2).lastCalledWith(2, "meta2");
+      expect(spy2).lastCalledWith(2);
 
       val.destroy();
     });
@@ -269,14 +250,14 @@ describe("Val", () => {
       val.set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(2, undefined);
+      expect(spy).lastCalledWith(2);
 
       val.destroy();
     });
 
     it("should emit meta on reaction", () => {
       const spy = vi.fn();
-      const val = new Val<number, string>(1);
+      const val = new Val(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
@@ -284,10 +265,10 @@ describe("Val", () => {
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
-      val.set(2, "meta2");
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
-      expect(spy).lastCalledWith(2, "meta2");
+      expect(spy).lastCalledWith(2);
 
       val.destroy();
     });
@@ -365,7 +346,7 @@ describe("Val", () => {
       val.set(2);
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
-        expect(spy).lastCalledWith(2, undefined);
+        expect(spy).lastCalledWith(2);
       });
 
       val.destroy();
@@ -374,7 +355,7 @@ describe("Val", () => {
     it("should remove subscriber if disposed", () => {
       const spy1 = vi.fn();
       const spy2 = vi.fn();
-      const val = new Val<number, string>(1);
+      const val = new Val(1);
 
       const spy1Disposer = val.reaction(spy1);
       val.reaction(spy2);
@@ -384,11 +365,11 @@ describe("Val", () => {
 
       spy1Disposer();
 
-      val.set(2, "meta2");
+      val.set(2);
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(1);
-      expect(spy2).lastCalledWith(2, "meta2");
+      expect(spy2).lastCalledWith(2);
 
       val.destroy();
     });

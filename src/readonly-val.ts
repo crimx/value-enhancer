@@ -1,8 +1,8 @@
 import { Subscribers } from "./subscribers";
 import type { ValDisposer, ValSubscriber, ValConfig } from "./typings";
 
-export class ReadonlyVal<TValue = any, TMeta = any> {
-  private _subs: Subscribers<TValue, TMeta>;
+export class ReadonlyVal<TValue = any> {
+  private _subs: Subscribers<TValue>;
 
   protected _value: TValue;
 
@@ -10,16 +10,16 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
     return newValue === oldValue;
   }
 
-  protected _set = (value: TValue, meta?: TMeta): void => {
+  protected _set = (value: TValue): void => {
     if (!this._cp(value, this._value)) {
       this._value = value;
-      this._subs.invoke(value, meta);
+      this._subs.invoke(value);
     }
   };
 
   public constructor(
     value: TValue,
-    { compare, beforeSubscribe }: ValConfig<TValue, TMeta> = {}
+    { compare, beforeSubscribe }: ValConfig<TValue> = {}
   ) {
     this._value = value;
 
@@ -27,7 +27,7 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
       this._cp = compare;
     }
 
-    this._subs = new Subscribers<TValue, TMeta>(
+    this._subs = new Subscribers<TValue>(
       beforeSubscribe ? () => beforeSubscribe(this._set) : null
     );
   }
@@ -39,7 +39,7 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
   /**
    * Subscribe to value changes without immediate emission.
    */
-  public reaction(subscriber: ValSubscriber<TValue, TMeta>): ValDisposer {
+  public reaction(subscriber: ValSubscriber<TValue>): ValDisposer {
     this._subs.add(subscriber);
     return (): void => this._subs.remove(subscriber);
   }
@@ -47,14 +47,10 @@ export class ReadonlyVal<TValue = any, TMeta = any> {
   /**
    * Subscribe to value changes with immediate emission.
    * @param subscriber
-   * @param meta Meta for the immediate emission
    */
-  public subscribe(
-    subscriber: ValSubscriber<TValue, TMeta>,
-    meta?: TMeta
-  ): ValDisposer {
+  public subscribe(subscriber: ValSubscriber<TValue>): ValDisposer {
     const disposer = this.reaction(subscriber);
-    subscriber(this._value, meta);
+    subscriber(this._value);
     return disposer;
   }
 

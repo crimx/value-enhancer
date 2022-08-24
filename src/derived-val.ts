@@ -3,20 +3,17 @@ import type { ValConfig, ValTransform } from "./typings";
 
 export class DerivedVal<
   TSrcValue = any,
-  TValue = any,
-  TMeta = any
-> extends ReadonlyVal<TValue, TMeta> {
+  TValue = any
+> extends ReadonlyVal<TValue> {
   public constructor(
     val: ReadonlyVal<TSrcValue>,
     transform: ValTransform<TSrcValue, TValue>,
-    config: ValConfig<TValue, TMeta> = {}
+    config: ValConfig<TValue> = {}
   ) {
     super(transform(val.value), {
       ...config,
       beforeSubscribe: set => {
-        const disposer = val.subscribe((newValue, meta) =>
-          set(transform(newValue), meta)
-        );
+        const disposer = val.subscribe(newValue => set(transform(newValue)));
         if (config.beforeSubscribe) {
           const beforeSubscribeDisposer = config.beforeSubscribe(set);
           if (beforeSubscribeDisposer) {
@@ -44,19 +41,19 @@ export class DerivedVal<
   private _srcValue: () => TValue;
 }
 
-export function derive<TSrcValue = any, TValue = any, TMeta = any>(
+export function derive<TSrcValue = any, TValue = any>(
   val: ReadonlyVal<TSrcValue>
-): ReadonlyVal<TValue, TMeta>;
-export function derive<TSrcValue = any, TValue = any, TMeta = any>(
+): ReadonlyVal<TValue>;
+export function derive<TSrcValue = any, TValue = any>(
   val: ReadonlyVal<TSrcValue>,
   transform: ValTransform<TSrcValue, TValue>,
-  config?: ValConfig<TValue, TMeta>
-): ReadonlyVal<TValue, TMeta>;
-export function derive<TSrcValue = any, TValue = any, TMeta = any>(
+  config?: ValConfig<TValue>
+): ReadonlyVal<TValue>;
+export function derive<TSrcValue = any, TValue = any>(
   val: ReadonlyVal<TSrcValue>,
   transform: ValTransform<TSrcValue, TValue> = value =>
     value as unknown as TValue,
-  config: ValConfig<TValue, TMeta> = {}
-): ReadonlyVal<TValue, TMeta> {
+  config: ValConfig<TValue> = {}
+): ReadonlyVal<TValue> {
   return new DerivedVal(val, transform, config);
 }

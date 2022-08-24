@@ -15,6 +15,8 @@
 
 A tiny library to enhance value with reactive wrapper.
 
+([v1](https://github.com/crimx/value-enhancer/tree/v1))
+
 ## Install
 
 ```bash
@@ -54,14 +56,6 @@ console.log(combined.value); // 16
 combined.subscribe(value => console.log(`combined: ${value}`)); // combined: 16
 
 val.set(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
-```
-
-`set` may carry any type of extra info via `meta` param.
-
-```ts
-val.subscribe((value, meta) => console.log(value, meta));
-
-val.set(5, { source: "remote" });
 ```
 
 ### Bind Vals To An Instance

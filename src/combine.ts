@@ -6,12 +6,8 @@ export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
     [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
   }>;
 
-export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue, any>
+export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue>
   ? TValue
-  : never;
-
-export type ExtractValMeta<TVal> = TVal extends ReadonlyVal<any, infer TMeta>
-  ? TMeta
   : never;
 
 export type CombineValTransform<
@@ -22,17 +18,15 @@ export type CombineValTransform<
 
 export class CombinedVal<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-  TValue = any,
-  TMeta = ExtractValMeta<TValInputs[number]>
-> extends ReadonlyVal<TValue, TMeta> {
+  TValue = any
+> extends ReadonlyVal<TValue> {
   public constructor(
     valInputs: TValInputs,
     transform: CombineValTransform<
       TValue,
-      [...TValInputsValueTuple<TValInputs>],
-      TMeta
+      [...TValInputsValueTuple<TValInputs>]
     >,
-    config: ValConfig<TValue, TMeta> = {}
+    config: ValConfig<TValue> = {}
   ) {
     super(transform(getValues(valInputs)), {
       ...config,
@@ -40,12 +34,12 @@ export class CombinedVal<
         let lastValueInputs = getValues(valInputs);
         set(transform(lastValueInputs));
         const disposers = valInputs.map((val, i) =>
-          val.reaction((value, meta) => {
+          val.reaction(value => {
             lastValueInputs = lastValueInputs.slice() as [
               ...TValInputsValueTuple<TValInputs>
             ];
             lastValueInputs[i] = value;
-            set(transform(lastValueInputs), meta);
+            set(transform(lastValueInputs));
           })
         );
         const disposer = () => disposers.forEach(disposer => disposer());
@@ -92,35 +86,25 @@ export function combine<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
 >(
   valInputs: readonly [...TValInputs]
-): ReadonlyVal<
-  [...TValInputsValueTuple<TValInputs>],
-  ExtractValMeta<TValInputs[number]>
->;
+): ReadonlyVal<[...TValInputsValueTuple<TValInputs>]>;
 export function combine<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-  TValue = any,
-  TMeta = ExtractValMeta<TValInputs[number]>
+  TValue = any
+>(
+  valInputs: readonly [...TValInputs],
+  transform: CombineValTransform<TValue, [...TValInputsValueTuple<TValInputs>]>,
+  config?: ValConfig<TValue>
+): ReadonlyVal<TValue>;
+export function combine<
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+  TValue = any
 >(
   valInputs: readonly [...TValInputs],
   transform: CombineValTransform<
     TValue,
-    [...TValInputsValueTuple<TValInputs>],
-    TMeta
-  >,
-  config?: ValConfig<TValue, TMeta>
-): ReadonlyVal<TValue, TMeta>;
-export function combine<
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-  TValue = any,
-  TMeta = ExtractValMeta<TValInputs[number]>
->(
-  valInputs: readonly [...TValInputs],
-  transform: CombineValTransform<
-    TValue,
-    [...TValInputsValueTuple<TValInputs>],
-    TMeta
+    [...TValInputsValueTuple<TValInputs>]
   > = value => value as TValue,
-  config: ValConfig<TValue, TMeta> = {}
-): ReadonlyVal<TValue, TMeta> {
+  config: ValConfig<TValue> = {}
+): ReadonlyVal<TValue> {
   return new CombinedVal(valInputs, transform, config);
 }

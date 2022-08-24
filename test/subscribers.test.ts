@@ -55,9 +55,9 @@ describe("Subscribers", () => {
     subscribers.add(sub1);
     expect(sub1).toHaveBeenCalledTimes(0);
 
-    subscribers.invoke(1, 2);
+    subscribers.invoke(1);
     expect(sub1).toHaveReturnedTimes(1);
-    expect(sub1).lastCalledWith(1, 2);
+    expect(sub1).lastCalledWith(1);
 
     sub1.mockClear();
 
@@ -66,11 +66,11 @@ describe("Subscribers", () => {
     expect(sub1).toHaveBeenCalledTimes(0);
     expect(sub2).toHaveBeenCalledTimes(0);
 
-    subscribers.invoke(1, 2);
+    subscribers.invoke(1);
     expect(sub1).toHaveReturnedTimes(1);
-    expect(sub1).lastCalledWith(1, 2);
+    expect(sub1).lastCalledWith(1);
     expect(sub2).toHaveReturnedTimes(1);
-    expect(sub2).lastCalledWith(1, 2);
+    expect(sub2).lastCalledWith(1);
   });
 
   describe("beforeSubscribe", () => {

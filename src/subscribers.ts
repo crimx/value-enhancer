@@ -1,6 +1,6 @@
 import type { ValDisposer, ValSubscriber } from "./typings";
 
-export class Subscribers<TValue = any, TMeta = any> {
+export class Subscribers<TValue = any> {
   public get size(): number {
     return (this._sub ? 1 : this._subs?.size) || 0;
   }
@@ -11,11 +11,11 @@ export class Subscribers<TValue = any, TMeta = any> {
     this._bs = beforeSubscribe;
   }
 
-  public invoke(newValue: TValue, meta?: TMeta): void {
+  public invoke(newValue: TValue): void {
     if (this._sub) {
-      this._sub(newValue, meta);
+      this._sub(newValue);
     } else if (this._subs) {
-      this._subs.forEach(subscriber => subscriber(newValue, meta));
+      this._subs.forEach(subscriber => subscriber(newValue));
     }
   }
 
@@ -29,7 +29,7 @@ export class Subscribers<TValue = any, TMeta = any> {
         this._sub = subscribe;
         return;
       }
-      this._subs = new Set<ValSubscriber<TValue, TMeta>>().add(this._sub);
+      this._subs = new Set<ValSubscriber<TValue>>().add(this._sub);
       this._sub = null;
     }
 
@@ -59,8 +59,8 @@ export class Subscribers<TValue = any, TMeta = any> {
     }
   }
 
-  private _sub?: ValSubscriber<TValue, TMeta> | null;
-  private _subs?: Set<ValSubscriber<TValue, TMeta>>;
+  private _sub?: ValSubscriber<TValue> | null;
+  private _subs?: Set<ValSubscriber<TValue>>;
 
   private _bs?: (() => void | ValDisposer | undefined) | null;
   private _bsd?: ValDisposer | void | null;
