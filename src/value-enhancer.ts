@@ -1,8 +1,12 @@
-export * from "./typings";
-export * from "./readonly-val";
-export * from "./val";
-export * from "./derived-val";
-export * from "./combine";
-export * from "./with-readonly-value-enhancer";
-export * from "./with-value-enhancer";
-export * from "./val-manager";
+export type {
+  ReadonlyVal,
+  Val,
+  ValCompare,
+  ValSubscriber,
+  ValTransform,
+  ValConfig,
+} from "./typings";
+export { readonlyVal } from "./readonly-val";
+export { val } from "./val";
+export { derive } from "./derived-val";
+export { combine } from "./combine";

@@ -15,7 +15,7 @@
 
 A tiny library to enhance value with reactive wrapper.
 
-([v1](https://github.com/crimx/value-enhancer/tree/v1))
+[(v1 docs)](https://github.com/crimx/value-enhancer/tree/v1)
 
 ## Install
 
@@ -23,187 +23,141 @@ A tiny library to enhance value with reactive wrapper.
 npm add value-enhancer
 ```
 
-## Why
+## Features
 
-The goal of this lib is to bring reactivity to values like MobX but without the implicit-cast magic. It is like RxJS but trimmed and simplified with the focus on value changes instead of async operations which resulted in much smaller codebase.
+- RxJS-style reactivity.  
+  Without the implicit-cast Proxy magic like Vue Reactivity and MobX.
+- Single-layer shallow reactivity.  
+  It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
+- Explicit.  
+  Reactive objects are easy to tell since their types are different from normal objects. Subscriptions also require explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
+- Bundle size and Performance.  
+  By carefully defining scope and choosing right features that balance usability and performance, less work needed to be done in `value-enhancer` which makes it smaller and faster.
+
+## Quick Q&A
+
+<details>
+<summary>Why not MobX?</summary>
+
+MobX is cleverly designed to make properties magically reactive. But after using it in many of our large projects people started to complain about this implicit behavior. It is hard to tell if a property is reactive unless enforcing some kind of code style rules. Rules of MobX are easy to be broken especially for new team members.
+
+MobX does not work well with other libraries. It could break other libraries if you forget to exclude instances from other libraries from making observable. `toJS` is also needed if data is passed to other libraries.
+
+MobX also prints error when it sees another version of MobX in the global. It is not a good choice for making SDK or library that will be delivered into customer's environment.
+
+</details>
+
+<details>
+<summary>Why not Vue Reactivity?</summary>
+
+Vue3 brings Reactivity as standalone APIs. It is beautifully designed and I had learned a lot from its source code.
+
+But even though it is made standalone, it is still very Vue centered. Many extra works related to Vue components is added under the hood.
+
+Vue supports deep reactive lazy conversion. It converts plain JavaScript values into reactive values which means it also suffers from the same issues of MobX.
+
+It is a good choice if you are choosing the Vue ecosystem. The implementation of `value-enhancer` absorbs many good parts from Vue Reactivity and stays framework agnostic.
+
+</details>
+
+<details>
+<summary>Why not RxJS?</summary>
+
+I love RxJS and the reactive paradigm behind it. The goal of RxJS is to compose asynchronous or callback-based code.
+
+It requires you to write code in a pipe-able way which may not be acceptable from everyone.
+
+</details>
+
+<details>
+<summary>What about React Hooks?</summary>
+
+The signature of `combine` and `derive` may look familiar for those who have used React hooks.
+
+```ts
+import { useMemo } from "react";
+
+const derived = useMemo(() => source + 1, [source]);
+```
+
+I really like the explicit dependency declaration. But in React it is error-prone since people keep forgetting to add or remove dependencies. The React team even made a `exhaustive-deps` linter rule for this.
+
+`value-enhancer` solves this by absorbing the RxJS-style callbacks.
+
+```ts
+import { val, derive, combine } from "value-enhancer";
+
+const source$ = val(1);
+console.log(source$.value); // 1
+
+const derived$ = derive(source$, source => source + 1);
+console.log(derived$.value); // 2
+
+const combined$ = combine(
+  [source$, derived$],
+  ([source, derived]) => source + derived
+);
+console.log(combined$.value); // 3
+```
+
+Since the type of reactive objects are different from its values, it is hard to have mismatched dependencies inside the `transform` function.
+
+`value-enhancer` can be used in React with [`use-value-enhancer`](https://www.npmjs.com/package/use-value-enhancer).
+
+</details>
+
+<details>
+<summary>Svelte Stores?</summary>
+
+Svelte offers excellent support for Observables. Svelte store is one of the simplest implementation. The code is really neat and clean.
+
+Svelte store works well for simple cases but it also leaves some edge cases unresolved. For example, when `derived` a list of stores, the transform function could be [invoked with intermediate states](https://svelte.dev/repl/6218ae0ecf5c455195b4a76d7f0cff9f?version=3.49.0).
+
+`value-enhancer` is compatible with Svelte Store contract, which means it can be used in Svelte just like Svelte stores.
+
+</details>
+
+<details>
+<summary>SolidJS?</summary>
+
+SolidJS "create"s are like React hooks but with saner signatures. It is also thoughtfully optimized for edge cases.
+
+A thing that one may feel odd in SolidJS is accessing reactive value by calling it as function. `value-enhancer` keeps the `xxx.value` way to access reactive value which I think should be more intuitive.
+
+`value-enhancer` is compatible with SolidJS using [`from`](https://www.solidjs.com/docs/latest/api#from).
+
+</details>
 
 ## Usage
 
 ```js
-import { Val, combine, derive } from "value-enhancer";
+import { val, combine, derive } from "value-enhancer";
 
-const val = new Val(2);
+const count$ = val(2);
 
-console.log(val.value); // 2
+console.log(count$.value); // 2
 
-val.set(3);
-console.log(val.value); // 3
+count$.set(3);
+console.log(count$.value); // 3
 
-val.subscribe(value => console.log(`subscribe: ${value}`)); // subscribe: 3
+count$.subscribe(count => console.log(`subscribe: ${count}`)); // subscribe: 3
 
-val.reaction(value => console.log(`reaction: ${value}`)); // (nothing printed)
+count$.reaction(count => console.log(`reaction: ${count}`)); // (nothing printed)
 
-val.set(3); // nothing happened
+count$.set(3); // nothing happened
 
-val.set(4); // subscribe: 4, reaction: 4
+count$.value = 4; // subscribe: 4, reaction: 4
 
-const derived = derive(val, value => value * 3);
-console.log(derived.value); // 12
-derived.subscribe(value => console.log(`derived: ${value}`)); // derived: 12
+const derive$ = derive(count$, count => count * 3);
+console.log(derived$.value); // 12
+derived$.subscribe(derived => console.log(`derived: ${derived}`)); // derived: 12
 
-const combined = combine([val, derived], ([val, derived]) => val + derived);
-console.log(combined.value); // 16
-combined.subscribe(value => console.log(`combined: ${value}`)); // combined: 16
+const combined$ = combine(
+  [count$, derived$],
+  ([count, derived]) => count + derived
+);
+console.log(combined$.value); // 16
+combined$.subscribe(combined => console.log(`combined: ${combined}`)); // combined: 16
 
-val.set(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
-```
-
-### Bind Vals To An Instance
-
-Bind Vals `value`, `set` and itself to properties of an instance.
-
-```ts
-import type { ValEnhancedResult } from "value-enhancer";
-import { Val, withValueEnhancer } from "value-enhancer";
-
-type ValConfig = {
-  apple: Val<string>;
-  banana: Val<string>;
-};
-
-interface Obj extends ValEnhancedResult<ValConfig> {}
-
-class Obj {
-  constructor() {
-    const apple$ = new Val("apple");
-    const banana$ = new Val("banana");
-
-    withValueEnhancer(this, {
-      apple: apple$,
-      banana: banana$,
-    });
-  }
-}
-```
-
-`const obj = new Obj()` results in:
-
-- `obj.apple`, a getter that returns `apple$.value`, setter same as `apple$.set(value)`
-- `obj._apple$`, the `apple$`
-- `obj.setApple(value)`, same as `apple$.set(value)`
-- `obj.banana`, a getter that returns `banana$.value`, setter same as `banana$.set(value)`
-- `obj.setBanana(value)`, same as `banana$.set(value)`
-- `obj._banana$`, the `banana$`
-- `obj.onValChanged(key: "apple" | "banana", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
-
-### Bind ReadonlyVals/Vals To An Instance
-
-Like `withValueEnhancer`, `withReadonlyValueEnhancer` binds ReadonlyVals/Vals to a instance but without setters
-
-```ts
-import type { ReadonlyValEnhancedResult } from "value-enhancer";
-import { Val, withReadonlyValueEnhancer } from "value-enhancer";
-
-type ReadonlyValConfig = {
-  apple: Val<string>;
-  isApple: ReadonlyVal<boolean>;
-};
-
-interface Obj extends ReadonlyValEnhancedResult<ReadonlyValConfig> {}
-
-class Obj {
-  constructor() {
-    const apple$ = new Val("apple");
-    const isApple$ = derive(apple$, apple => apple === "apple");
-
-    withReadonlyValueEnhancer(this, {
-      apple: apple$,
-      isApple: isApple$,
-    });
-  }
-}
-```
-
-`const obj = new Obj()` results in:
-
-- `obj.apple`, a getter that returns `apple$.value`
-- `obj._apple$`, the `apple$`
-- `obj.isApple`, a getter that returns `isApple$.value`
-- `obj._isApple$`, the `isApple$`
-- `obj.onValChanged(key: "apple" | "isApple", listener)`, equals to calling <code>obj[\`_${key}$\`].reaction</code>
-
-### ValManager
-
-Manage life-cycles of a list of Vals (e.g. auto cleanup).
-
-```ts
-import { Val, ValManager } from "value-enhancer";
-
-const valManager = new ValManager();
-const val1 = valManager.attach(new Val("12345"));
-const val2 = valManager.attach(new Val(""));
-
-valManager.destroy(); // val1.destroy() and val2.destroy() are called
-```
-
-Combined with `withValueEnhancer` or `withReadonlyValueEnhancer`:
-
-```js
-import type { ValEnhancedResult } from "value-enhancer";
-import { Val, withValueEnhancer, ValManager } from "value-enhancer";
-
-class Obj {
-  constructor() {
-    this.valManager = new ValManager();
-
-    const apple$ = new Val("apple");
-    const banana$ = new Val("banana");
-
-    withValueEnhancer(
-      this,
-      {
-        apple: apple$,
-        banana: banana$,
-      },
-      this.valManager
-    );
-  }
-
-  destroy() {
-    this.valManager.destroy();
-  }
-}
-```
-
-And `valManager` may keep private with [`side-effect-manager`](https://github.com/crimx/side-effect-manager):
-
-```js
-import type { ValEnhancedResult } from "value-enhancer";
-import { Val, withValueEnhancer, ValManager } from "value-enhancer";
-import { SideEffectManager } from "side-effect-manager";
-
-class Obj {
-  constructor() {
-    this.sideEffect = new SideEffectManager();
-
-    const valManager = new ValManager();
-    this.sideEffect.addDisposer(() => valManager.destroy());
-
-    const apple$ = new Val("apple");
-    const banana$ = new Val("banana");
-
-    withValueEnhancer(
-      this,
-      {
-        apple: apple$,
-        banana: banana$,
-      },
-      valManager
-    );
-  }
-
-  destroy() {
-    this.sideEffect.flushAll();
-  }
-}
+count$.set(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
 ```

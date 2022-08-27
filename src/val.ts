@@ -1,6 +1,10 @@
-import { ReadonlyVal } from "./readonly-val";
+import { ReadonlyValImpl } from "./readonly-val";
+import type { Val, ValConfig } from "./typings";
 
-export class Val<TValue = any> extends ReadonlyVal<TValue> {
+class ValImpl<TValue = any>
+  extends ReadonlyValImpl<TValue>
+  implements Val<TValue>
+{
   public override get value(): TValue {
     return this._value;
   }
@@ -10,4 +14,16 @@ export class Val<TValue = any> extends ReadonlyVal<TValue> {
   public set: (value: TValue) => void = this._set;
   /** @alias set */
   public setValue: (value: TValue) => void = this._set;
+}
+
+export function val(): Val<undefined>;
+export function val<TValue = any>(
+  value: TValue,
+  config?: ValConfig<TValue>
+): Val<TValue>;
+export function val<TValue = any>(
+  value?: TValue,
+  config?: ValConfig<TValue>
+): Val<TValue> {
+  return new ValImpl(value as TValue, config);
 }

@@ -1,34 +1,44 @@
 import { Subscribers } from "./subscribers";
-import type { ValDisposer, ValSubscriber, ValConfig } from "./typings";
+import type {
+  ValDisposer,
+  ValSubscriber,
+  ValConfig,
+  ValOnStart,
+  ReadonlyVal,
+  ReadonlyValConfig,
+} from "./typings";
 
-export class ReadonlyVal<TValue = any> {
-  private _subs: Subscribers<TValue>;
+export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
+  protected _subs: Subscribers<TValue>;
 
   protected _value: TValue;
 
-  protected _cp(newValue: TValue, oldValue: TValue): boolean {
+  protected _compare(newValue: TValue, oldValue: TValue): boolean {
     return newValue === oldValue;
   }
 
   protected _set = (value: TValue): void => {
-    if (!this._cp(value, this._value)) {
+    if (!this._compare(value, this._value)) {
       this._value = value;
-      this._subs.invoke(value);
+      this._subs.invoke();
     }
   };
 
   public constructor(
     value: TValue,
-    { compare, beforeSubscribe }: ValConfig<TValue> = {}
+    { compare }: ValConfig<TValue> = {},
+    start?: ValOnStart<TValue>
   ) {
     this._value = value;
 
     if (compare) {
-      this._cp = compare;
+      this._compare = compare;
     }
 
     this._subs = new Subscribers<TValue>(
-      beforeSubscribe ? () => beforeSubscribe(this._set) : null
+      this,
+      value,
+      start ? () => start(this._set) : null
     );
   }
 
@@ -36,33 +46,50 @@ export class ReadonlyVal<TValue = any> {
     return this._value;
   }
 
-  /**
-   * Subscribe to value changes without immediate emission.
-   */
-  public reaction(subscriber: ValSubscriber<TValue>): ValDisposer {
-    this._subs.add(subscriber);
+  public reaction(
+    subscriber: ValSubscriber<TValue>,
+    eager = false
+  ): ValDisposer {
+    this._subs.add(subscriber, eager ? "sub1" : "sub0");
     return (): void => this._subs.remove(subscriber);
   }
 
-  /**
-   * Subscribe to value changes with immediate emission.
-   * @param subscriber
-   */
-  public subscribe(subscriber: ValSubscriber<TValue>): ValDisposer {
-    const disposer = this.reaction(subscriber);
-    subscriber(this._value);
+  public subscribe(
+    subscriber: ValSubscriber<TValue>,
+    eager = false
+  ): ValDisposer {
+    const disposer = this.reaction(subscriber, eager);
+    try {
+      subscriber(this.value);
+    } catch (e) {
+      console.error(e);
+    }
     return disposer;
   }
 
-  public destroy(): void {
-    this._subs.clear();
+  /**
+   * @internal
+   * For computed vals
+   */
+  public _compute(subscriber: ValSubscriber<TValue>): ValDisposer {
+    this._subs.add(subscriber, "sub2");
+    return (): void => this._subs.remove(subscriber);
   }
 
-  public unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void {
-    this._subs.remove(subscriber);
+  public unsubscribe(): void;
+  public unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void;
+  public unsubscribe<T extends (...args: any[]) => any>(subscriber?: T): void {
+    if (subscriber) {
+      this._subs.remove(subscriber);
+    } else {
+      this._subs.clear();
+    }
   }
+}
 
-  public get size(): number {
-    return this._subs.size;
-  }
+export function readonlyVal<TValue = any>(
+  value: TValue,
+  config: ReadonlyValConfig<TValue> = {}
+): ReadonlyVal<TValue> {
+  return new ReadonlyValImpl(value, config, config.start);
 }

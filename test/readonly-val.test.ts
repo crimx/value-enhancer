@@ -1,88 +1,87 @@
-import type { SpyInstanceFn } from "vitest";
-import { describe, it, expect, vi } from "vitest";
-import type { ValSetValue } from "../src/value-enhancer";
-import { ReadonlyVal } from "../src/value-enhancer";
+import { describe, it, expect, jest } from "@jest/globals";
+import type { ValSetValue } from "../src/typings";
+import { readonlyVal } from "../src/value-enhancer";
 
 const noop = () => void 0;
 
 describe("ReadonlyVal", () => {
   describe("value", () => {
     it("should have a Val with value 1", () => {
-      const val = new ReadonlyVal(1);
+      const val = readonlyVal(1);
       expect(val.value).toBe(1);
     });
   });
 
-  describe("beforeSubscribe", () => {
+  describe("start", () => {
     it("should be called before first subscription", () => {
-      const beforeSubscribe = vi.fn();
-      const val = new ReadonlyVal(1, { beforeSubscribe });
-      expect(beforeSubscribe).toHaveBeenCalledTimes(0);
+      const start = jest.fn(() => void 0);
+      const val = readonlyVal(1, { start });
+      expect(start).toHaveBeenCalledTimes(0);
 
-      const sub1 = vi.fn();
+      const sub1 = jest.fn();
       const dispose1 = val.subscribe(sub1);
-      expect(beforeSubscribe).toBeCalledTimes(1);
+      expect(start).toBeCalledTimes(1);
       expect(sub1).toBeCalledTimes(1);
 
-      const sub2 = vi.fn();
+      const sub2 = jest.fn();
       const dispose2 = val.subscribe(sub2);
-      expect(beforeSubscribe).toBeCalledTimes(1);
+      expect(start).toBeCalledTimes(1);
       expect(sub1).toBeCalledTimes(1);
       expect(sub2).toBeCalledTimes(1);
 
       dispose1();
-      expect(beforeSubscribe).toBeCalledTimes(1);
+      expect(start).toBeCalledTimes(1);
       expect(sub1).toBeCalledTimes(1);
       expect(sub2).toBeCalledTimes(1);
 
       dispose2();
-      expect(beforeSubscribe).toBeCalledTimes(1);
+      expect(start).toBeCalledTimes(1);
       expect(sub1).toBeCalledTimes(1);
       expect(sub2).toBeCalledTimes(1);
 
-      const sub3 = vi.fn();
+      const sub3 = jest.fn();
       val.subscribe(sub3);
-      expect(beforeSubscribe).toBeCalledTimes(2);
+      expect(start).toBeCalledTimes(2);
       expect(sub1).toBeCalledTimes(1);
       expect(sub2).toBeCalledTimes(1);
       expect(sub3).toBeCalledTimes(1);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
     it("should trigger disposer after last un-subscription", () => {
-      const beforeSubscribeDisposer = vi.fn();
-      const beforeSubscribe = vi.fn(() => beforeSubscribeDisposer);
-      const val = new ReadonlyVal(1, { beforeSubscribe });
-      expect(beforeSubscribeDisposer).toHaveBeenCalledTimes(0);
+      const startDisposer = jest.fn();
+      const start = jest.fn(() => startDisposer);
+      const val = readonlyVal(1, { start });
+      expect(startDisposer).toHaveBeenCalledTimes(0);
 
-      const sub1 = vi.fn();
+      const sub1 = jest.fn();
       const dispose1 = val.subscribe(sub1);
-      expect(beforeSubscribeDisposer).toHaveBeenCalledTimes(0);
+      expect(startDisposer).toHaveBeenCalledTimes(0);
 
-      const sub2 = vi.fn();
+      const sub2 = jest.fn();
       const dispose2 = val.subscribe(sub2);
-      expect(beforeSubscribeDisposer).toHaveBeenCalledTimes(0);
+      expect(startDisposer).toHaveBeenCalledTimes(0);
 
       dispose1();
-      expect(beforeSubscribeDisposer).toHaveBeenCalledTimes(0);
+      expect(startDisposer).toHaveBeenCalledTimes(0);
 
       dispose2();
-      expect(beforeSubscribeDisposer).toHaveBeenCalledTimes(1);
+      expect(startDisposer).toHaveBeenCalledTimes(1);
 
-      const sub3 = vi.fn();
+      const sub3 = jest.fn();
       const dispose3 = val.subscribe(sub3);
-      expect(beforeSubscribeDisposer).toHaveBeenCalledTimes(1);
+      expect(startDisposer).toHaveBeenCalledTimes(1);
 
       dispose3();
-      expect(beforeSubscribeDisposer).toHaveBeenCalledTimes(2);
+      expect(startDisposer).toHaveBeenCalledTimes(2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
     it("should not trigger extra emissions on sync set", () => {
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: set => {
+      const val = readonlyVal(1, {
+        start: set => {
           set(1);
           set(2);
           set(3);
@@ -90,12 +89,12 @@ describe("ReadonlyVal", () => {
         },
       });
 
-      const sub1 = vi.fn();
+      const sub1 = jest.fn();
       const dispose1 = val.subscribe(sub1);
       expect(sub1).toHaveBeenCalledTimes(1);
       expect(sub1).toBeCalledWith(4);
 
-      const sub2 = vi.fn();
+      const sub2 = jest.fn();
       const dispose2 = val.subscribe(sub2);
       expect(sub2).toHaveBeenCalledTimes(1);
       expect(sub2).toBeCalledWith(4);
@@ -111,7 +110,7 @@ describe("ReadonlyVal", () => {
       expect(sub1).toHaveBeenCalledTimes(0);
       expect(sub2).toHaveBeenCalledTimes(0);
 
-      const sub3 = vi.fn();
+      const sub3 = jest.fn();
       const dispose3 = val.subscribe(sub3);
       expect(sub3).toHaveBeenCalledTimes(1);
       expect(sub3).toBeCalledWith(4);
@@ -121,12 +120,12 @@ describe("ReadonlyVal", () => {
       dispose3();
       expect(sub3).toHaveBeenCalledTimes(0);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should trigger extra emission on async set", async () => {
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: set => {
+    it("should not trigger extra emission on async set", async () => {
+      const val = readonlyVal(1, {
+        start: set => {
           setTimeout(() => {
             set(1);
             set(2);
@@ -136,17 +135,17 @@ describe("ReadonlyVal", () => {
         },
       });
 
-      const sub1 = vi.fn();
+      const sub1 = jest.fn();
       const dispose1 = val.subscribe(sub1);
       expect(sub1).toHaveBeenCalledTimes(1);
       expect(sub1).toBeCalledWith(1);
 
       await new Promise(resolve => setTimeout(resolve, 0));
 
-      expect(sub1).toHaveBeenCalledTimes(4);
+      expect(sub1).toHaveBeenCalledTimes(2);
       expect(sub1).toBeCalledWith(4);
 
-      const sub2 = vi.fn();
+      const sub2 = jest.fn();
       const dispose2 = val.subscribe(sub2);
       expect(sub2).toHaveBeenCalledTimes(1);
       expect(sub2).toBeCalledWith(4);
@@ -162,30 +161,30 @@ describe("ReadonlyVal", () => {
       expect(sub1).toHaveBeenCalledTimes(0);
       expect(sub2).toHaveBeenCalledTimes(0);
 
-      val.destroy();
+      val.unsubscribe();
     });
   });
 
   describe("subscribe", () => {
     it("should trigger immediate emission on subscribe", () => {
-      const spy = vi.fn();
-      const val = new ReadonlyVal(1);
+      const spy = jest.fn();
+      const val = readonlyVal(1);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
       val.subscribe(spy);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(1);
-      expect(firstParamOfLastCall(spy)).toBe(1);
+      expect(spy).lastCalledWith(1);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should trigger emission on set", () => {
+    it("should trigger async emission on set", async () => {
       let set = noop as ValSetValue<number>;
-      const spy = vi.fn();
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
+      const spy = jest.fn();
+      const val = readonlyVal(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -199,21 +198,50 @@ describe("ReadonlyVal", () => {
       expect(spy.mock.calls[0][0]).toBe(1);
 
       set(2);
+      expect(spy).toBeCalledTimes(1);
+
+      await Promise.resolve();
+
+      expect(spy).toBeCalledTimes(2);
+      expect(spy.mock.calls[1][0]).toBe(2);
+      expect(val.value).toBe(2);
+
+      val.unsubscribe();
+    });
+
+    it("should trigger sync emission on set", () => {
+      let set = noop as ValSetValue<number>;
+      const spy = jest.fn();
+      const val = readonlyVal(1, {
+        start: _setValue => {
+          set = _setValue;
+          return () => (set = noop);
+        },
+      });
+      expect(val.value).toBe(1);
+      expect(spy).toBeCalledTimes(0);
+
+      val.subscribe(spy, true);
+      expect(val.value).toBe(1);
+      expect(spy).toBeCalledTimes(1);
+      expect(spy.mock.calls[0][0]).toBe(1);
+
+      set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(spy.mock.calls[1][0]).toBe(2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should not trigger emission on set with same value", () => {
+    it("should not trigger emission on set with same value", async () => {
       let set = noop as ValSetValue<{ value: number }>;
-      const spy = vi.fn();
+      const spy = jest.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
 
-      const val = new ReadonlyVal(value1, {
-        beforeSubscribe: _setValue => {
+      const val = readonlyVal(value1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -224,31 +252,33 @@ describe("ReadonlyVal", () => {
       val.subscribe(spy);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
-      expect(firstParamOfLastCall(spy)).toBe(value1);
+      expect(spy).lastCalledWith(value1);
 
       set(value1);
+      await Promise.resolve();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
       set(value2);
+      await Promise.resolve();
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(2);
-      expect(firstParamOfLastCall(spy)).toBe(value2);
+      expect(spy).lastCalledWith(value2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should perform custom compare", () => {
+    it("should perform custom compare", async () => {
       let set = noop as ValSetValue<{ value: number }>;
-      const spy = vi.fn();
+      const spy = jest.fn();
       const value1 = { value: 1 };
       const valueClone = { value: 1 };
       const compare = (a: { value: number }, b: { value: number }) =>
         a.value === b.value;
 
-      const val = new ReadonlyVal(value1, {
+      const val = readonlyVal(value1, {
         compare,
-        beforeSubscribe: _setValue => {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -257,29 +287,32 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(0);
 
       val.subscribe(spy);
+      await Promise.resolve();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
-      expect(firstParamOfLastCall(spy)).toBe(value1);
+      expect(spy).lastCalledWith(value1);
 
       set(value1);
+      await Promise.resolve();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
       set(valueClone);
+      await Promise.resolve();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
-      expect(firstParamOfLastCall(spy)).toBe(value1);
+      expect(spy).lastCalledWith(value1);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should support multiple subscribers", () => {
+    it("should support multiple subscribers", async () => {
       let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
-        .map(() => vi.fn());
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
+        .map(() => jest.fn());
+      const val = readonlyVal(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -295,25 +328,27 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
 
       set(2);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(2);
         expect(spy).lastCalledWith(2);
       });
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should remove subscriber if disposed", () => {
+    it("should remove subscriber if disposed", async () => {
       let set = noop as ValSetValue<number>;
-      const spy1 = vi.fn();
-      const spy2 = vi.fn();
-      const val = new ReadonlyVal<number>(1, {
-        beforeSubscribe: _setValue => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const val = readonlyVal<number>(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -330,21 +365,22 @@ describe("ReadonlyVal", () => {
       spy1Disposer();
 
       set(2);
+      await Promise.resolve();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
       expect(spy2).lastCalledWith(2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should remove all subscribers on destroy", () => {
+    it("should remove all subscribers on unsubscribe", async () => {
       let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
-        .map(() => vi.fn());
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
+        .map(() => jest.fn());
+      const val = readonlyVal(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -355,27 +391,27 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
 
-      val.destroy();
+      val.unsubscribe();
 
       set(2);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
-
-      val.destroy();
     });
   });
 
   describe("reaction", () => {
-    it("should not trigger immediate emission on reaction", () => {
+    it("should not trigger immediate emission on reaction", async () => {
       let set = noop as ValSetValue<number>;
-      const spy = vi.fn();
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
+      const spy = jest.fn();
+      const val = readonlyVal(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -388,66 +424,46 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(0);
 
       set(2);
-      expect(val.value).toBe(2);
-      expect(spy).toBeCalledTimes(1);
-      expect(firstParamOfLastCall(spy)).toBe(2);
-
-      val.destroy();
-    });
-
-    it("should trigger emission on set", () => {
-      let set = noop as ValSetValue<number>;
-      const spy = vi.fn();
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
-      expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
-      val.reaction(spy);
-      expect(val.value).toBe(1);
-      expect(spy).toBeCalledTimes(0);
+      await Promise.resolve();
 
-      set(2);
-      expect(val.value).toBe(2);
-      expect(spy).toBeCalledTimes(1);
-      expect(firstParamOfLastCall(spy)).toBe(2);
-
-      val.destroy();
-    });
-
-    it("should have old value", () => {
-      let set = noop as ValSetValue<number>;
-      const spy = vi.fn();
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
-      expect(val.value).toBe(1);
-      expect(spy).toBeCalledTimes(0);
-
-      val.reaction(spy);
-      expect(val.value).toBe(1);
-      expect(spy).toBeCalledTimes(0);
-
-      set(2);
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should emit meta on reaction", () => {
+    it("should trigger sync emission on set", async () => {
       let set = noop as ValSetValue<number>;
-      const spy = vi.fn();
-      const val = new ReadonlyVal<number>(1, {
-        beforeSubscribe: _setValue => {
+      const spy = jest.fn();
+      const val = readonlyVal(1, {
+        start: _setValue => {
+          set = _setValue;
+          return () => (set = noop);
+        },
+      });
+      expect(val.value).toBe(1);
+      expect(spy).toBeCalledTimes(0);
+
+      val.reaction(spy, true);
+      expect(spy).toBeCalledTimes(0);
+      expect(val.value).toBe(1);
+
+      set(2);
+      expect(spy).toBeCalledTimes(1);
+      expect(spy).lastCalledWith(2);
+      expect(val.value).toBe(2);
+
+      val.unsubscribe();
+    });
+
+    it("should trigger emission on set", async () => {
+      let set = noop as ValSetValue<number>;
+      const spy = jest.fn();
+      const val = readonlyVal(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -460,21 +476,23 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(0);
 
       set(2);
+      await Promise.resolve();
+
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should not trigger emission on set with same value", () => {
+    it("should not trigger emission on set with same value", async () => {
       let set = noop as ValSetValue<{ value: number }>;
-      const spy = vi.fn();
+      const spy = jest.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
 
-      const val = new ReadonlyVal(value1, {
-        beforeSubscribe: _setValue => {
+      const val = readonlyVal(value1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -487,28 +505,30 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(0);
 
       set(value1);
+      await Promise.resolve();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
       set(value2);
+      await Promise.resolve();
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(1);
-      expect(firstParamOfLastCall(spy)).toBe(value2);
+      expect(spy).lastCalledWith(value2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
     it("should perform custom compare", () => {
       let set = noop as ValSetValue<{ value: number }>;
-      const spy = vi.fn();
+      const spy = jest.fn();
       const value1 = { value: 1 };
       const value1Clone = { value: 1 };
       const compare = (a: { value: number }, b: { value: number }) =>
         a.value === b.value;
 
-      const val = new ReadonlyVal(value1, {
+      const val = readonlyVal(value1, {
         compare,
-        beforeSubscribe: _setValue => {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -516,7 +536,7 @@ describe("ReadonlyVal", () => {
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
-      val.reaction(spy);
+      val.reaction(spy, true);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -528,16 +548,16 @@ describe("ReadonlyVal", () => {
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should support multiple subscribers", () => {
+    it("should support multiple subscribers", async () => {
       let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
-        .map(() => vi.fn());
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
+        .map(() => jest.fn());
+      const val = readonlyVal(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -552,25 +572,27 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
 
       set(2);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
         expect(spy).lastCalledWith(2);
       });
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should remove subscriber if disposed", () => {
+    it("should remove subscriber if disposed", async () => {
       let set = noop as ValSetValue<number>;
-      const spy1 = vi.fn();
-      const spy2 = vi.fn();
-      const val = new ReadonlyVal<number>(1, {
-        beforeSubscribe: _setValue => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const val = readonlyVal<number>(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -585,21 +607,22 @@ describe("ReadonlyVal", () => {
       spy1Disposer();
 
       set(2);
+      await Promise.resolve();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(1);
       expect(spy2).lastCalledWith(2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should remove all subscribers on destroy", () => {
+    it("should remove all subscribers on unsubscribe", async () => {
       let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
-        .map(() => vi.fn());
-      const val = new ReadonlyVal(1, {
-        beforeSubscribe: _setValue => {
+        .map(() => jest.fn());
+      const val = readonlyVal(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -610,28 +633,30 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
 
-      val.destroy();
+      val.unsubscribe();
 
       set(2);
+      await Promise.resolve();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
 
-      val.destroy();
+      val.unsubscribe();
     });
   });
 
   describe("unsubscribe", () => {
-    it("should unsubscribe a subscribe callback", () => {
+    it("should unsubscribe a subscribe callback", async () => {
       let set = noop as ValSetValue<number>;
-      const spy1 = vi.fn();
-      const spy2 = vi.fn();
-      const val = new ReadonlyVal<number>(1, {
-        beforeSubscribe: _setValue => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const val = readonlyVal<number>(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -650,21 +675,22 @@ describe("ReadonlyVal", () => {
       expect(spy2).lastCalledWith(1);
 
       set(2);
+      await Promise.resolve();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
       expect(spy1).lastCalledWith(1);
       expect(spy2).lastCalledWith(2);
 
-      val.destroy();
+      val.unsubscribe();
     });
 
-    it("should unsubscribe a reaction callback", () => {
+    it("should unsubscribe a reaction callback", async () => {
       let set = noop as ValSetValue<number>;
-      const spy1 = vi.fn();
-      const spy2 = vi.fn();
-      const val = new ReadonlyVal<number>(1, {
-        beforeSubscribe: _setValue => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const val = readonlyVal<number>(1, {
+        start: _setValue => {
           set = _setValue;
           return () => (set = noop);
         },
@@ -680,6 +706,7 @@ describe("ReadonlyVal", () => {
       expect(spy2).toBeCalledTimes(0);
 
       set(2);
+      await Promise.resolve();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
@@ -687,19 +714,51 @@ describe("ReadonlyVal", () => {
       expect(spy2).lastCalledWith(2);
 
       set(3);
+      await Promise.resolve();
       expect(val.value).toBe(3);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
       expect(spy1).lastCalledWith(2);
       expect(spy2).lastCalledWith(3);
 
-      val.destroy();
+      val.unsubscribe();
+    });
+
+    it("should log subscriber error", async () => {
+      let set = noop as ValSetValue<number>;
+      const val = readonlyVal(1, {
+        start: _setValue => {
+          set = _setValue;
+          return () => (set = noop);
+        },
+      });
+
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
+      expect(consoleErrorMock).toBeCalledTimes(0);
+
+      const error = new Error("Hello");
+      val.subscribe(() => {
+        throw error;
+      });
+
+      expect(consoleErrorMock).toBeCalledTimes(1);
+      expect(consoleErrorMock).toBeCalledWith(error);
+
+      consoleErrorMock.mockClear();
+
+      set(2);
+
+      expect(consoleErrorMock).toBeCalledTimes(0);
+
+      await Promise.resolve();
+
+      expect(consoleErrorMock).toBeCalledTimes(1);
+      expect(consoleErrorMock).toBeCalledWith(error);
+
+      consoleErrorMock.mockRestore();
     });
   });
 });
-
-function firstParamOfLastCall<T extends any[] = any[], P extends any[] = any>(
-  spy: SpyInstanceFn<T, P>
-): any {
-  return spy.mock.calls[spy.mock.calls.length - 1][0];
-}

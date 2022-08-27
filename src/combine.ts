@@ -1,5 +1,5 @@
-import { ReadonlyVal } from "./readonly-val";
-import type { ValConfig } from "./typings";
+import { ReadonlyValImpl } from "./readonly-val";
+import type { ReadonlyVal, ValConfig } from "./typings";
 
 export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
   Readonly<{
@@ -16,60 +16,70 @@ export type CombineValTransform<
   TMeta = any
 > = (newValues: TValues, oldValues?: TValues, meta?: TMeta) => TDerivedValue;
 
-export class CombinedVal<
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-  TValue = any
-> extends ReadonlyVal<TValue> {
+export class CombinedValImpl<
+    TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+    TValue = any
+  >
+  extends ReadonlyValImpl<TValue>
+  implements ReadonlyVal<TValue>
+{
   public constructor(
     valInputs: TValInputs,
     transform: CombineValTransform<
       TValue,
       [...TValInputsValueTuple<TValInputs>]
     >,
-    config: ValConfig<TValue> = {}
+    config: ValConfig<TValue>
   ) {
-    super(transform(getValues(valInputs)), {
-      ...config,
-      beforeSubscribe: set => {
-        let lastValueInputs = getValues(valInputs);
-        set(transform(lastValueInputs));
-        const disposers = valInputs.map((val, i) =>
-          val.reaction(value => {
-            lastValueInputs = lastValueInputs.slice() as [
-              ...TValInputsValueTuple<TValInputs>
-            ];
-            lastValueInputs[i] = value;
-            set(transform(lastValueInputs));
-          })
-        );
-        const disposer = () => disposers.forEach(disposer => disposer());
-
-        if (config.beforeSubscribe) {
-          const beforeSubscribeDisposer = config.beforeSubscribe(set);
-          if (beforeSubscribeDisposer) {
-            return () => {
-              disposer();
-              beforeSubscribeDisposer();
-            };
+    const sOldValues = getValues(valInputs);
+    super(transform(sOldValues), config, () => {
+      const disposers = valInputs.map(val =>
+        (val as ReadonlyValImpl)._compute(() => {
+          if (!this._dirty) {
+            this._dirty = true;
+            this._subs.invoke();
           }
-        }
-
-        return disposer;
-      },
+        })
+      );
+      return () => disposers.forEach(dispose);
     });
 
-    this._srcValue = () => transform(getValues(valInputs));
+    this._sVals = valInputs;
+    this._sOldValues = sOldValues;
+    this._transform = transform;
   }
 
   public override get value(): TValue {
-    if (this.size <= 0) {
-      const value = this._srcValue();
-      return this._cp(value, this._value) ? this._value : value;
+    if (this._dirty || this._subs.size <= 0) {
+      this._dirty = false;
+      const sNewValues = this._newValues();
+      if (sNewValues !== this._sOldValues) {
+        this._sOldValues = sNewValues;
+        const value = this._transform(sNewValues);
+        if (!this._compare(value, this._value)) {
+          this._value = value;
+        }
+      }
     }
     return this._value;
   }
 
-  private _srcValue: () => TValue;
+  private _sVals: TValInputs;
+  private _sOldValues: [...TValInputsValueTuple<TValInputs>];
+  private _transform: CombineValTransform<
+    TValue,
+    [...TValInputsValueTuple<TValInputs>]
+  >;
+  private _dirty = false;
+
+  private _newValues(): [...TValInputsValueTuple<TValInputs>] {
+    for (let i = 0; i < this._sVals.length; i++) {
+      if (this._sVals[i].value !== this._sOldValues[i]) {
+        return getValues(this._sVals);
+      }
+    }
+    return this._sOldValues;
+  }
 }
 
 function getValues<TValInputs extends readonly ReadonlyVal[]>(
@@ -80,6 +90,10 @@ function getValues<TValInputs extends readonly ReadonlyVal[]>(
 
 function getValue<TValue>(val: ReadonlyVal<TValue>): TValue {
   return val.value;
+}
+
+function dispose(disposer: () => void) {
+  disposer();
 }
 
 export function combine<
@@ -106,5 +120,5 @@ export function combine<
   > = value => value as TValue,
   config: ValConfig<TValue> = {}
 ): ReadonlyVal<TValue> {
-  return new CombinedVal(valInputs, transform, config);
+  return new CombinedValImpl(valInputs, transform, config);
 }
