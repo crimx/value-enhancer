@@ -14,16 +14,7 @@ export default defineConfig(({ mode }) => {
       },
       outDir: "dist",
       sourcemap: isProd,
-      rollupOptions: {
-        external: ["react"],
-      },
-      minify: isProd,
-    },
-    test: {
-      environment: "jsdom",
-      coverage: {
-        reporter: ["lcov", "text"],
-      },
+      minify: false,
     },
   };
 });

@@ -7,8 +7,8 @@
   "author": "CRIMX <straybugs@gmail.com> (https://github.com/crimx/)",
   "repository": "crimx/value-enhancer",
   "sideEffects": false,
-  "main": "./dist/value-enhancer.cjs.js",
-  "module": "./dist/value-enhancer.es.js",
+  "main": "./dist/value-enhancer.js",
+  "module": "./dist/value-enhancer.mjs",
   "types": "./dist/value-enhancer.d.ts",
   "files": [
     "src",
@@ -17,7 +17,7 @@
   "scripts": {
     "prepublish": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
-    "test": "vitest run --coverage",
+    "test": "jest --coverage",
     "docs": "typedoc --includeVersion --excludePrivate --out docs src/value-enhancer.ts",
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
     "build": "vite build && npm run types",
@@ -25,18 +25,18 @@
     "release": "standard-version"
   },
   "devDependencies": {
+    "@jest/globals": "^28.1.3",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
     "@typescript-eslint/parser": "^4.31.1",
-    "c8": "^7.11.0",
     "cross-env": "^7.0.3",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "jsdom": "^19.0.0",
+    "jest": "^28.1.3",
     "prettier": "^2.4.0",
     "standard-version": "^9.3.1",
+    "ts-jest": "^28.0.8",
     "typedoc": "^0.22.3",
     "typescript": "^4.4.3",
-    "vite": "^2.5.6",
-    "vitest": "^0.8.4"
+    "vite": "^3.0.9"
   }
 }
