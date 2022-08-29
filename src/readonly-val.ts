@@ -87,6 +87,12 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   }
 }
 
+/**
+ * Creates a readonly val with the given value.
+ * @param value The value of the readonly val.
+ * @param config Custom config.
+ * @returns A readonly val with the given value.
+ */
 export function readonlyVal<TValue = any>(
   value: TValue,
   config: ReadonlyValConfig<TValue> = {}

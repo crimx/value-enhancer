@@ -96,11 +96,23 @@ function dispose(disposer: () => void) {
   disposer();
 }
 
+/**
+ * Combines an array of vals into a single val with the array of values.
+ * @param valInputs An array of vals to combine.
+ * @returns A readonly val with the combined values.
+ */
 export function combine<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
 >(
   valInputs: readonly [...TValInputs]
 ): ReadonlyVal<[...TValInputsValueTuple<TValInputs>]>;
+/**
+ * Combines an array of vals into a single val with transformed value.
+ * @param valInputs An array of vals to combine.
+ * @param transform A pure function that takes an array of values and returns a new value.
+ * @param config custom config for the combined val.
+ * @returns A readonly val with the transformed values.
+ */
 export function combine<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
   TValue = any

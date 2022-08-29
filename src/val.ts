@@ -11,12 +11,22 @@ class ValImpl<TValue = any>
   public override set value(value: TValue) {
     this._set(value);
   }
+  /** Set new value */
   public set: (value: TValue) => void = this._set;
   /** @alias set */
   public setValue: (value: TValue) => void = this._set;
 }
 
+/**
+ * Creates a writable val.
+ * @returns A val with undefined value.
+ */
 export function val(): Val<undefined>;
+/**
+ * Creates a writable val.
+ * @param value Initial value.
+ * @param config Custom config.
+ */
 export function val<TValue = any>(
   value: TValue,
   config?: ValConfig<TValue>
