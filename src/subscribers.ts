@@ -23,12 +23,14 @@ export class Subscribers<TValue = any> {
   }
 
   public invoke(): void {
-    if (this.size > 0) {
+    if (this.sub2?.size) {
       this.exec("sub2");
+    }
+    if (this.sub1?.size) {
       this.exec("sub1");
-      if (this.sub0?.size) {
-        schedule(this);
-      }
+    }
+    if (this.sub0?.size) {
+      schedule(this);
     }
   }
 
@@ -37,11 +39,12 @@ export class Subscribers<TValue = any> {
       this.stop = this.start();
     }
 
-    if (!this[mode]) {
-      this[mode] = new Set<ValSubscriber<TValue>>();
+    let subs = this[mode];
+    if (!subs) {
+      subs = this[mode] = new Set<ValSubscriber<TValue>>();
     }
 
-    this[mode]!.add(subscribe);
+    subs.add(subscribe);
     this.size += 1;
   }
 
