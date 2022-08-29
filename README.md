@@ -30,7 +30,9 @@ npm add value-enhancer
 - Single-layer shallow reactivity.  
   It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
 - Explicit.  
-  Reactive objects are easy to tell since their types are different from normal objects. Subscriptions also require explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
+  Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
+- Simple DX.
+  No hidden rules for getting or setting values. What you see is what you get.
 - Bundle size and Performance.  
   By carefully defining scope and choosing right features that balance usability and performance, less work needed to be done in `value-enhancer` which makes it smaller and faster.
 
@@ -45,6 +47,8 @@ MobX does not work well with other libraries. It could break other libraries if 
 
 MobX also prints error when it sees another version of MobX in the global. It is not a good choice for making SDK or library that will be delivered into customer's environment.
 
+In my opinion, the vision of MobX has to be implemented as language-level features, otherwise it will create all kinds of compatibility issues. Svelte, SolidJS and even Vue are heading towards the compiler direction now, looking forward to the next generation of MobX.
+
 </details>
 
 <details>
@@ -54,25 +58,25 @@ Vue3 brings Reactivity as standalone APIs. It is beautifully designed and I had 
 
 But even though it is made standalone, it is still very Vue centered. Many extra works related to Vue components is added under the hood.
 
-Vue supports deep reactive lazy conversion. It converts plain JavaScript values into reactive values which means it also suffers from the same issues of MobX.
+Vue supports lazy deep reactive conversion. It converts plain JavaScript values into reactive values which means it also suffers from the same issues of MobX.
 
-It is a good choice if you are choosing the Vue ecosystem. The implementation of `value-enhancer` absorbs many good parts from Vue Reactivity and stays framework agnostic.
+It is a good choice if you are choosing the Vue ecosystem. The implementation of `value-enhancer` absorbs many optimization strategies from Vue Reactivity while staying framework agnostic.
 
 </details>
 
 <details>
 <summary>Why not RxJS?</summary>
 
-I love RxJS and the reactive paradigm behind it. The goal of RxJS is to compose asynchronous or callback-based code.
+I love RxJS and the reactive paradigm behind it. But the goal of RxJS is to compose asynchronous or callback-based code.
 
-It requires you to write code in a pipe-able way which may not be acceptable from everyone.
+It requires you to write code in a pipe-able way which may not be acceptable for everyone.
 
 </details>
 
 <details>
 <summary>What about React Hooks?</summary>
 
-The signature of `combine` and `derive` may look familiar for those who have used React hooks.
+The signature of `combine` and `derive` may look familiar to those who have used React hooks.
 
 ```ts
 import { useMemo } from "react";
@@ -80,7 +84,7 @@ import { useMemo } from "react";
 const derived = useMemo(() => source + 1, [source]);
 ```
 
-I really like the explicit dependency declaration. But in React it is error-prone since people keep forgetting to add or remove dependencies. The React team even made a `exhaustive-deps` linter rule for this.
+I really like the explicit dependency declaration, but in React it is error-prone since people keep forgetting to add or remove dependencies. The React team even made a `exhaustive-deps` linter rule for this.
 
 `value-enhancer` solves this by absorbing the RxJS-style callbacks.
 
@@ -102,18 +106,20 @@ console.log(combined$.value); // 3
 
 Since the type of reactive objects are different from its values, it is hard to have mismatched dependencies inside the `transform` function.
 
-`value-enhancer` can be used in React with [`use-value-enhancer`](https://www.npmjs.com/package/use-value-enhancer).
+`value-enhancer` can be used in React with [`use-value-enhancer`](https://www.npmjs.com/package/use-value-enhancer) hook.
 
 </details>
 
 <details>
 <summary>Svelte Stores?</summary>
 
-Svelte offers excellent support for Observables. Svelte store is one of the simplest implementation. The code is really neat and clean.
+Svelte offers excellent support for Observables. Svelte store is one of the simplest implementations. The code is really neat and clean.
 
 Svelte store works well for simple cases but it also leaves some edge cases unresolved. For example, when `derived` a list of stores, the transform function could be [invoked with intermediate states](https://svelte.dev/repl/6218ae0ecf5c455195b4a76d7f0cff9f?version=3.49.0).
 
-`value-enhancer` is compatible with Svelte Store contract, which means it can be used in Svelte just like Svelte stores.
+Svelte also adds a `$xxx` syntax for subscribing Observables as values. The compiled code is really simple and straightforward.
+
+`value-enhancer` is compatible with Svelte Store contract. It can be used in Svelte just like Svelte stores.
 
 </details>
 
