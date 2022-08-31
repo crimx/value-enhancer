@@ -31,7 +31,7 @@ npm add value-enhancer
   It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
 - Explicit.  
   Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
-- Simple DX.
+- Simple DX.  
   No hidden rules for getting or setting values. What you see is what you get.
 - Bundle size and Performance.  
   By carefully defining scope and choosing right features that balance usability and performance, less work needed to be done in `value-enhancer` which makes it smaller and faster.
@@ -56,7 +56,7 @@ In my opinion, the vision of MobX has to be implemented as language-level featur
 
 Vue3 brings Reactivity as standalone APIs. It is beautifully designed and I had learned a lot from its source code.
 
-But even though it is made standalone, it is still very Vue centered. Many extra works related to Vue components is added under the hood.
+But even though it is made standalone, it is still very Vue centered. Many extra works related to Vue Components are added under the hood.
 
 Vue supports lazy deep reactive conversion. It converts plain JavaScript values into reactive values which means it also suffers from the same issues of MobX.
 
@@ -76,7 +76,7 @@ It requires you to write code in a pipe-able way which may not be acceptable for
 <details>
 <summary>What about React Hooks?</summary>
 
-The signature of `combine` and `derive` may look familiar to those who have used React hooks.
+The signature of `combine` and `derive` in `value-enhancer` may look familiar to those who have used React hooks.
 
 ```ts
 import { useMemo } from "react";
@@ -84,7 +84,7 @@ import { useMemo } from "react";
 const derived = useMemo(() => source + 1, [source]);
 ```
 
-I really like the explicit dependency declaration, but in React it is error-prone since people keep forgetting to add or remove dependencies. The React team even made a `exhaustive-deps` linter rule for this.
+I really like the explicit dependency declaration, but in React it is error-prone since people keep forgetting adding or removing dependencies. The React team even made a `exhaustive-deps` linter rule for this.
 
 `value-enhancer` solves this by absorbing the RxJS-style callbacks.
 
@@ -129,6 +129,8 @@ Svelte also adds a `$xxx` syntax for subscribing Observables as values. The comp
 SolidJS "create"s are like React hooks but with saner signatures. It is also thoughtfully optimized for edge cases.
 
 A thing that one may feel odd in SolidJS is accessing reactive value by calling it as function. `value-enhancer` keeps the `xxx.value` way to access reactive value which I think should be more intuitive.
+
+It also suffers from implicit magic issues like MobX and Vue where you ended up using something like [`mergeProps`](https://www.solidjs.com/docs/latest/api#mergeprops) and [`splitProps`](https://www.solidjs.com/docs/latest/api#splitprops).
 
 `value-enhancer` is compatible with SolidJS using [`from`](https://www.solidjs.com/docs/latest/api#from).
 
