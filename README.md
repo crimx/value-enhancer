@@ -15,7 +15,7 @@
 
 A tiny library to enhance value with reactive wrapper.
 
-[(v1 docs)](https://github.com/crimx/value-enhancer/tree/v1)
+[(v2 docs)](https://crimx.github.io/value-enhancer/), [(v1 docs)](https://github.com/crimx/value-enhancer/tree/v1)
 
 ## Install
 
