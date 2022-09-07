@@ -136,6 +136,28 @@ It also suffers from implicit magic issues like MobX and Vue where you ended up 
 
 </details>
 
+<details>
+<summary>Preact Signals?</summary>
+
+Preact recently released [Signals](https://preactjs.com/blog/introducing-signals/) which shares similar ideas with `value-enhancer`. It is like signals of SolidJS but without the odd function-like value accessing. It flushes reactions top-down then bottom-up like Vue and `value-enhancer`.
+
+The Preact team also took a step further to support writing Signals directly within TSX. This is the best design among the frameworks so far.
+
+```tsx
+const count = signal(0);
+
+// Instead of this:
+<p>Value: {count.value}</p>
+
+// … we can pass the signal directly into JSX:
+<p>Value: {count}</p>
+
+// … or even passing them as DOM properties:
+<input value={count} />
+```
+
+</details>
+
 ## Usage
 
 ```js
