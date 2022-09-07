@@ -93,6 +93,15 @@
 <p><code>value-enhancer</code> is compatible with SolidJS using <a href="https://www.solidjs.com/docs/latest/api#from"><code>from</code></a>.</p>
 </details>
 
+<details>
+<summary>Preact Signals?</summary>
+
+<p>Preact recently released <a href="https://preactjs.com/blog/introducing-signals/">Signals</a> which shares similar ideas with <code>value-enhancer</code>. It is like signals of SolidJS but without the odd function-like value accessing. It flushes reactions top-down then bottom-up like Vue and <code>value-enhancer</code>.</p>
+<p>The Preact team also took a step further to support writing Signals directly within TSX. This is the best design among the frameworks so far.</p>
+<pre><code class="language-tsx"><span class="hl-4">const</span><span class="hl-0"> </span><span class="hl-5">count</span><span class="hl-0"> = </span><span class="hl-6">signal</span><span class="hl-0">(</span><span class="hl-7">0</span><span class="hl-0">);</span><br/><br/><span class="hl-8">// Instead of this:</span><br/><span class="hl-9">&lt;</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><span class="hl-0">Value: </span><span class="hl-4">{</span><span class="hl-2">count</span><span class="hl-11">.</span><span class="hl-2">value</span><span class="hl-4">}</span><span class="hl-9">&lt;/</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><br/><br/><span class="hl-8">// … we can pass the signal directly into JSX:</span><br/><span class="hl-9">&lt;</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><span class="hl-0">Value: </span><span class="hl-4">{</span><span class="hl-2">count</span><span class="hl-4">}</span><span class="hl-9">&lt;/</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><br/><br/><span class="hl-8">// … or even passing them as DOM properties:</span><br/><span class="hl-9">&lt;</span><span class="hl-10">input</span><span class="hl-0"> </span><span class="hl-12">value</span><span class="hl-0">=</span><span class="hl-4">{</span><span class="hl-2">count</span><span class="hl-4">}</span><span class="hl-0"> </span><span class="hl-9">/&gt;</span>
+</code></pre>
+</details>
+
 
 <a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
   <h2>Usage</h2>
