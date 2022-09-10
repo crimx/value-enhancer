@@ -1,0 +1,40 @@
+{
+  "name": "@wopjs/template",
+  "version": "0.1.0",
+  "description": "Collection of common utilities.",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "prepublish": "pnpm run build",
+    "lint": "eslint --ext .ts,.tsx . && prettier --check .",
+    "build": "tsup src/index.ts --clean --format esm --target esnext --dts"
+  },
+  "keywords": [
+    "template"
+  ],
+  "maintainers": [
+    {
+      "name": "CRIMX",
+      "email": "straybugs@gmail.com"
+    },
+    {
+      "name": "hyrious",
+      "email": "hyrious@outlook.com"
+    }
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.36.1",
+    "@typescript-eslint/parser": "^5.36.1",
+    "eslint": "^8.23.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.7.1",
+    "tsup": "^6.2.3",
+    "typescript": "^4.8.2"
+  }
+}
