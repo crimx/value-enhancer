@@ -42,11 +42,7 @@ export class Subscribers<TValue = any> {
       this._startDisposer_ = this._start_();
     }
 
-    if (!this[mode]) {
-      this[mode] = new Set<ValSubscriber<TValue>>();
-    }
-
-    this[mode]!.add(subscriber);
+    (this[mode] || (this[mode] = new Set())).add(subscriber);
 
     this.size_ += 1;
 
