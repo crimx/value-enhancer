@@ -1,5 +1,3 @@
-import type { ReadonlyValConfig } from "./readonly-val";
-import { ReadonlyValImpl } from "./readonly-val";
 import type { CreateVal } from "./val";
 import { ValImpl } from "./val";
 import type { DeriveValTransform, CreateDerive } from "./derived-val";
@@ -17,17 +15,6 @@ import type {
 } from "./typings";
 
 import { identity } from "./utils";
-
-/**
- * Creates a readonly val with the given value.
- * @param value The value of the readonly val.
- * @param config Custom config.
- * @returns A readonly val with the given value.
- */
-export const readonlyVal = <TValue = any>(
-  value: TValue,
-  config: ReadonlyValConfig<TValue> = {}
-): ReadonlyVal<TValue> => new ReadonlyValImpl(value, config, config.start);
 
 /**
  * Creates a writable val.
