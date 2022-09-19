@@ -1,5 +1,5 @@
 import { describe, it, expect, jest } from "@jest/globals";
-import { val } from "../src/value-enhancer";
+import { val } from "../src";
 
 describe("Val", () => {
   describe("value", () => {

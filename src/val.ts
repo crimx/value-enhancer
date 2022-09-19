@@ -1,7 +1,7 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { Val, ValConfig } from "./typings";
 
-class ValImpl<TValue = any>
+export class ValImpl<TValue = any>
   extends ReadonlyValImpl<TValue>
   implements Val<TValue>
 {
@@ -34,8 +34,3 @@ export interface CreateVal {
    */
   <TValue = any>(value: TValue, config?: ValConfig<TValue>): Val<TValue>;
 }
-
-export const val: CreateVal = <TValue = any>(
-  value?: TValue,
-  config?: ValConfig<TValue>
-): Val<TValue> => new ValImpl(value as TValue, config);

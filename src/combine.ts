@@ -1,21 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
-import type { ReadonlyVal, ValConfig } from "./typings";
-
-const getValue = <TValue>(val: ReadonlyVal<TValue>): TValue => val.value;
-const getValues = <TValInputs extends readonly ReadonlyVal[]>(
-  valInputs: TValInputs
-): [...TValInputsValueTuple<TValInputs>] =>
-  valInputs.map(getValue) as [...TValInputsValueTuple<TValInputs>];
-const dispose = (disposer: () => void) => disposer();
-
-export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
-  Readonly<{
-    [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
-  }>;
-
-export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue>
-  ? TValue
-  : never;
+import type { ReadonlyVal, TValInputsValueTuple, ValConfig } from "./typings";
+import { dispose, getValues } from "./utils";
 
 export type CombineValTransform<
   TDerivedValue = any,
@@ -112,15 +97,3 @@ export interface CreateCombine {
     config?: ValConfig<TValue>
   ): ReadonlyVal<TValue>;
 }
-
-export const combine: CreateCombine = <
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-  TValue = any
->(
-  valInputs: readonly [...TValInputs],
-  transform: CombineValTransform<
-    TValue,
-    [...TValInputsValueTuple<TValInputs>]
-  > = value => value as TValue,
-  config: ValConfig<TValue> = {}
-): ReadonlyVal<TValue> => new CombinedValImpl(valInputs, transform, config);

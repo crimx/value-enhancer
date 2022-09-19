@@ -36,10 +36,6 @@ export type ValCompare<TValue = any> = (
 
 export type ValSubscriber<TValue = any> = (newValue: TValue) => void;
 
-export type ValTransform<TValue = any, TDerivedValue = any> = (
-  newValue: TValue
-) => TDerivedValue;
-
 export type ValDisposer = () => void;
 
 export type ValOnStart = () => void | ValDisposer | undefined;
@@ -51,11 +47,11 @@ export interface ValConfig<TValue = any> {
   compare?: ValCompare<TValue>;
 }
 
-export interface ReadonlyValConfig<TValue = any> extends ValConfig<TValue> {
-  /**
-   * A function that is called when the number of subscribers goes from zero to one (but not from one to two, etc).
-   * That function will be passed a set function which changes the value of the val.
-   * It may optionally return a disposer function that is called when the subscriber count goes from one to zero.
-   */
-  start?: ValOnStart;
-}
+export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
+  Readonly<{
+    [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
+  }>;
+
+export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue>
+  ? TValue
+  : never;

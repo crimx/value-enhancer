@@ -1,13 +1,76 @@
-export type {
+import type { ReadonlyValConfig } from "./readonly-val";
+import { ReadonlyValImpl } from "./readonly-val";
+import type { CreateVal } from "./val";
+import { ValImpl } from "./val";
+import type { DeriveValTransform, CreateDerive } from "./derived-val";
+import { DerivedValImpl } from "./derived-val";
+import type { CombineValTransform, CreateCombine } from "./combine";
+import { CombinedValImpl } from "./combine";
+
+import type {
   ReadonlyVal,
   Val,
-  ValCompare,
-  ValSubscriber,
-  ValTransform,
+  TValInputsValueTuple,
   ValConfig,
 } from "./typings";
 
-export { readonlyVal } from "./readonly-val";
-export { val } from "./val";
-export { derive } from "./derived-val";
-export { combine } from "./combine";
+import { identity } from "./utils";
+
+/**
+ * Creates a readonly val with the given value.
+ * @param value The value of the readonly val.
+ * @param config Custom config.
+ * @returns A readonly val with the given value.
+ */
+export const readonlyVal = <TValue = any>(
+  value: TValue,
+  config: ReadonlyValConfig<TValue> = {}
+): ReadonlyVal<TValue> => new ReadonlyValImpl(value, config, config.start);
+
+/**
+ * Creates a writable val.
+ * @param value Initial value.
+ * @param config Custom config.
+ */
+export const val: CreateVal = <TValue = any>(
+  value?: TValue,
+  config?: ValConfig<TValue>
+): Val<TValue> => new ValImpl(value as TValue, config);
+
+/**
+ * Derive a new val with transformed value from the given val.
+ * @param val Input value.
+ * @param transform A pure function that takes an input value and returns a new value. Default identity.
+ * @param config custom config for the combined val.
+ * @returns An readonly val with transformed value from the input val.
+ */
+export const derive: CreateDerive = <TSrcValue = any, TValue = any>(
+  val: ReadonlyVal<TSrcValue>,
+  transform: DeriveValTransform<
+    TSrcValue,
+    TValue
+  > = identity as DeriveValTransform<TSrcValue, TValue>,
+  config: ValConfig<TValue> = {}
+): ReadonlyVal<TValue> => new DerivedValImpl(val, transform, config);
+
+/**
+ * Combines an array of vals into a single val with transformed value.
+ * @param valInputs An array of vals to combine.
+ * @param transform A pure function that takes an array of values and returns a new value. Default identity.
+ * @param config custom config for the combined val.
+ * @returns A readonly val with the transformed values.
+ */
+export const combine: CreateCombine = <
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+  TValue = any
+>(
+  valInputs: readonly [...TValInputs],
+  transform: CombineValTransform<
+    TValue,
+    [...TValInputsValueTuple<TValInputs>]
+  > = identity as CombineValTransform<
+    TValue,
+    [...TValInputsValueTuple<TValInputs>]
+  >,
+  config: ValConfig<TValue> = {}
+): ReadonlyVal<TValue> => new CombinedValImpl(valInputs, transform, config);

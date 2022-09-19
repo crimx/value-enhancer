@@ -1,5 +1,5 @@
 import { describe, it, expect, jest } from "@jest/globals";
-import { derive, val } from "../src/value-enhancer";
+import { derive, val } from "../src";
 
 describe("derive", () => {
   it("should lazy-calculate value", () => {

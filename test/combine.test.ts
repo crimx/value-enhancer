@@ -1,5 +1,5 @@
 import { describe, it, expect, jest } from "@jest/globals";
-import { combine, val } from "../src/value-enhancer";
+import { combine, val } from "../src";
 
 describe("combine", () => {
   it("should lazy-calculate value", () => {

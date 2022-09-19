@@ -5,8 +5,16 @@ import type {
   ValConfig,
   ValOnStart,
   ReadonlyVal,
-  ReadonlyValConfig,
 } from "./typings";
+
+export interface ReadonlyValConfig<TValue = any> extends ValConfig<TValue> {
+  /**
+   * A function that is called when the number of subscribers goes from zero to one (but not from one to two, etc).
+   * That function will be passed a set function which changes the value of the val.
+   * It may optionally return a disposer function that is called when the subscriber count goes from one to zero.
+   */
+  start?: ValOnStart;
+}
 
 export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   protected _subs_: Subscribers<TValue>;
@@ -80,14 +88,3 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     }
   }
 }
-
-/**
- * Creates a readonly val with the given value.
- * @param value The value of the readonly val.
- * @param config Custom config.
- * @returns A readonly val with the given value.
- */
-export const readonlyVal = <TValue = any>(
-  value: TValue,
-  config: ReadonlyValConfig<TValue> = {}
-): ReadonlyVal<TValue> => new ReadonlyValImpl(value, config, config.start);
