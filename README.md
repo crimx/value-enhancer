@@ -49,6 +49,8 @@ MobX also prints error when it sees another version of MobX in the global. It is
 
 In my opinion, the vision of MobX has to be implemented as language-level features, otherwise it will create all kinds of compatibility issues. Svelte, SolidJS and even Vue are heading towards the compiler direction now, looking forward to the next generation of MobX.
 
+In `value-enhancer` reactive Vals and plain JavaScript values are easy to distinguish since they have different types. The values of reactive Vals are still plain JavaScript values so it works fine with other libraries. It is small and does not have global variable issues.
+
 </details>
 
 <details>
@@ -67,9 +69,9 @@ It is a good choice if you are choosing the Vue ecosystem. The implementation of
 <details>
 <summary>Why not RxJS?</summary>
 
-I love RxJS and the reactive paradigm behind it. But the goal of RxJS is to compose asynchronous or callback-based code.
+I love RxJS and the reactive paradigm behind it. But the goal of RxJS is to compose asynchronous or callback-based code. It is not optimized for state management.
 
-It requires you to write code in a pipe-able way which may not be acceptable for everyone.
+It also requires you to write code in a pipe-able way which may not be acceptable for everyone.
 
 </details>
 
@@ -106,7 +108,7 @@ console.log(combined$.value); // 3
 
 Since the type of reactive objects are different from its values, it is hard to have mismatched dependencies inside the `transform` function.
 
-`value-enhancer` can be used in React with [`use-value-enhancer`](https://www.npmjs.com/package/use-value-enhancer) hook.
+`value-enhancer` can be used in React with a super-simple hook [`use-value-enhancer`](https://www.npmjs.com/package/use-value-enhancer).
 
 </details>
 
@@ -141,7 +143,7 @@ It also suffers from implicit magic issues like MobX and Vue where you ended up 
 
 Preact recently released [Signals](https://preactjs.com/blog/introducing-signals/) which shares similar ideas with `value-enhancer`. It is like signals of SolidJS but without the odd function-like value accessing. It flushes reactions top-down then bottom-up like Vue and `value-enhancer`.
 
-The Preact team also took a step further to support writing Signals directly within TSX. This is the best design among the frameworks so far.
+The Preact team also took a step further to support writing Signals directly within TSX. This offers Svelte-like neat coding experience.
 
 ```tsx
 const count = signal(0);
@@ -155,6 +157,33 @@ const count = signal(0);
 // … or even passing them as DOM properties:
 <input value={count} />
 ```
+
+But it also uses Vue-like magic to collect effects.
+
+```tsx
+const counter = signal(0);
+
+effect(() => {
+  console.log(counter.value);
+});
+```
+
+It might seem clean at first but it's not a self-consistent solution either. You'll probably meet weird issues and find workarounds like [`signal.peek()`](https://github.com/preactjs/signals#signalpeek) which is error-prone.
+
+```tsx
+const counter = signal(0);
+const effectCount = signal(0);
+
+effect(() => {
+  console.log(counter.value);
+
+  // Whenever this effect is triggered, increase `effectCount`.
+  // But we don't want this signal to react to `effectCount`
+  effectCount.value = effectCount.peek() + 1;
+});
+```
+
+This issue does not exist in `value-enhancer` because we do not collect dependencies implicitly.
 
 </details>
 
@@ -172,11 +201,11 @@ console.log(count$.value); // 3
 
 count$.subscribe(count => console.log(`subscribe: ${count}`)); // subscribe: 3
 
-count$.reaction(count => console.log(`reaction: ${count}`)); // (nothing printed)
+count$.reaction(count => console.log(`reaction: ${count}`)); // (nothing printed, only subscribe to changes)
 
 count$.set(3); // nothing happened
 
-count$.value = 4; // subscribe: 4, reaction: 4
+count$.value = 4; // prints subscribe: 4, reaction: 4
 
 const derive$ = derive(count$, count => count * 3);
 console.log(derived$.value); // 12
