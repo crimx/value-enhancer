@@ -12,6 +12,8 @@ import type {
   Val,
   TValInputsValueTuple,
   ValConfig,
+  ValSubscriber,
+  ValDisposer,
 } from "./typings";
 
 import { identity } from "./utils";
@@ -74,3 +76,15 @@ export const combine: CreateCombine = <
   >,
   config: ValConfig<TValue> = {}
 ): ReadonlyVal<TValue> => new CombinedValImpl(valInputs, transform, config);
+
+export const subscribe = <TValue>(
+  val: ReadonlyVal<TValue>,
+  subscriber: ValSubscriber<TValue>,
+  eager?: boolean
+): ValDisposer => val.subscribe(subscriber, eager);
+
+export const reaction = <TValue>(
+  val: ReadonlyVal<TValue>,
+  subscriber: ValSubscriber<TValue>,
+  eager?: boolean
+): ValDisposer => val.reaction(subscriber, eager);
