@@ -10,18 +10,15 @@ class ValImpl<TValue = any>
   }
 
   public override get value(): TValue {
-    return this._value;
+    return this._value_;
   }
 
   public override set value(value: TValue) {
-    this._set(value);
+    this._set_(value);
   }
 
   /** Set new value */
-  public set: (value: TValue) => void = this._set;
-
-  /** @alias set */
-  public setValue: (value: TValue) => void = this._set;
+  public set: (value: TValue) => void = this._set_;
 }
 
 /**

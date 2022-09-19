@@ -4,23 +4,23 @@ export type Task<TValue = any> = (value: TValue) => void;
 
 const nextTick = /*#__PURE__*/ Promise.resolve();
 const subsSet = new Set<Subscribers>();
-let pending: Promise<void> | null = null;
+let pending = false;
 
-export function schedule<TValue>(subs: Subscribers<TValue>): void {
+export async function schedule<TValue>(
+  subs: Subscribers<TValue>
+): Promise<void> {
   subsSet.add(subs);
   if (!pending) {
-    pending = nextTick.then(flush);
+    pending = true;
+    await nextTick;
+    for (const subs of subsSet) {
+      subs.exec_("s0");
+    }
+    subsSet.clear();
+    pending = false;
   }
 }
 
 export function cancelTask(subs: Subscribers): void {
   subsSet.delete(subs);
-}
-
-async function flush() {
-  for (const subs of subsSet) {
-    subs.exec("sub0");
-  }
-  pending = null;
-  subsSet.clear();
 }

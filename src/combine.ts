@@ -1,6 +1,13 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig } from "./typings";
 
+const getValue = <TValue>(val: ReadonlyVal<TValue>): TValue => val.value;
+const getValues = <TValInputs extends readonly ReadonlyVal[]>(
+  valInputs: TValInputs
+): [...TValInputsValueTuple<TValInputs>] =>
+  valInputs.map(getValue) as [...TValInputsValueTuple<TValInputs>];
+const dispose = (disposer: () => void) => disposer();
+
 export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
   Readonly<{
     [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
@@ -34,66 +41,50 @@ export class CombinedValImpl<
     const sOldValues = getValues(valInputs);
     super(transform(sOldValues), config, () => {
       const disposers = valInputs.map(val =>
-        (val as ReadonlyValImpl)._compute(() => {
-          if (!this._dirty) {
-            this._dirty = true;
-            this._subs.invoke();
+        (val as ReadonlyValImpl)._compute_(() => {
+          if (!this._dirty_) {
+            this._dirty_ = true;
+            this._subs_.invoke_();
           }
         })
       );
       return () => disposers.forEach(dispose);
     });
 
-    this._sVals = valInputs;
-    this._sOldValues = sOldValues;
-    this._transform = transform;
+    this._sVals_ = valInputs;
+    this._sOldValues_ = sOldValues;
+    this._transform_ = transform;
   }
 
   public override get value(): TValue {
-    if (this._dirty || this._subs.size <= 0) {
-      this._dirty = false;
-      const sNewValues = this._newValues();
-      if (sNewValues !== this._sOldValues) {
-        this._sOldValues = sNewValues;
-        const value = this._transform(sNewValues);
-        if (!this._compare(value, this._value)) {
-          this._value = value;
+    if (this._dirty_ || this._subs_.size_ <= 0) {
+      this._dirty_ = false;
+      const sNewValues = this._newValues_();
+      if (sNewValues) {
+        const value = this._transform_(sNewValues);
+        if (!this._compare_(value, this._value_)) {
+          this._value_ = value;
         }
       }
     }
-    return this._value;
+    return this._value_;
   }
 
-  private _sVals: TValInputs;
-  private _sOldValues: [...TValInputsValueTuple<TValInputs>];
-  private _transform: CombineValTransform<
+  private _sVals_: TValInputs;
+  private _sOldValues_: [...TValInputsValueTuple<TValInputs>];
+  private _transform_: CombineValTransform<
     TValue,
     [...TValInputsValueTuple<TValInputs>]
   >;
-  private _dirty = false;
+  private _dirty_ = false;
 
-  private _newValues(): [...TValInputsValueTuple<TValInputs>] {
-    for (let i = 0; i < this._sVals.length; i++) {
-      if (this._sVals[i].value !== this._sOldValues[i]) {
-        return getValues(this._sVals);
+  private _newValues_(): [...TValInputsValueTuple<TValInputs>] | undefined {
+    for (let i = 0; i < this._sVals_.length; i++) {
+      if (this._sVals_[i].value !== this._sOldValues_[i]) {
+        return (this._sOldValues_ = getValues(this._sVals_));
       }
     }
-    return this._sOldValues;
   }
-}
-
-function getValues<TValInputs extends readonly ReadonlyVal[]>(
-  valInputs: TValInputs
-): [...TValInputsValueTuple<TValInputs>] {
-  return valInputs.map(getValue) as [...TValInputsValueTuple<TValInputs>];
-}
-
-function getValue<TValue>(val: ReadonlyVal<TValue>): TValue {
-  return val.value;
-}
-
-function dispose(disposer: () => void) {
-  disposer();
 }
 
 /**

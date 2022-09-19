@@ -9,18 +9,18 @@ import type {
 } from "./typings";
 
 export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
-  protected _subs: Subscribers<TValue>;
+  protected _subs_: Subscribers<TValue>;
 
-  protected _value: TValue;
+  protected _value_: TValue;
 
-  protected _compare(newValue: TValue, oldValue: TValue): boolean {
+  protected _compare_(newValue: TValue, oldValue: TValue): boolean {
     return newValue === oldValue;
   }
 
-  protected _set = (value: TValue): void => {
-    if (!this._compare(value, this._value)) {
-      this._value = value;
-      this._subs.invoke();
+  protected _set_ = (value: TValue): void => {
+    if (!this._compare_(value, this._value_)) {
+      this._value_ = value;
+      this._subs_.invoke_();
     }
   };
 
@@ -29,29 +29,29 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     { compare }: ValConfig<TValue> = {},
     start?: ValOnStart<TValue>
   ) {
-    this._value = value;
+    this._value_ = value;
 
     if (compare) {
-      this._compare = compare;
+      this._compare_ = compare;
     }
 
-    this._subs = new Subscribers<TValue>(
+    this._subs_ = new Subscribers<TValue>(
       this,
       value,
-      start ? () => start(this._set) : null
+      start ? () => start(this._set_) : null
     );
   }
 
   public get value(): TValue {
-    return this._value;
+    return this._value_;
   }
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
     eager = false
   ): ValDisposer {
-    this._subs.add(subscriber, eager ? "sub1" : "sub0");
-    return (): void => this._subs.remove(subscriber);
+    this._subs_.add_(subscriber, eager ? "s1" : "s0");
+    return (): void => this._subs_.remove_(subscriber);
   }
 
   public subscribe(
@@ -71,18 +71,18 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * @internal
    * For computed vals
    */
-  public _compute(subscriber: ValSubscriber<TValue>): ValDisposer {
-    this._subs.add(subscriber, "sub2");
-    return (): void => this._subs.remove(subscriber);
+  public _compute_(subscriber: ValSubscriber<TValue>): ValDisposer {
+    this._subs_.add_(subscriber, "s2");
+    return (): void => this._subs_.remove_(subscriber);
   }
 
   public unsubscribe(): void;
   public unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void;
   public unsubscribe<T extends (...args: any[]) => any>(subscriber?: T): void {
     if (subscriber) {
-      this._subs.remove(subscriber);
+      this._subs_.remove_(subscriber);
     } else {
-      this._subs.clear();
+      this._subs_.clear_();
     }
   }
 }

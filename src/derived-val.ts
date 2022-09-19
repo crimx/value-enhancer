@@ -11,39 +11,39 @@ export class DerivedValImpl<TSrcValue = any, TValue = any>
     config: ValConfig<TValue>
   ) {
     super(transform(val.value), config, () =>
-      (val as ReadonlyValImpl)._compute(() => {
-        if (!this._dirty) {
-          this._dirty = true;
-          this._subs.invoke();
+      (val as ReadonlyValImpl)._compute_(() => {
+        if (!this._dirty_) {
+          this._dirty_ = true;
+          this._subs_.invoke_();
         }
       })
     );
 
-    this._sVal = val;
-    this._sOldValue = val.value;
-    this._transform = transform;
+    this._sVal_ = val;
+    this._sOldValue_ = val.value;
+    this._transform_ = transform;
   }
 
   public override get value(): TValue {
-    if (this._dirty || this._subs.size <= 0) {
-      this._dirty = false;
-      const newValue = this._sVal.value;
-      if (this._sOldValue !== newValue) {
-        this._sOldValue = newValue;
-        const value = this._transform(newValue);
-        if (!this._compare(value, this._value)) {
-          this._value = value;
+    if (this._dirty_ || this._subs_.size_ <= 0) {
+      this._dirty_ = false;
+      const newValue = this._sVal_.value;
+      if (this._sOldValue_ !== newValue) {
+        this._sOldValue_ = newValue;
+        const value = this._transform_(newValue);
+        if (!this._compare_(value, this._value_)) {
+          this._value_ = value;
         }
       }
     }
-    return this._value;
+    return this._value_;
   }
 
-  private _sVal: ReadonlyVal<TSrcValue>;
-  private _sOldValue: TSrcValue;
-  private _transform: ValTransform<TSrcValue, TValue>;
+  private _sVal_: ReadonlyVal<TSrcValue>;
+  private _sOldValue_: TSrcValue;
+  private _transform_: ValTransform<TSrcValue, TValue>;
 
-  private _dirty = false;
+  private _dirty_ = false;
 }
 
 /**

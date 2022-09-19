@@ -16,5 +16,9 @@ export default defineConfig(({ mode }) => {
       sourcemap: isProd,
       minify: false,
     },
+    esbuild: {
+      mangleProps: /[^_]_$/,
+      mangleCache: require("./mangle-cache.json"),
+    },
   };
 });
