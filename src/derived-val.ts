@@ -46,31 +46,32 @@ export class DerivedValImpl<TSrcValue = any, TValue = any>
   private _dirty_ = false;
 }
 
-/**
- * Derive a new val with same value from the given val.
- * @param val Input value.
- * @returns An readonly val with same value as the input val.
- */
-export function derive<TSrcValue = any, TValue = any>(
-  val: ReadonlyVal<TSrcValue>
-): ReadonlyVal<TValue>;
-/**
- * Derive a new val with transformed value from the given val.
- * @param val Input value.
- * @param transform A pure function that takes an input value and returns a new value.
- * @param config custom config for the combined val.
- * @returns An readonly val with transformed value from the input val.
- */
-export function derive<TSrcValue = any, TValue = any>(
-  val: ReadonlyVal<TSrcValue>,
-  transform: ValTransform<TSrcValue, TValue>,
-  config?: ValConfig<TValue>
-): ReadonlyVal<TValue>;
-export function derive<TSrcValue = any, TValue = any>(
+export interface CreateDerive {
+  /**
+   * Derive a new val with same value from the given val.
+   * @param val Input value.
+   * @returns An readonly val with same value as the input val.
+   */
+  <TSrcValue = any, TValue = any>(
+    val: ReadonlyVal<TSrcValue>
+  ): ReadonlyVal<TValue>;
+  /**
+   * Derive a new val with transformed value from the given val.
+   * @param val Input value.
+   * @param transform A pure function that takes an input value and returns a new value.
+   * @param config custom config for the combined val.
+   * @returns An readonly val with transformed value from the input val.
+   */
+  <TSrcValue = any, TValue = any>(
+    val: ReadonlyVal<TSrcValue>,
+    transform: ValTransform<TSrcValue, TValue>,
+    config?: ValConfig<TValue>
+  ): ReadonlyVal<TValue>;
+}
+
+export const derive: CreateDerive = <TSrcValue = any, TValue = any>(
   val: ReadonlyVal<TSrcValue>,
   transform: ValTransform<TSrcValue, TValue> = value =>
     value as unknown as TValue,
   config: ValConfig<TValue> = {}
-): ReadonlyVal<TValue> {
-  return new DerivedValImpl(val, transform, config);
-}
+): ReadonlyVal<TValue> => new DerivedValImpl(val, transform, config);

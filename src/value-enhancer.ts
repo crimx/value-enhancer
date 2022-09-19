@@ -6,6 +6,7 @@ export type {
   ValTransform,
   ValConfig,
 } from "./typings";
+
 export { readonlyVal } from "./readonly-val";
 export { val } from "./val";
 export { derive } from "./derived-val";

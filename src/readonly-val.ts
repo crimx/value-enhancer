@@ -87,9 +87,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
  * @param config Custom config.
  * @returns A readonly val with the given value.
  */
-export function readonlyVal<TValue = any>(
+export const readonlyVal = <TValue = any>(
   value: TValue,
   config: ReadonlyValConfig<TValue> = {}
-): ReadonlyVal<TValue> {
-  return new ReadonlyValImpl(value, config, config.start);
-}
+): ReadonlyVal<TValue> => new ReadonlyValImpl(value, config, config.start);

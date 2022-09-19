@@ -21,23 +21,21 @@ class ValImpl<TValue = any>
   public set: (value: TValue) => void = this._set_;
 }
 
-/**
- * Creates a writable val.
- * @returns A val with undefined value.
- */
-export function val(): Val<undefined>;
-/**
- * Creates a writable val.
- * @param value Initial value.
- * @param config Custom config.
- */
-export function val<TValue = any>(
-  value: TValue,
-  config?: ValConfig<TValue>
-): Val<TValue>;
-export function val<TValue = any>(
+export interface CreateVal {
+  /**
+   * Creates a writable val.
+   * @returns A val with undefined value.
+   */
+  (): Val<undefined>;
+  /**
+   * Creates a writable val.
+   * @param value Initial value.
+   * @param config Custom config.
+   */
+  <TValue = any>(value: TValue, config?: ValConfig<TValue>): Val<TValue>;
+}
+
+export const val: CreateVal = <TValue = any>(
   value?: TValue,
   config?: ValConfig<TValue>
-): Val<TValue> {
-  return new ValImpl(value as TValue, config);
-}
+): Val<TValue> => new ValImpl(value as TValue, config);
