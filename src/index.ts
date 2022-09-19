@@ -3,6 +3,7 @@ export type {
   Val,
   ValCompare,
   ValSubscriber,
+  ValDisposer,
   ValConfig,
 } from "./typings";
 
