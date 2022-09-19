@@ -18,7 +18,7 @@
     "prepublish": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
     "test": "jest --coverage",
-    "docs": "typedoc --includeVersion --excludePrivate --out docs src/index.ts",
+    "docs": "typedoc --cname value-enhancer.js.org --includeVersion --excludePrivate --out docs src/index.ts",
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
     "build": "vite build && npm run types",
     "build:dev": "vite build --mode development && npm run types",
@@ -35,7 +35,7 @@
     "prettier": "^2.4.0",
     "standard-version": "^9.3.1",
     "ts-jest": "^28.0.8",
-    "typedoc": "^0.22.3",
+    "typedoc": "^0.23.15",
     "typescript": "^4.4.3",
     "vite": "^3.0.9"
   }
