@@ -4,15 +4,14 @@ export type Task<TValue = any> = (value: TValue) => void;
 
 const nextTick = /*#__PURE__*/ Promise.resolve();
 const subsSet = new Set<Subscribers>();
-let pending = false;
+let pending: Promise<void> | false | undefined;
 
 export async function schedule<TValue>(
   subs: Subscribers<TValue>
 ): Promise<void> {
   subsSet.add(subs);
   if (!pending) {
-    pending = true;
-    await nextTick;
+    await (pending = nextTick);
     for (const subs of subsSet) {
       subs.exec_("s0");
     }

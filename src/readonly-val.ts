@@ -46,8 +46,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     subscriber: ValSubscriber<TValue>,
     eager = false
   ): ValDisposer {
-    this._subs_.add_(subscriber, eager ? "s1" : "s0");
-    return (): void => this._subs_.remove_(subscriber);
+    return this._subs_.add_(subscriber, eager ? "s1" : "s0");
   }
 
   public subscribe(
@@ -68,8 +67,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * For computed vals
    */
   public _compute_(subscriber: ValSubscriber<TValue>): ValDisposer {
-    this._subs_.add_(subscriber, "s2");
-    return (): void => this._subs_.remove_(subscriber);
+    return this._subs_.add_(subscriber, "s2");
   }
 
   public unsubscribe(): void;

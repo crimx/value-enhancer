@@ -5,7 +5,7 @@ const sSize = (s: Set<ValSubscriber> | undefined): number => (s ? s.size : 0);
 const sDelete = (
   s: Set<ValSubscriber> | undefined,
   sub: ValSubscriber
-): unknown => s && s.delete(sub);
+): 0 | 1 => (s && s.delete(sub) ? 1 : 0);
 const sClear = (s: Set<ValSubscriber> | undefined): unknown => s && s.clear();
 
 export type SubscriberMode =
@@ -30,18 +30,14 @@ export class Subscribers<TValue = any> {
   }
 
   public invoke_(): void {
-    if (sSize(this.s2)) {
-      this.exec_("s2");
-    }
-    if (sSize(this.s1)) {
-      this.exec_("s1");
-    }
+    this.exec_("s2");
+    this.exec_("s1");
     if (sSize(this.s0)) {
       schedule(this);
     }
   }
 
-  public add_(subscribe: ValSubscriber, mode: SubscriberMode): void {
+  public add_(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
     if (this._start_ && this.size_ <= 0) {
       this._startDisposer_ = this._start_();
     }
@@ -50,16 +46,18 @@ export class Subscribers<TValue = any> {
       this[mode] = new Set<ValSubscriber<TValue>>();
     }
 
-    this[mode]!.add(subscribe);
+    this[mode]!.add(subscriber);
 
     this.size_ += 1;
+
+    return (): void => this.remove_(subscriber);
   }
 
   public remove_(subscriber: ValSubscriber): void {
-    sDelete(this.s0, subscriber);
-    sDelete(this.s1, subscriber);
-    sDelete(this.s2, subscriber);
-    this.size_ = sSize(this.s0) + sSize(this.s1) + sSize(this.s2);
+    this.size_ -=
+      sDelete(this.s0, subscriber) +
+      sDelete(this.s1, subscriber) +
+      sDelete(this.s2, subscriber);
     if (this.size_ <= 0) {
       this._stop_();
     }
@@ -75,7 +73,7 @@ export class Subscribers<TValue = any> {
   }
 
   public exec_(mode: SubscriberMode): void {
-    if (this[mode]) {
+    if (sSize(this[mode])) {
       const value = this._val_.value;
       if (mode === "s0") {
         if (this._oldValue_ === value) {

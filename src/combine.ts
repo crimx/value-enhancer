@@ -51,15 +51,15 @@ export class CombinedValImpl<
       return () => disposers.forEach(dispose);
     });
 
-    this._sVals_ = valInputs;
-    this._sOldValues_ = sOldValues;
+    this._sVal_ = valInputs;
+    this._sOldValue_ = sOldValues;
     this._transform_ = transform;
   }
 
   public override get value(): TValue {
     if (this._dirty_ || this._subs_.size_ <= 0) {
       this._dirty_ = false;
-      const sNewValues = this._newValues_();
+      const sNewValues = this._newValue_();
       if (sNewValues) {
         const value = this._transform_(sNewValues);
         if (!this._compare_(value, this._value_)) {
@@ -70,18 +70,18 @@ export class CombinedValImpl<
     return this._value_;
   }
 
-  private _sVals_: TValInputs;
-  private _sOldValues_: [...TValInputsValueTuple<TValInputs>];
+  private _sVal_: TValInputs;
+  private _sOldValue_: [...TValInputsValueTuple<TValInputs>];
   private _transform_: CombineValTransform<
     TValue,
     [...TValInputsValueTuple<TValInputs>]
   >;
   private _dirty_ = false;
 
-  private _newValues_(): [...TValInputsValueTuple<TValInputs>] | undefined {
-    for (let i = 0; i < this._sVals_.length; i++) {
-      if (this._sVals_[i].value !== this._sOldValues_[i]) {
-        return (this._sOldValues_ = getValues(this._sVals_));
+  private _newValue_(): [...TValInputsValueTuple<TValInputs>] | undefined {
+    for (let i = 0; i < this._sVal_.length; i++) {
+      if (this._sVal_[i].value !== this._sOldValue_[i]) {
+        return (this._sOldValue_ = getValues(this._sVal_));
       }
     }
   }
