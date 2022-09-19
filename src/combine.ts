@@ -21,7 +21,7 @@ export class CombinedValImpl<
       TValue,
       [...TValInputsValueTuple<TValInputs>]
     >,
-    config: ValConfig<TValue>
+    config?: ValConfig<TValue>
   ) {
     const sOldValues = getValues(valInputs);
     super(transform(sOldValues), config, () => {

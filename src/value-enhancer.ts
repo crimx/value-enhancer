@@ -39,7 +39,7 @@ export const derive: CreateDerive = <TSrcValue = any, TValue = any>(
     TSrcValue,
     TValue
   > = identity as DeriveValTransform<TSrcValue, TValue>,
-  config: ValConfig<TValue> = {}
+  config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> => new DerivedValImpl(val, transform, config);
 
 /**
@@ -61,7 +61,7 @@ export const combine: CreateCombine = <
     TValue,
     [...TValInputsValueTuple<TValInputs>]
   >,
-  config: ValConfig<TValue> = {}
+  config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> => new CombinedValImpl(valInputs, transform, config);
 
 export const subscribe = <TValue>(

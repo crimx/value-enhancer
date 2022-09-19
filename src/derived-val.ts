@@ -12,7 +12,7 @@ export class DerivedValImpl<TSrcValue = any, TValue = any>
   public constructor(
     val: ReadonlyVal<TSrcValue>,
     transform: DeriveValTransform<TSrcValue, TValue>,
-    config: ValConfig<TValue>
+    config?: ValConfig<TValue>
   ) {
     super(transform(val.value), config, () =>
       (val as ReadonlyValImpl)._compute_(() => {
