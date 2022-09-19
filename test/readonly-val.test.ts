@@ -1,8 +1,7 @@
 import { describe, it, expect, jest } from "@jest/globals";
 import type { ValSetValue } from "../src/typings";
+import type { ReadonlyVal } from "../src/value-enhancer";
 import { readonlyVal } from "../src/value-enhancer";
-
-const noop = () => void 0;
 
 describe("ReadonlyVal", () => {
   describe("value", () => {
@@ -80,14 +79,13 @@ describe("ReadonlyVal", () => {
     });
 
     it("should not trigger extra emissions on sync set", () => {
-      const val = readonlyVal(1, {
-        start: set => {
-          set(1);
-          set(2);
-          set(3);
-          set(4);
-        },
-      });
+      const val = readonlyVal(1);
+
+      const set = getInternalSetter(val);
+      set(1);
+      set(2);
+      set(3);
+      set(4);
 
       const sub1 = jest.fn();
       const dispose1 = val.subscribe(sub1);
@@ -124,16 +122,14 @@ describe("ReadonlyVal", () => {
     });
 
     it("should not trigger extra emission on async set", async () => {
-      const val = readonlyVal(1, {
-        start: set => {
-          setTimeout(() => {
-            set(1);
-            set(2);
-            set(3);
-            set(4);
-          }, 0);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
+      setTimeout(() => {
+        set(1);
+        set(2);
+        set(3);
+        set(4);
+      }, 0);
 
       const sub1 = jest.fn();
       const dispose1 = val.subscribe(sub1);
@@ -181,14 +177,9 @@ describe("ReadonlyVal", () => {
     });
 
     it("should trigger async emission on set", async () => {
-      let set = noop as ValSetValue<number>;
       const spy = jest.fn();
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
@@ -210,14 +201,9 @@ describe("ReadonlyVal", () => {
     });
 
     it("should trigger sync emission on set", () => {
-      let set = noop as ValSetValue<number>;
       const spy = jest.fn();
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
@@ -235,17 +221,12 @@ describe("ReadonlyVal", () => {
     });
 
     it("should not trigger emission on set with same value", async () => {
-      let set = noop as ValSetValue<{ value: number }>;
       const spy = jest.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
 
-      const val = readonlyVal(value1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(value1);
+      const set = getInternalSetter(val);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -269,7 +250,6 @@ describe("ReadonlyVal", () => {
     });
 
     it("should perform custom compare", async () => {
-      let set = noop as ValSetValue<{ value: number }>;
       const spy = jest.fn();
       const value1 = { value: 1 };
       const valueClone = { value: 1 };
@@ -278,11 +258,8 @@ describe("ReadonlyVal", () => {
 
       const val = readonlyVal(value1, {
         compare,
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
       });
+      const set = getInternalSetter(val);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -307,16 +284,11 @@ describe("ReadonlyVal", () => {
     });
 
     it("should support multiple subscribers", async () => {
-      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => jest.fn());
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
 
       spies.forEach(spy => {
         val.subscribe(spy);
@@ -344,15 +316,10 @@ describe("ReadonlyVal", () => {
     });
 
     it("should remove subscriber if disposed", async () => {
-      let set = noop as ValSetValue<number>;
       const spy1 = jest.fn();
       const spy2 = jest.fn();
-      const val = readonlyVal<number>(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal<number>(1);
+      const set = getInternalSetter(val);
 
       const spy1Disposer = val.subscribe(spy1);
       val.subscribe(spy2);
@@ -375,16 +342,11 @@ describe("ReadonlyVal", () => {
     });
 
     it("should remove all subscribers on unsubscribe", async () => {
-      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => jest.fn());
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
 
       spies.forEach(spy => {
         val.subscribe(spy);
@@ -408,14 +370,9 @@ describe("ReadonlyVal", () => {
 
   describe("reaction", () => {
     it("should not trigger immediate emission on reaction", async () => {
-      let set = noop as ValSetValue<number>;
       const spy = jest.fn();
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
@@ -436,14 +393,9 @@ describe("ReadonlyVal", () => {
     });
 
     it("should trigger sync emission on set", async () => {
-      let set = noop as ValSetValue<number>;
       const spy = jest.fn();
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
@@ -460,14 +412,9 @@ describe("ReadonlyVal", () => {
     });
 
     it("should trigger emission on set", async () => {
-      let set = noop as ValSetValue<number>;
       const spy = jest.fn();
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
       expect(val.value).toBe(1);
       expect(spy).toBeCalledTimes(0);
 
@@ -486,17 +433,12 @@ describe("ReadonlyVal", () => {
     });
 
     it("should not trigger emission on set with same value", async () => {
-      let set = noop as ValSetValue<{ value: number }>;
       const spy = jest.fn();
       const value1 = { value: 1 };
       const value2 = { value: 2 };
 
-      const val = readonlyVal(value1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(value1);
+      const set = getInternalSetter(val);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -519,7 +461,6 @@ describe("ReadonlyVal", () => {
     });
 
     it("should perform custom compare", () => {
-      let set = noop as ValSetValue<{ value: number }>;
       const spy = jest.fn();
       const value1 = { value: 1 };
       const value1Clone = { value: 1 };
@@ -528,11 +469,8 @@ describe("ReadonlyVal", () => {
 
       const val = readonlyVal(value1, {
         compare,
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
       });
+      const set = getInternalSetter(val);
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -552,16 +490,11 @@ describe("ReadonlyVal", () => {
     });
 
     it("should support multiple subscribers", async () => {
-      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => jest.fn());
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
 
       spies.forEach(spy => {
         val.reaction(spy);
@@ -588,15 +521,10 @@ describe("ReadonlyVal", () => {
     });
 
     it("should remove subscriber if disposed", async () => {
-      let set = noop as ValSetValue<number>;
       const spy1 = jest.fn();
       const spy2 = jest.fn();
-      const val = readonlyVal<number>(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal<number>(1);
+      const set = getInternalSetter(val);
 
       const spy1Disposer = val.reaction(spy1);
       val.reaction(spy2);
@@ -617,16 +545,11 @@ describe("ReadonlyVal", () => {
     });
 
     it("should remove all subscribers on unsubscribe", async () => {
-      let set = noop as ValSetValue<number>;
       const spies = Array(20)
         .fill(0)
         .map(() => jest.fn());
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
 
       spies.forEach(spy => {
         val.reaction(spy);
@@ -652,15 +575,10 @@ describe("ReadonlyVal", () => {
 
   describe("unsubscribe", () => {
     it("should unsubscribe a subscribe callback", async () => {
-      let set = noop as ValSetValue<number>;
       const spy1 = jest.fn();
       const spy2 = jest.fn();
-      const val = readonlyVal<number>(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal<number>(1);
+      const set = getInternalSetter(val);
 
       val.subscribe(function sub1(...args) {
         val.unsubscribe(sub1);
@@ -686,15 +604,10 @@ describe("ReadonlyVal", () => {
     });
 
     it("should unsubscribe a reaction callback", async () => {
-      let set = noop as ValSetValue<number>;
       const spy1 = jest.fn();
       const spy2 = jest.fn();
-      const val = readonlyVal<number>(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal<number>(1);
+      const set = getInternalSetter(val);
 
       val.reaction(function sub1(...args) {
         val.unsubscribe(sub1);
@@ -725,13 +638,8 @@ describe("ReadonlyVal", () => {
     });
 
     it("should log subscriber error", async () => {
-      let set = noop as ValSetValue<number>;
-      const val = readonlyVal(1, {
-        start: _setValue => {
-          set = _setValue;
-          return () => (set = noop);
-        },
-      });
+      const val = readonlyVal(1);
+      const set = getInternalSetter(val);
 
       const consoleErrorMock = jest
         .spyOn(console, "error")
@@ -762,3 +670,9 @@ describe("ReadonlyVal", () => {
     });
   });
 });
+
+function getInternalSetter<TValue>(
+  val: ReadonlyVal<TValue>
+): ValSetValue<TValue> {
+  return ((val as any)._set_ || (val as any)._s).bind(val);
+}

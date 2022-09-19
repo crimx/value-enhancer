@@ -17,17 +17,17 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     return newValue === oldValue;
   }
 
-  protected _set_ = (value: TValue): void => {
+  protected _set_(value: TValue): void {
     if (!this._compare_(value, this._value_)) {
       this._value_ = value;
       this._subs_.invoke_();
     }
-  };
+  }
 
   public constructor(
     value: TValue,
     { compare }: ValConfig<TValue> = {},
-    start?: ValOnStart<TValue>
+    start?: ValOnStart
   ) {
     this._value_ = value;
 
@@ -35,11 +35,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
       this._compare_ = compare;
     }
 
-    this._subs_ = new Subscribers<TValue>(
-      this,
-      value,
-      start ? () => start(this._set_) : null
-    );
+    this._subs_ = new Subscribers<TValue>(this, value, start);
   }
 
   public get value(): TValue {

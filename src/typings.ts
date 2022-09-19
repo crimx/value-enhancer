@@ -42,9 +42,7 @@ export type ValTransform<TValue = any, TDerivedValue = any> = (
 
 export type ValDisposer = () => void;
 
-export type ValOnStart<TValue = any> = (
-  set: ValSetValue<TValue>
-) => void | ValDisposer | undefined;
+export type ValOnStart = () => void | ValDisposer | undefined;
 
 export interface ValConfig<TValue = any> {
   /**
@@ -59,5 +57,5 @@ export interface ReadonlyValConfig<TValue = any> extends ValConfig<TValue> {
    * That function will be passed a set function which changes the value of the val.
    * It may optionally return a disposer function that is called when the subscriber count goes from one to zero.
    */
-  start?: ValOnStart<TValue>;
+  start?: ValOnStart;
 }
