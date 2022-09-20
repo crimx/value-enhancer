@@ -43,14 +43,14 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
-    eager = false
+    eager?: boolean
   ): ValDisposer {
     return this._subs_.add_(subscriber, eager ? "s1" : "s0");
   }
 
   public subscribe(
     subscriber: ValSubscriber<TValue>,
-    eager = false
+    eager?: boolean
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     try {

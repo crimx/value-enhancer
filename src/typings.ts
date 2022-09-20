@@ -4,14 +4,14 @@ export interface ReadonlyVal<TValue = any> {
   /**
    * Subscribe to value changes without immediate emission.
    * @param subscriber
-   * @param eager notify subscribers of value changes synchronously. otherwise subscribers will be notified next tick.
+   * @param eager by default subscribers will be notified on next tick. set `true` to notify subscribers of value changes synchronously.
    * @returns a disposer function that cancels the subscription
    */
   reaction(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
   /**
    * Subscribe to value changes with immediate emission.
    * @param subscriber
-   * @param eager notify subscribers of value changes synchronously. otherwise subscribers will be notified next tick.
+   * @param eager by default subscribers will be notified on next tick. set `true` to notify subscribers of value changes synchronously.
    * @returns a disposer function that cancels the subscription
    */
   subscribe(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
