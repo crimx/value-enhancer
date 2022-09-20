@@ -7,4 +7,11 @@ export type {
   ValConfig,
 } from "./typings";
 
-export { val, derive, combine, subscribe, reaction } from "./value-enhancer";
+export {
+  val,
+  derive,
+  combine,
+  subscribe,
+  reaction,
+  unsubscribe,
+} from "./value-enhancer";

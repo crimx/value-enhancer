@@ -15,10 +15,12 @@ export interface ReadonlyVal<TValue = any> {
    * @returns a disposer function that cancels the subscription
    */
   subscribe(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
-  /** remove all subscribers */
-  unsubscribe(): void;
-  /** remove the given subscriber */
-  unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void;
+  /**
+   * Remove the given subscriber.
+   * Remove all if no subscriber provided.
+   * @param subscriber
+   */
+  unsubscribe(subscriber?: (...args: any[]) => any): void;
 }
 
 export interface Val<TValue = any> extends ReadonlyVal<TValue> {

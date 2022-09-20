@@ -69,9 +69,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     return this._subs_.add_(subscriber, "s2");
   }
 
-  public unsubscribe(): void;
-  public unsubscribe<T extends (...args: any[]) => any>(subscriber: T): void;
-  public unsubscribe<T extends (...args: any[]) => any>(subscriber?: T): void {
+  public unsubscribe(subscriber?: (...args: any[]) => any): void {
     if (subscriber) {
       this._subs_.remove_(subscriber);
     } else {
