@@ -1,4 +1,4 @@
-# value-enhancer
+# [value-enhancer](https://github.com/crimx/value-enhancer)
 
 <p align="center">
   <img width="200" src="https://raw.githubusercontent.com/crimx/value-enhancer/master/assets/value-enhancer.svg">
@@ -15,7 +15,9 @@
 
 A tiny library to enhance value with reactive wrapper.
 
-[(v2 docs)](https://crimx.github.io/value-enhancer/), [(v1 docs)](https://github.com/crimx/value-enhancer/tree/v1)
+Docs: <https://value-enhancer.js.org>
+
+[(v1)](https://github.com/crimx/value-enhancer/tree/v1)
 
 ## Install
 

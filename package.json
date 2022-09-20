@@ -18,7 +18,7 @@
     "prepublish": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
     "test": "jest --coverage",
-    "docs": "typedoc --cname value-enhancer.js.org --includeVersion --excludePrivate --out docs src/index.ts",
+    "docs": "typedoc --cname value-enhancer.js.org --includeVersion --excludePrivate --excludeProtected --excludeInternal --out docs src/index.ts",
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
     "build": "vite build && npm run types",
     "build:dev": "vite build --mode development && npm run types",
