@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/crimx/value-enhancer/compare/v2.0.0-alpha.0...v2.0.0) (2022-09-20)
+
+
+### Features
+
+* add top-level subscribe and reaction ([bee2126](https://github.com/crimx/value-enhancer/commit/bee2126b54c98845e63767502c956dc744ed4999))
+
 ## [2.0.0-alpha.0](https://github.com/crimx/value-enhancer/compare/v1.3.2...v2.0.0-alpha.0) (2022-08-27)
 
 ### [1.3.2](https://github.com/crimx/value-enhancer/compare/v1.3.0...v1.3.2) (2022-07-12)
