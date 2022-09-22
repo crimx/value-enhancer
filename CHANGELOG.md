@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://github.com/crimx/value-enhancer/compare/v2.0.0...v2.0.1) (2022-09-22)
+
+
+### Bug Fixes
+
+* udpate d.ts entry ([7167ab2](https://github.com/crimx/value-enhancer/commit/7167ab299d4d8a74ff4d1a655160f29fc1e346be))
+
 ## [2.0.0](https://github.com/crimx/value-enhancer/compare/v2.0.0-alpha.0...v2.0.0) (2022-09-20)
 
 
