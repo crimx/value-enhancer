@@ -9,7 +9,7 @@
   "sideEffects": false,
   "main": "./dist/value-enhancer.js",
   "module": "./dist/value-enhancer.mjs",
-  "types": "./dist/value-enhancer.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "src",
     "dist"
