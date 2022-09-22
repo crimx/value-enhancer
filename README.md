@@ -27,7 +27,7 @@ npm add value-enhancer
 
 ## Features
 
-- RxJS-style reactivity.  
+- Plain reactivity.  
   Without the implicit-cast Proxy magic like Vue Reactivity and MobX.
 - Single-layer shallow reactivity.  
   It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
