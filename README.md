@@ -17,8 +17,6 @@ A tiny library to enhance value with reactive wrapper.
 
 Docs: <https://value-enhancer.js.org>
 
-[(v1)](https://github.com/crimx/value-enhancer/tree/v1)
-
 ## Install
 
 ```bash
@@ -31,6 +29,8 @@ npm add value-enhancer
   Without the implicit-cast Proxy magic like Vue Reactivity and MobX.
 - Single-layer shallow reactivity.  
   It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
+- Safe and fast.
+  It solves multi-level derivation issue (exist in Svelte Stores) with smart lazy value evaluation.
 - Explicit.  
   Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
 - Simple DX.  
@@ -222,3 +222,7 @@ combined$.subscribe(combined => console.log(`combined: ${combined}`)); // combin
 
 count$.set(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
 ```
+
+## Legacy
+
+[(v1)](https://github.com/crimx/value-enhancer/tree/v1)
