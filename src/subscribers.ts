@@ -46,7 +46,7 @@ export class Subscribers<TValue = any> {
     if (mode) {
       this.subscribers_.delete(subscriber);
       this[mode]--;
-      if (this[1 /* Async */] + this[2 /* Eager */] <= 0) {
+      if (!this.subscribers_.size) {
         this._stop_();
       }
     }
