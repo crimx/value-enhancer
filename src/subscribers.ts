@@ -1,109 +1,107 @@
 import { cancelTask, schedule } from "./scheduler";
 import type { ReadonlyVal, ValDisposer, ValSubscriber } from "./typings";
 
-const sSize = (s: Set<ValSubscriber> | undefined): number => (s ? s.size : 0);
-const sDelete = (
-  s: Set<ValSubscriber> | undefined,
-  sub: ValSubscriber
-): 0 | 1 => (s && s.delete(sub) ? 1 : 0);
-const sClear = (s: Set<ValSubscriber> | undefined): unknown => s && s.clear();
-
-export type SubscriberMode =
-  /** Async */
-  | "s0"
-  /** Eager */
-  | "s1"
-  /** Computed */
-  | "s2";
+type SubscriberMode = 1 /* Async */ | 2 /* Eager */ | 3; /* Computed */
 
 export class Subscribers<TValue = any> {
-  public size_ = 0;
-
   public constructor(
     val: ReadonlyVal<TValue>,
-    initialValue: TValue,
     start?: (() => void | ValDisposer | undefined) | null
   ) {
     this._val_ = val;
-    this._oldValue_ = initialValue;
     this._start_ = start;
   }
 
   public invoke_(): void {
-    this.exec_("s2");
-    this.exec_("s1");
-    if (sSize(this.s0)) {
+    if (this._notReadySubscribers_.size) {
+      this._notReadySubscribers_.clear();
+    }
+    this.exec_(3 /* Computed */);
+    this.exec_(2 /* Eager */);
+    if (this[1 /* Async */]) {
       schedule(this);
+    } else {
+      this.shouldExec_ = false;
     }
   }
 
   public add_(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
-    if (this._start_ && this.size_ <= 0) {
+    if (this._start_ && !this.subscribers_.size) {
       this._startDisposer_ = this._start_();
     }
 
-    (this[mode] || (this[mode] = new Set())).add(subscriber);
-
-    this.size_ += 1;
+    const currentMode = this.subscribers_.get(subscriber);
+    if (currentMode) {
+      this[currentMode]--;
+    }
+    this._notReadySubscribers_.add(subscriber);
+    this.subscribers_.set(subscriber, mode);
+    this[mode]++;
 
     return (): void => this.remove_(subscriber);
   }
 
   public remove_(subscriber: ValSubscriber): void {
-    this.size_ -=
-      sDelete(this.s0, subscriber) +
-      sDelete(this.s1, subscriber) +
-      sDelete(this.s2, subscriber);
-    if (this.size_ <= 0) {
-      this._stop_();
+    const mode = this.subscribers_.get(subscriber);
+    if (mode) {
+      this.subscribers_.delete(subscriber);
+      this[mode]--;
+      if (this[1 /* Async */] + this[2 /* Eager */] <= 0) {
+        this._stop_();
+      }
     }
   }
 
   public clear_(): void {
-    sClear(this.s0);
-    sClear(this.s1);
-    sClear(this.s2);
-    this.size_ = 0;
+    this.subscribers_.clear();
+    this._notReadySubscribers_.clear();
+    this[1 /* Async */] = this[2 /* Eager */] = this[3 /* Computed */] = 0;
     cancelTask(this);
     this._stop_();
   }
 
   public exec_(mode: SubscriberMode): void {
-    if (sSize(this[mode])) {
-      const value = this._val_.value;
-      if (mode === "s0") {
-        if (this._oldValue_ === value) {
+    if (this[mode]) {
+      let value: TValue | undefined;
+      if (mode !== 3 /* Computed */) {
+        value = this._val_.value;
+      }
+      if (mode === 1 /* Async */) {
+        if (!this.shouldExec_) {
           return;
         }
-        this._oldValue_ = value;
+        this.shouldExec_ = false;
       }
-      for (const sub of this[mode]!) {
-        try {
-          sub(value);
-        } catch (e) {
-          console.error(e);
+      for (const [sub, subMode] of this.subscribers_) {
+        if (subMode === mode && !this._notReadySubscribers_.has(sub)) {
+          try {
+            sub(value as TValue);
+          } catch (e) {
+            console.error(e);
+          }
         }
       }
     }
   }
 
+  public shouldExec_ = false;
+
+  public readonly subscribers_ = new Map<
+    ValSubscriber<TValue>,
+    SubscriberMode
+  >();
+
   private _stop_(): void {
-    if (this._startDisposer_) {
-      this._startDisposer_();
-      this._startDisposer_ = null;
-    }
+    this._startDisposer_ && (this._startDisposer_ = this._startDisposer_());
   }
 
-  private _val_: ReadonlyVal<TValue>;
+  private readonly _val_: ReadonlyVal<TValue>;
 
-  /** Async */
-  private s0?: Set<ValSubscriber<TValue>>;
-  /** Eager */
-  private s1?: Set<ValSubscriber<TValue>>;
-  /** Computed */
-  private s2?: Set<ValSubscriber<TValue>>;
+  private [1 /* Async */] = 0;
+  private [2 /* Eager */] = 0;
+  private [3 /* Computed */] = 0;
 
-  private _oldValue_: TValue;
+  private readonly _notReadySubscribers_ = new Set<ValSubscriber<TValue>>();
 
   private _start_?: (() => void | ValDisposer | undefined) | null;
   private _startDisposer_?: ValDisposer | void | null;

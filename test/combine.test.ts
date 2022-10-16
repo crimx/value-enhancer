@@ -10,18 +10,18 @@ describe("combine", () => {
     const val4 = val(1);
     const combined = combine([val1, val2, val3, val4], spy);
 
-    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledTimes(0);
 
     val1.set(2);
     val2.set(3);
     val3.set(4);
     val4.set(5);
 
-    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledTimes(0);
 
     expect(combined.value).toEqual([2, 3, 4, 5]);
 
-    expect(spy).toBeCalledTimes(2);
+    expect(spy).toBeCalledTimes(1);
   });
 
   it("should get value without subscribe", () => {
@@ -220,36 +220,82 @@ describe("combine", () => {
   });
 
   it("should trigger transform only once", async () => {
-    const spy2 = jest.fn(value => value);
-    const spy3 = jest.fn(value => value);
-    const spy4 = jest.fn(value => value);
+    const spy2 = jest.fn(([value]) => value);
+    const spy3 = jest.fn(([value1, value2]) => value1 + value2);
+    const spy4 = jest.fn(
+      ([value1, value2, value3]) => value1 + value2 + value3
+    );
     const val1 = val(1);
     const val2 = combine([val1], spy2);
     const val3 = combine([val1, val2], spy3);
     const val4 = combine([val1, val2, val3], spy4);
 
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy3).toBeCalledTimes(1);
-    expect(spy4).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(0);
+    expect(spy3).toBeCalledTimes(0);
+    expect(spy4).toBeCalledTimes(0);
 
     const spy5 = jest.fn();
     val4.reaction(spy5);
 
-    expect(spy2).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(2);
     expect(spy3).toBeCalledTimes(1);
     expect(spy4).toBeCalledTimes(1);
 
+    spy2.mockClear();
+    spy3.mockClear();
+    spy4.mockClear();
+
     val1.set(2);
 
-    expect(spy2).toBeCalledTimes(2);
-    expect(spy3).toBeCalledTimes(2);
-    expect(spy4).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(0);
+    expect(spy3).toBeCalledTimes(0);
+    expect(spy4).toBeCalledTimes(0);
     expect(spy5).toBeCalledTimes(0);
 
     await Promise.resolve();
 
+    expect(spy2).toBeCalledTimes(1);
+    expect(spy3).toBeCalledTimes(1);
+    expect(spy4).toBeCalledTimes(1);
     expect(spy5).toBeCalledTimes(1);
+    expect(spy5).lastCalledWith(8);
 
     val4.unsubscribe();
+  });
+
+  it("should update combined value if changed before first subscription", () => {
+    const val1 = val(1);
+    const val2 = val(1);
+    const combined = combine([val1, val2], ([val1, val2]) => val1 + val2);
+
+    expect(combined.value).toBe(2);
+
+    val1.set(2);
+
+    const spy = jest.fn();
+    combined.subscribe(spy);
+
+    expect(spy).lastCalledWith(3);
+    expect(combined.value).toBe(3);
+  });
+
+  it("should react combined value if changed before first subscription", async () => {
+    const val1 = val(1);
+    const val2 = val(1);
+    const combined = combine([val1, val2], ([val1, val2]) => val1 + val2);
+
+    expect(combined.value).toBe(2);
+
+    const spy = jest.fn();
+    combined.reaction(spy);
+
+    val1.set(2);
+
+    expect(spy).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spy).lastCalledWith(3);
+    expect(combined.value).toBe(3);
   });
 });

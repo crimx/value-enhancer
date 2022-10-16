@@ -10,7 +10,7 @@ describe("combine", () => {
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(1);
 
-    spy1.mockReset();
+    spy1.mockClear();
 
     v.set(2);
 
@@ -21,7 +21,7 @@ describe("combine", () => {
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(2);
 
-    spy1.mockReset();
+    spy1.mockClear();
 
     disposer();
 
@@ -44,14 +44,14 @@ describe("combine", () => {
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(1);
 
-    spy1.mockReset();
+    spy1.mockClear();
 
     v.set(2);
 
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(2);
 
-    spy1.mockReset();
+    spy1.mockClear();
 
     disposer();
 

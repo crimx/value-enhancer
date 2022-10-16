@@ -1,6 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, TValInputsValueTuple, ValConfig } from "./typings";
-import { dispose, getValues } from "./utils";
+import { dispose, getValues, INIT_VALUE } from "./utils";
 
 export type CombineValTransform<
   TDerivedValue = any,
@@ -23,12 +23,16 @@ export class CombinedValImpl<
     >,
     config?: ValConfig<TValue>
   ) {
-    const sOldValues = getValues(valInputs);
-    super(transform(sOldValues), config, () => {
+    super(INIT_VALUE, config, () => {
+      if (this._value_ === INIT_VALUE) {
+        this._value_ = transform(getValues(this._sVal_));
+      } else {
+        this._dirtyLevel_ = this._dirtyLevel_ || 1;
+      }
       const disposers = valInputs.map(val =>
         (val as ReadonlyValImpl)._compute_(() => {
-          if (!this._dirty_) {
-            this._dirty_ = true;
+          if (this._dirtyLevel_ < 2) {
+            this._dirtyLevel_ = 2;
             this._subs_.invoke_();
           }
         })
@@ -37,39 +41,30 @@ export class CombinedValImpl<
     });
 
     this._sVal_ = valInputs;
-    this._sOldValue_ = sOldValues;
     this._transform_ = transform;
   }
 
   public override get value(): TValue {
-    if (this._dirty_ || this._subs_.size_ <= 0) {
-      this._dirty_ = false;
-      const sNewValues = this._newValue_();
-      if (sNewValues) {
-        const value = this._transform_(sNewValues);
-        if (!this._compare_(value, this._value_)) {
-          this._value_ = value;
-        }
-      }
+    if (
+      this._dirtyLevel_ ||
+      this._value_ === INIT_VALUE ||
+      !this._subs_.subscribers_.size
+    ) {
+      const value = this._transform_(getValues(this._sVal_));
+      this._subs_.shouldExec_ =
+        this._dirtyLevel_ > 0 && !this._compare_(value, this._value_);
+      this._value_ = value;
+      this._dirtyLevel_ = 0;
     }
     return this._value_;
   }
 
   private _sVal_: TValInputs;
-  private _sOldValue_: [...TValInputsValueTuple<TValInputs>];
   private _transform_: CombineValTransform<
     TValue,
     [...TValInputsValueTuple<TValInputs>]
   >;
-  private _dirty_ = false;
-
-  private _newValue_(): [...TValInputsValueTuple<TValInputs>] | undefined {
-    for (let i = 0; i < this._sVal_.length; i++) {
-      if (this._sVal_[i].value !== this._sOldValue_[i]) {
-        return (this._sOldValue_ = getValues(this._sVal_));
-      }
-    }
-  }
+  private _dirtyLevel_ = 0;
 }
 
 export interface CreateCombine {

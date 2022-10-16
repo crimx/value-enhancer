@@ -1,5 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig } from "./typings";
+import { INIT_VALUE } from "./utils";
 
 export type DeriveValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue
@@ -14,40 +15,42 @@ export class DerivedValImpl<TSrcValue = any, TValue = any>
     transform: DeriveValTransform<TSrcValue, TValue>,
     config?: ValConfig<TValue>
   ) {
-    super(transform(val.value), config, () =>
-      (val as ReadonlyValImpl)._compute_(() => {
-        if (!this._dirty_) {
-          this._dirty_ = true;
+    super(INIT_VALUE, config, () => {
+      if (this._value_ === INIT_VALUE) {
+        this._value_ = this._transform_(this._sVal_.value);
+      } else {
+        this._dirtyLevel_ = this._dirtyLevel_ || 1;
+      }
+      return (val as ReadonlyValImpl)._compute_(() => {
+        if (this._dirtyLevel_ < 2) {
+          this._dirtyLevel_ = 2;
           this._subs_.invoke_();
         }
-      })
-    );
+      });
+    });
 
     this._sVal_ = val;
-    this._sOldValue_ = val.value;
     this._transform_ = transform;
   }
 
   public override get value(): TValue {
-    if (this._dirty_ || this._subs_.size_ <= 0) {
-      this._dirty_ = false;
-      const newValue = this._sVal_.value;
-      if (this._sOldValue_ !== newValue) {
-        this._sOldValue_ = newValue;
-        const value = this._transform_(newValue);
-        if (!this._compare_(value, this._value_)) {
-          this._value_ = value;
-        }
-      }
+    if (
+      this._dirtyLevel_ ||
+      this._value_ === INIT_VALUE ||
+      !this._subs_.subscribers_.size
+    ) {
+      const value = this._transform_(this._sVal_.value);
+      this._subs_.shouldExec_ =
+        this._dirtyLevel_ > 0 && !this._compare_(value, this._value_);
+      this._value_ = value;
+      this._dirtyLevel_ = 0;
     }
     return this._value_;
   }
 
   private _sVal_: ReadonlyVal<TSrcValue>;
-  private _sOldValue_: TSrcValue;
   private _transform_: DeriveValTransform<TSrcValue, TValue>;
-
-  private _dirty_ = false;
+  private _dirtyLevel_ = 0;
 }
 
 export interface CreateDerive {

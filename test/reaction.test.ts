@@ -18,7 +18,7 @@ describe("reaction", () => {
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(2);
 
-    spy1.mockReset();
+    spy1.mockClear();
 
     disposer();
 
@@ -45,7 +45,7 @@ describe("reaction", () => {
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(2);
 
-    spy1.mockReset();
+    spy1.mockClear();
 
     disposer();
 

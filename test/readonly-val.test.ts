@@ -366,6 +366,41 @@ describe("ReadonlyVal", () => {
         expect(spy).toBeCalledTimes(1);
       });
     });
+
+    it("should remove original if adding two same subscribes", async () => {
+      const spy = jest.fn();
+      const val = new ReadonlyValImpl(1);
+      const set = getInternalSetter(val);
+
+      val.subscribe(spy);
+      val.subscribe(spy);
+
+      expect(spy).toBeCalledTimes(2);
+      expect(spy).lastCalledWith(1);
+
+      set(2);
+
+      expect(spy).toBeCalledTimes(2);
+      expect(spy).lastCalledWith(1);
+
+      await Promise.resolve();
+
+      expect(val.value).toBe(2);
+      expect(spy).toBeCalledTimes(3);
+      expect(spy).lastCalledWith(2);
+
+      val.subscribe(spy, true);
+
+      expect(spy).toBeCalledTimes(4);
+      expect(spy).lastCalledWith(2);
+
+      set(3);
+
+      expect(spy).toBeCalledTimes(5);
+      expect(spy).lastCalledWith(3);
+
+      val.unsubscribe();
+    });
   });
 
   describe("reaction", () => {

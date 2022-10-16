@@ -7,15 +7,15 @@ describe("derive", () => {
     const val1 = val(1);
     const combined = derive(val1, spy);
 
-    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledTimes(0);
 
     val1.set(2);
 
-    expect(spy).toBeCalledTimes(1);
+    expect(spy).toBeCalledTimes(0);
 
     expect(combined.value).toEqual(2);
 
-    expect(spy).toBeCalledTimes(2);
+    expect(spy).toBeCalledTimes(1);
   });
 
   it("should subscribe", async () => {
@@ -212,6 +212,44 @@ describe("derive", () => {
     val1.set(2);
 
     expect(derived.value).toEqual(2);
+
+    derived.unsubscribe();
+  });
+
+  it("should update derived value if changed before first subscription", () => {
+    const val1 = val(1);
+    const derived = derive(val1, value => value + 1);
+
+    expect(derived.value).toBe(2);
+
+    val1.set(2);
+
+    const spy = jest.fn();
+    derived.subscribe(spy);
+
+    expect(spy).lastCalledWith(3);
+    expect(derived.value).toEqual(3);
+
+    derived.unsubscribe();
+  });
+
+  it("should reaction derived value if changed before first subscription", async () => {
+    const val1 = val(1);
+    const derived = derive(val1, value => value + 1);
+
+    expect(derived.value).toBe(2);
+
+    const spy = jest.fn();
+    derived.reaction(spy);
+
+    val1.set(2);
+
+    expect(spy).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spy).lastCalledWith(3);
+    expect(derived.value).toEqual(3);
 
     derived.unsubscribe();
   });

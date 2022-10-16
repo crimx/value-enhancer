@@ -18,6 +18,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   protected _set_(value: TValue): void {
     if (!this._compare_(value, this._value_)) {
+      this._subs_.shouldExec_ = true;
       this._value_ = value;
       this._subs_.invoke_();
     }
@@ -34,7 +35,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
       this._compare_ = compare;
     }
 
-    this._subs_ = new Subscribers<TValue>(this, value, start);
+    this._subs_ = new Subscribers<TValue>(this, start);
   }
 
   public get value(): TValue {
@@ -45,7 +46,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     subscriber: ValSubscriber<TValue>,
     eager?: boolean
   ): ValDisposer {
-    return this._subs_.add_(subscriber, eager ? "s1" : "s0");
+    return this._subs_.add_(subscriber, eager ? 2 /* Eager */ : 1 /* Async */);
   }
 
   public subscribe(
@@ -65,8 +66,8 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * @internal
    * For computed vals
    */
-  public _compute_(subscriber: ValSubscriber<TValue>): ValDisposer {
-    return this._subs_.add_(subscriber, "s2");
+  public _compute_(subscriber: ValSubscriber<void>): ValDisposer {
+    return this._subs_.add_(subscriber, 3 /* Computed */);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {

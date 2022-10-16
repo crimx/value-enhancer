@@ -10,3 +10,5 @@ export const getValues = <TValInputs extends readonly ReadonlyVal[]>(
   valInputs.map(getValue) as [...TValInputsValueTuple<TValInputs>];
 
 export const dispose = (disposer: () => void): void => disposer();
+
+export const INIT_VALUE: any = {};

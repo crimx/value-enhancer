@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
       },
       outDir: "dist",
       sourcemap: isProd,
-      minify: false,
+      minify: Boolean(process.env.MINIFY),
     },
     esbuild: {
       mangleProps: /[^_]_$/,
