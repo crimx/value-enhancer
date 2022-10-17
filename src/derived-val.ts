@@ -37,7 +37,7 @@ export class DerivedValImpl<TSrcValue = any, TValue = any>
     if (
       this._dirtyLevel_ ||
       this._value_ === INIT_VALUE ||
-      !this._subs_.subscribers_.size
+      this._subs_.subscribers_.size <= 0
     ) {
       const value = this._transform_(this._sVal_.value);
       this._subs_.shouldExec_ =

@@ -13,20 +13,22 @@ export class Subscribers<TValue = any> {
   }
 
   public invoke_(): void {
-    if (this._notReadySubscribers_.size) {
+    if (this._notReadySubscribers_.size > 0) {
       this._notReadySubscribers_.clear();
     }
-    this.exec_(3 /* Computed */);
-    this.exec_(2 /* Eager */);
-    if (this[1 /* Async */]) {
-      schedule(this);
+    if (this.subscribers_.size > 0) {
+      this.exec_(3 /* Computed */);
+      this.exec_(2 /* Eager */);
+      if (this[1 /* Async */] > 0) {
+        schedule(this);
+      }
     } else {
       this.shouldExec_ = false;
     }
   }
 
   public add_(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
-    if (this._start_ && !this.subscribers_.size) {
+    if (this._start_ && this.subscribers_.size <= 0) {
       this._startDisposer_ = this._start_();
     }
 
@@ -47,7 +49,7 @@ export class Subscribers<TValue = any> {
     if (mode) {
       this.subscribers_.delete(subscriber);
       this[mode]--;
-      if (!this.subscribers_.size) {
+      if (this.subscribers_.size <= 0) {
         this._stop_();
       }
     }
@@ -62,16 +64,23 @@ export class Subscribers<TValue = any> {
   }
 
   public exec_(mode: SubscriberMode): void {
-    if (this[mode]) {
+    if (this[mode] > 0) {
       let value: TValue | undefined;
-      if (mode !== 3 /* Computed */) {
+      if (mode === 3 /* Computed */) {
+        if (this[1 /* Async */] + this[2 /* Eager */] <= 0) {
+          this.shouldExec_ = false;
+        }
+      } else {
         value = this._val_.value;
-      }
-      if (mode === 1 /* Async */) {
         if (!this.shouldExec_) {
           return;
         }
-        this.shouldExec_ = false;
+        if (
+          mode === 1 /* Async */ ||
+          /* mode === 2 / Computed / */ this[1 /* Async */] <= 0
+        ) {
+          this.shouldExec_ = false;
+        }
       }
       for (const [sub, subMode] of this.subscribers_) {
         if (subMode === mode && !this._notReadySubscribers_.has(sub)) {

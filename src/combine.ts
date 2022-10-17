@@ -48,7 +48,7 @@ export class CombinedValImpl<
     if (
       this._dirtyLevel_ ||
       this._value_ === INIT_VALUE ||
-      !this._subs_.subscribers_.size
+      this._subs_.subscribers_.size <= 0
     ) {
       const value = this._transform_(getValues(this._sVal_));
       this._subs_.shouldExec_ =

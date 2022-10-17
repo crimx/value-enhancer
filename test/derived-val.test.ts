@@ -216,6 +216,154 @@ describe("derive", () => {
     derived.unsubscribe();
   });
 
+  it("should not trigger async subscribers if not changed", async () => {
+    const val1 = val({ v: 0 });
+    const spyOdd = jest.fn();
+    const odd = derive(
+      val1,
+      value => {
+        spyOdd(value);
+        return { odd: Boolean(value.v % 2) };
+      },
+      { compare: (a, b) => a.odd === b.odd }
+    );
+
+    const spyEven = jest.fn();
+    const even = derive(
+      odd,
+      value => {
+        spyEven(value);
+        return { even: !value.odd };
+      },
+      { compare: (a, b) => a.even === b.even }
+    );
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    val1.set({ v: 2 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    const spySub = jest.fn();
+    even.subscribe(spySub);
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 2 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: true });
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 4 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+    expect(spySub).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 4 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(0);
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 3 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+    expect(spySub).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 3 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: true });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: false });
+
+    even.unsubscribe();
+  });
+
+  it("should not trigger eager subscribers if not changed", async () => {
+    const val1 = val({ v: 0 });
+    const spyOdd = jest.fn();
+    const odd = derive(
+      val1,
+      value => {
+        spyOdd(value);
+        return { odd: Boolean(value.v % 2) };
+      },
+      { compare: (a, b) => a.odd === b.odd }
+    );
+
+    const spyEven = jest.fn();
+    const even = derive(
+      odd,
+      value => {
+        spyEven(value);
+        return { even: !value.odd };
+      },
+      { compare: (a, b) => a.even === b.even }
+    );
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    val1.set({ v: 2 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    const spySub = jest.fn();
+    even.subscribe(spySub, true);
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 2 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: true });
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 4 });
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 4 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(0);
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 3 });
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 3 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: true });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: false });
+
+    even.unsubscribe();
+  });
+
   it("should update derived value if changed before first subscription", () => {
     const val1 = val(1);
     const derived = derive(val1, value => value + 1);
@@ -252,5 +400,112 @@ describe("derive", () => {
     expect(derived.value).toEqual(3);
 
     derived.unsubscribe();
+  });
+
+  it("should trigger transform only once for async subscribers", async () => {
+    const val1 = val(1);
+    const spy = jest.fn();
+    const derived = derive(val1, value => {
+      spy(value);
+      return value + 1;
+    });
+
+    const spy2 = jest.fn();
+    const derived2 = derive(derived, value => {
+      spy2(value);
+      return value + 1;
+    });
+
+    expect(spy).toBeCalledTimes(0);
+    expect(spy2).toBeCalledTimes(0);
+
+    val1.set(2);
+
+    expect(spy).toBeCalledTimes(0);
+    expect(spy2).toBeCalledTimes(0);
+
+    const spy3 = jest.fn();
+    derived2.subscribe(spy3);
+
+    expect(spy3).toBeCalledTimes(1);
+    expect(spy3).lastCalledWith(4);
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(1);
+    expect(spy).lastCalledWith(2);
+    expect(spy2).lastCalledWith(3);
+
+    spy.mockClear();
+    spy2.mockClear();
+    spy3.mockClear();
+
+    val1.set(3);
+
+    expect(spy3).toBeCalledTimes(0);
+
+    expect(spy).toBeCalledTimes(0);
+    expect(spy2).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spy3).toBeCalledTimes(1);
+    expect(spy3).lastCalledWith(5);
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(1);
+    expect(spy).lastCalledWith(3);
+    expect(spy2).lastCalledWith(4);
+
+    derived2.unsubscribe();
+  });
+
+  it("should trigger transform only once for eager subscribers", async () => {
+    const val1 = val(1);
+    const spy = jest.fn();
+    const derived = derive(val1, value => {
+      spy(value);
+      return value + 1;
+    });
+
+    const spy2 = jest.fn();
+    const derived2 = derive(derived, value => {
+      spy2(value);
+      return value + 1;
+    });
+
+    expect(spy).toBeCalledTimes(0);
+    expect(spy2).toBeCalledTimes(0);
+
+    val1.set(2);
+
+    expect(spy).toBeCalledTimes(0);
+    expect(spy2).toBeCalledTimes(0);
+
+    const spy3 = jest.fn();
+    derived2.subscribe(spy3, true);
+
+    expect(spy3).toBeCalledTimes(1);
+    expect(spy3).lastCalledWith(4);
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(1);
+    expect(spy).lastCalledWith(2);
+    expect(spy2).lastCalledWith(3);
+
+    spy.mockClear();
+    spy2.mockClear();
+    spy3.mockClear();
+
+    val1.set(3);
+
+    expect(spy3).toBeCalledTimes(1);
+    expect(spy3).lastCalledWith(5);
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(1);
+    expect(spy).lastCalledWith(3);
+    expect(spy2).lastCalledWith(4);
+
+    derived2.unsubscribe();
   });
 });

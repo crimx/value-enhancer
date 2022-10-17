@@ -263,6 +263,154 @@ describe("combine", () => {
     val4.unsubscribe();
   });
 
+  it("should not trigger async subscribers if not changed", async () => {
+    const val1 = val({ v: 0 });
+    const spyOdd = jest.fn();
+    const odd = combine(
+      [val1],
+      ([value]) => {
+        spyOdd(value);
+        return { odd: Boolean(value.v % 2) };
+      },
+      { compare: (a, b) => a.odd === b.odd }
+    );
+
+    const spyEven = jest.fn();
+    const even = combine(
+      [odd],
+      ([value]) => {
+        spyEven(value);
+        return { even: !value.odd };
+      },
+      { compare: (a, b) => a.even === b.even }
+    );
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    val1.set({ v: 2 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    const spySub = jest.fn();
+    even.subscribe(spySub);
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 2 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: true });
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 4 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+    expect(spySub).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 4 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(0);
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 3 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+    expect(spySub).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 3 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: true });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: false });
+
+    even.unsubscribe();
+  });
+
+  it("should not trigger eager subscribers if not changed", async () => {
+    const val1 = val({ v: 0 });
+    const spyOdd = jest.fn();
+    const odd = combine(
+      [val1],
+      ([value]) => {
+        spyOdd(value);
+        return { odd: Boolean(value.v % 2) };
+      },
+      { compare: (a, b) => a.odd === b.odd }
+    );
+
+    const spyEven = jest.fn();
+    const even = combine(
+      [odd],
+      ([value]) => {
+        spyEven(value);
+        return { even: !value.odd };
+      },
+      { compare: (a, b) => a.even === b.even }
+    );
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    val1.set({ v: 2 });
+
+    expect(spyOdd).toBeCalledTimes(0);
+    expect(spyEven).toBeCalledTimes(0);
+
+    const spySub = jest.fn();
+    even.subscribe(spySub, true);
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 2 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: true });
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 4 });
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 4 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spySub).toBeCalledTimes(0);
+
+    spyOdd.mockClear();
+    spyEven.mockClear();
+    spySub.mockClear();
+
+    val1.set({ v: 3 });
+
+    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).lastCalledWith({ v: 3 });
+    expect(spyEven).toBeCalledTimes(1);
+    expect(spyEven).lastCalledWith({ odd: true });
+    expect(spySub).toBeCalledTimes(1);
+    expect(spySub).lastCalledWith({ even: false });
+
+    even.unsubscribe();
+  });
+
   it("should update combined value if changed before first subscription", () => {
     const val1 = val(1);
     const val2 = val(1);
