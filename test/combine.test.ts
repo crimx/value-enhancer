@@ -446,4 +446,25 @@ describe("combine", () => {
     expect(spy).lastCalledWith(3);
     expect(combined.value).toBe(3);
   });
+
+  it("should trigger subscribers after dirty value is cleared", async () => {
+    const val1 = val(1);
+    const odd = combine([val1], ([value]) => Boolean(value % 2));
+    const even = combine([odd], ([value]) => !value);
+
+    const spy = jest.fn();
+    even.reaction(spy);
+
+    spy.mockClear();
+
+    val1.set(2);
+    expect(even.value).toBe(true);
+    val1.set(4);
+    expect(even.value).toBe(true);
+
+    await Promise.resolve();
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).lastCalledWith(true);
+  });
 });

@@ -508,4 +508,25 @@ describe("derive", () => {
 
     derived2.unsubscribe();
   });
+
+  it("should trigger subscribers after dirty value is cleared", async () => {
+    const val1 = val(1);
+    const odd = derive(val1, value => Boolean(value % 2));
+    const even = derive(odd, value => !value);
+
+    const spy = jest.fn();
+    even.reaction(spy);
+
+    spy.mockClear();
+
+    val1.set(2);
+    expect(even.value).toBe(true);
+    val1.set(4);
+    expect(even.value).toBe(true);
+
+    await Promise.resolve();
+
+    expect(spy).toBeCalledTimes(1);
+    expect(spy).lastCalledWith(true);
+  });
 });
