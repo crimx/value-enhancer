@@ -1,5 +1,6 @@
 import { cancelTask, schedule } from "./scheduler";
 import type { ReadonlyVal, ValDisposer, ValSubscriber } from "./typings";
+import { invoke } from "./utils";
 
 export enum SubscriberMode {
   Async = 1,
@@ -91,11 +92,7 @@ export class Subscribers<TValue = any> {
       }
       for (const [sub, subMode] of this.subscribers_) {
         if (subMode === mode && !this._notReadySubscribers_.has(sub)) {
-          try {
-            sub(value as TValue);
-          } catch (e) {
-            console.error(e);
-          }
+          invoke(sub, value as TValue);
         }
       }
     }

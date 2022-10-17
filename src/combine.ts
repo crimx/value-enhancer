@@ -1,6 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, TValInputsValueTuple, ValConfig } from "./typings";
-import { dispose, getValues, INIT_VALUE } from "./utils";
+import { invoke, getValues, INIT_VALUE } from "./utils";
 
 export type CombineValTransform<
   TDerivedValue = any,
@@ -37,7 +37,7 @@ export class CombinedValImpl<
           }
         })
       );
-      return () => disposers.forEach(dispose);
+      return () => disposers.forEach(invoke);
     });
 
     this._sVal_ = valInputs;

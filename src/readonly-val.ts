@@ -6,6 +6,7 @@ import type {
   ValOnStart,
   ReadonlyVal,
 } from "./typings";
+import { invoke } from "./utils";
 
 export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   protected _subs_: Subscribers<TValue>;
@@ -57,11 +58,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     eager?: boolean
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
-    try {
-      subscriber(this.value);
-    } catch (e) {
-      console.error(e);
-    }
+    invoke(subscriber, this.value);
     return disposer;
   }
 
