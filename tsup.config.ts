@@ -7,6 +7,7 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   treeshake: true,
+  dts: true,
   minify: Boolean(process.env.MINIFY),
   esbuildOptions: options => {
     options.mangleProps = /[^_]_$/;
