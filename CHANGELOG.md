@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.6](https://github.com/crimx/value-enhancer/compare/v2.0.5...v2.0.6) (2022-10-17)
+
+
+### Bug Fixes
+
+* trigger subscribers after dirty value is cleared ([e5969dc](https://github.com/crimx/value-enhancer/commit/e5969dc6f62293ef37db2c2c7616ecbda1cc38dd))
+
 ### [2.0.5](https://github.com/crimx/value-enhancer/compare/v2.0.4...v2.0.5) (2022-10-17)
 
 ### [2.0.4](https://github.com/crimx/value-enhancer/compare/v2.0.3...v2.0.4) (2022-10-17)
