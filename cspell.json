@@ -7,10 +7,12 @@
     "lcov",
     "pnpm",
     "preinstall",
+    "tsup",
     "typedoc",
     "Vals",
     "vite",
-    "vitest"
+    "vitest",
+    "yoctocolors"
   ],
   "ignorePaths": [
     "**/coverage/**",
