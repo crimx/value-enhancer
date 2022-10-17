@@ -1,7 +1,11 @@
 import { cancelTask, schedule } from "./scheduler";
 import type { ReadonlyVal, ValDisposer, ValSubscriber } from "./typings";
 
-type SubscriberMode = 1 /* Async */ | 2 /* Eager */ | 3; /* Computed */
+export enum SubscriberMode {
+  Async = 1,
+  Eager = 2,
+  Computed = 3,
+}
 
 export class Subscribers<TValue = any> {
   public constructor(
@@ -17,9 +21,9 @@ export class Subscribers<TValue = any> {
       this._notReadySubscribers_.clear();
     }
     if (this.subscribers_.size > 0) {
-      this.exec_(3 /* Computed */);
-      this.exec_(2 /* Eager */);
-      if (this[1 /* Async */] > 0) {
+      this.exec_(SubscriberMode.Computed);
+      this.exec_(SubscriberMode.Eager);
+      if (this[SubscriberMode.Async] > 0) {
         schedule(this);
       }
     } else {
@@ -58,7 +62,10 @@ export class Subscribers<TValue = any> {
   public clear_(): void {
     this.subscribers_.clear();
     this._notReadySubscribers_.clear();
-    this[1 /* Async */] = this[2 /* Eager */] = this[3 /* Computed */] = 0;
+    this[SubscriberMode.Async] =
+      this[SubscriberMode.Eager] =
+      this[SubscriberMode.Computed] =
+        0;
     cancelTask(this);
     this._stop_();
   }
@@ -66,8 +73,8 @@ export class Subscribers<TValue = any> {
   public exec_(mode: SubscriberMode): void {
     if (this[mode] > 0) {
       let value: TValue | undefined;
-      if (mode === 3 /* Computed */) {
-        if (this[1 /* Async */] + this[2 /* Eager */] <= 0) {
+      if (mode === SubscriberMode.Computed) {
+        if (this[SubscriberMode.Async] + this[SubscriberMode.Eager] <= 0) {
           this.shouldExec_ = false;
         }
       } else {
@@ -76,8 +83,8 @@ export class Subscribers<TValue = any> {
           return;
         }
         if (
-          mode === 1 /* Async */ ||
-          /* mode === 2 / Computed / */ this[1 /* Async */] <= 0
+          mode === SubscriberMode.Async ||
+          /* mode === SubscriberMode.Computed */ this[SubscriberMode.Async] <= 0
         ) {
           this.shouldExec_ = false;
         }
@@ -107,9 +114,9 @@ export class Subscribers<TValue = any> {
 
   private readonly _val_: ReadonlyVal<TValue>;
 
-  private [1 /* Async */] = 0;
-  private [2 /* Eager */] = 0;
-  private [3 /* Computed */] = 0;
+  private [SubscriberMode.Async] = 0;
+  private [SubscriberMode.Eager] = 0;
+  private [SubscriberMode.Computed] = 0;
 
   private readonly _notReadySubscribers_ = new Set<ValSubscriber<TValue>>();
 

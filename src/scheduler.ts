@@ -1,4 +1,5 @@
 import type { Subscribers } from "./subscribers";
+import { SubscriberMode } from "./subscribers";
 
 export type Task<TValue = any> = (value: TValue) => void;
 
@@ -8,7 +9,7 @@ let pending: Promise<void> | false;
 
 const flush = () => {
   for (const subs of subsSet) {
-    subs.exec_(1 /* Async */);
+    subs.exec_(SubscriberMode.Async);
   }
   pending = false;
   subsSet.clear();

@@ -1,4 +1,4 @@
-import { Subscribers } from "./subscribers";
+import { SubscriberMode, Subscribers } from "./subscribers";
 import type {
   ValDisposer,
   ValSubscriber,
@@ -46,7 +46,10 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     subscriber: ValSubscriber<TValue>,
     eager?: boolean
   ): ValDisposer {
-    return this._subs_.add_(subscriber, eager ? 2 /* Eager */ : 1 /* Async */);
+    return this._subs_.add_(
+      subscriber,
+      eager ? SubscriberMode.Eager : SubscriberMode.Async
+    );
   }
 
   public subscribe(
@@ -67,7 +70,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * For computed vals
    */
   public _compute_(subscriber: ValSubscriber<void>): ValDisposer {
-    return this._subs_.add_(subscriber, 3 /* Computed */);
+    return this._subs_.add_(subscriber, SubscriberMode.Computed);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {
