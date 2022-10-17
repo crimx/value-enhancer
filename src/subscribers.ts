@@ -42,6 +42,7 @@ export class Subscribers<TValue = any> {
   }
 
   public remove_(subscriber: ValSubscriber): void {
+    this._notReadySubscribers_.delete(subscriber);
     const mode = this.subscribers_.get(subscriber);
     if (mode) {
       this.subscribers_.delete(subscriber);
