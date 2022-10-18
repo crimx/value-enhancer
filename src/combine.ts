@@ -45,10 +45,10 @@ export class CombinedValImpl<
   }
 
   public override get value(): TValue {
-    if (this._value_ === INIT_VALUE || this._subs_.subscribers_.size <= 0) {
+    if (this._value_ === INIT_VALUE) {
       this._value_ = this._transform_(getValues(this._sVal_));
       this._subs_.shouldExec_ = true;
-    } else if (this._dirtyLevel_) {
+    } else if (this._dirtyLevel_ || this._subs_.subscribers_.size <= 0) {
       const value = this._transform_(getValues(this._sVal_));
       if (!this._compare_(value, this._value_)) {
         this._subs_.shouldExec_ = true;
