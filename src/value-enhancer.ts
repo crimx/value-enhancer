@@ -1,6 +1,6 @@
 import type { CreateVal } from "./val";
 import { ValImpl } from "./val";
-import type { DeriveValTransform, CreateDerive } from "./derived-val";
+import type { DerivedValTransform, CreateDerive } from "./derived-val";
 import { DerivedValImpl } from "./derived-val";
 import type { CombineValTransform, CreateCombine } from "./combine";
 import { CombinedValImpl } from "./combine";
@@ -35,10 +35,10 @@ export const val: CreateVal = <TValue = any>(
  */
 export const derive: CreateDerive = <TSrcValue = any, TValue = any>(
   val: ReadonlyVal<TSrcValue>,
-  transform: DeriveValTransform<
+  transform: DerivedValTransform<
     TSrcValue,
     TValue
-  > = identity as DeriveValTransform<TSrcValue, TValue>,
+  > = identity as DerivedValTransform<TSrcValue, TValue>,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> => new DerivedValImpl(val, transform, config);
 

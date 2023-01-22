@@ -2,7 +2,7 @@ import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig } from "./typings";
 import { INIT_VALUE } from "./utils";
 
-export type DeriveValTransform<TValue = any, TDerivedValue = any> = (
+export type DerivedValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue
 ) => TDerivedValue;
 
@@ -12,7 +12,7 @@ export class DerivedValImpl<TSrcValue = any, TValue = any>
 {
   public constructor(
     val: ReadonlyVal<TSrcValue>,
-    transform: DeriveValTransform<TSrcValue, TValue>,
+    transform: DerivedValTransform<TSrcValue, TValue>,
     config?: ValConfig<TValue>
   ) {
     super(INIT_VALUE, config, () => {
@@ -49,7 +49,7 @@ export class DerivedValImpl<TSrcValue = any, TValue = any>
   }
 
   private _sVal_: ReadonlyVal<TSrcValue>;
-  private _transform_: DeriveValTransform<TSrcValue, TValue>;
+  private _transform_: DerivedValTransform<TSrcValue, TValue>;
   private _dirtyLevel_ = 0;
 }
 
@@ -71,7 +71,7 @@ export interface CreateDerive {
    */
   <TSrcValue = any, TValue = any>(
     val: ReadonlyVal<TSrcValue>,
-    transform: DeriveValTransform<TSrcValue, TValue>,
+    transform: DerivedValTransform<TSrcValue, TValue>,
     config?: ValConfig<TValue>
   ): ReadonlyVal<TValue>;
 }
