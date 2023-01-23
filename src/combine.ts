@@ -1,14 +1,14 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, TValInputsValueTuple, ValConfig } from "./typings";
-import { invoke, getValues, INIT_VALUE } from "./utils";
+import { invoke, getValues, INIT_VALUE, identity } from "./utils";
 
-export type CombineValTransform<
+type CombineValTransform<
   TDerivedValue = any,
   TValues extends readonly any[] = any[],
   TMeta = any
 > = (newValues: TValues, oldValues?: TValues, meta?: TMeta) => TDerivedValue;
 
-export class CombinedValImpl<
+class CombinedValImpl<
     TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
     TValue = any
   >
@@ -67,28 +67,44 @@ export class CombinedValImpl<
   private _dirtyLevel_ = 0;
 }
 
-export interface CreateCombine {
-  /**
-   * Combines an array of vals into a single val with the array of values.
-   * @param valInputs An array of vals to combine.
-   * @returns A readonly val with the combined values.
-   */
-  <TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]>(
-    valInputs: readonly [...TValInputs]
-  ): ReadonlyVal<[...TValInputsValueTuple<TValInputs>]>;
-  /**
-   * Combines an array of vals into a single val with transformed value.
-   * @param valInputs An array of vals to combine.
-   * @param transform A pure function that takes an array of values and returns a new value.
-   * @param config custom config for the combined val.
-   * @returns A readonly val with the transformed values.
-   */
-  <TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[], TValue = any>(
-    valInputs: readonly [...TValInputs],
-    transform: CombineValTransform<
-      TValue,
-      [...TValInputsValueTuple<TValInputs>]
-    >,
-    config?: ValConfig<TValue>
-  ): ReadonlyVal<TValue>;
+/**
+ * Combines an array of vals into a single val with the array of values.
+ * @param valInputs An array of vals to combine.
+ * @returns A readonly val with the combined values.
+ */
+export function combine<
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
+>(
+  valInputs: readonly [...TValInputs]
+): ReadonlyVal<[...TValInputsValueTuple<TValInputs>]>;
+/**
+ * Combines an array of vals into a single val with transformed value.
+ * @param valInputs An array of vals to combine.
+ * @param transform A pure function that takes an array of values and returns a new value.
+ * @param config custom config for the combined val.
+ * @returns A readonly val with the transformed values.
+ */
+export function combine<
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+  TValue = any
+>(
+  valInputs: readonly [...TValInputs],
+  transform: CombineValTransform<TValue, [...TValInputsValueTuple<TValInputs>]>,
+  config?: ValConfig<TValue>
+): ReadonlyVal<TValue>;
+export function combine<
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+  TValue = any
+>(
+  valInputs: readonly [...TValInputs],
+  transform: CombineValTransform<
+    TValue,
+    [...TValInputsValueTuple<TValInputs>]
+  > = identity as CombineValTransform<
+    TValue,
+    [...TValInputsValueTuple<TValInputs>]
+  >,
+  config?: ValConfig<TValue>
+): ReadonlyVal<TValue> {
+  return new CombinedValImpl(valInputs, transform, config);
 }
