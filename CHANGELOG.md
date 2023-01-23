@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/crimx/value-enhancer/compare/v2.0.6...v2.1.0) (2023-01-23)
+
+
+### Features
+
+* add unwrap ([aeaaef1](https://github.com/crimx/value-enhancer/commit/aeaaef11e45cfcda62ff18983c6738a84331dea8))
+
 ### [2.0.6](https://github.com/crimx/value-enhancer/compare/v2.0.5...v2.0.6) (2022-10-17)
 
 
