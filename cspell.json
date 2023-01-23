@@ -6,6 +6,7 @@
     "esbuild",
     "lcov",
     "pnpm",
+    "Preact",
     "preinstall",
     "tsup",
     "typedoc",
