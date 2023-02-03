@@ -77,4 +77,34 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
       this._subs_.clear_();
     }
   }
+
+  /**
+   * @returns the string representation of `this.value`.
+   *
+   * @example
+   * ```js
+   * const v$ = val(val(val(1)));
+   * console.log(`${v$}`); // "1"
+   * ```
+   */
+  public toString(): string {
+    return String(this.value);
+  }
+
+  /**
+   * @returns the JSON representation of `this.value`.
+   *
+   * @example
+   * ```js
+   * const v$ = val(val(val({ a: 1 })));
+   * JSON.stringify(v$); // '{"a":1}'
+   * ```
+   */
+  public toJSON(key: string): unknown {
+    const value = this.value as
+      | undefined
+      | null
+      | { toJSON?: (key: string) => unknown };
+    return value && value.toJSON ? value.toJSON(key) : value;
+  }
 }

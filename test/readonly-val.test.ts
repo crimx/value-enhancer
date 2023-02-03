@@ -704,6 +704,38 @@ describe("ReadonlyVal", () => {
       consoleErrorMock.mockRestore();
     });
   });
+
+  describe("toJSON", () => {
+    it("should convert val value into JSON", () => {
+      const value = 1;
+      const val = new ReadonlyValImpl(value);
+      expect(JSON.stringify(val)).toBe(JSON.stringify(value));
+    });
+
+    it("should support nested vals", () => {
+      const value = { a: 2 };
+      const val = new ReadonlyValImpl(
+        new ReadonlyValImpl(new ReadonlyValImpl(value))
+      );
+      expect(JSON.stringify(val)).toBe(JSON.stringify(value));
+    });
+  });
+
+  describe("toString", () => {
+    it("should convert val value into string", () => {
+      const value = 1;
+      const val = new ReadonlyValImpl(value);
+      expect(String(val)).toBe(String(value));
+    });
+
+    it("should support nested vals", () => {
+      const value = {};
+      const val = new ReadonlyValImpl(
+        new ReadonlyValImpl(new ReadonlyValImpl(value))
+      );
+      expect(String(val)).toBe(String(value));
+    });
+  });
 });
 
 function getInternalSetter<TValue>(
