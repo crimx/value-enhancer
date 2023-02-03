@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://github.com/crimx/value-enhancer/compare/v2.1.0...v2.2.0) (2023-02-03)
+
+
+### Features
+
+* support toString and toJSON of val value ([ee64f0f](https://github.com/crimx/value-enhancer/commit/ee64f0f4825a5c50f9baf21c03a95744ee0721dd))
+
 ## [2.1.0](https://github.com/crimx/value-enhancer/compare/v2.0.6...v2.1.0) (2023-01-23)
 
 
