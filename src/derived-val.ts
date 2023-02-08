@@ -40,7 +40,7 @@ class DerivedValImpl<TSrcValue = any, TValue = any>
       this._subs_.shouldExec_ = true;
     } else if (this._dirtyLevel_ || this._subs_.subscribers_.size <= 0) {
       const value = this._getValue_();
-      if (!this._compare_(value, this._value_)) {
+      if (!this.compare(value, this._value_)) {
         this._subs_.shouldExec_ = true;
         this._value_ = value;
       }

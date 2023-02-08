@@ -45,7 +45,7 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
     if (this._dirty_ || this._subs_.subscribers_.size <= 0) {
       this._dirty_ = false;
       const value = this._getValue_();
-      if (!this._compare_(value, this._value_)) {
+      if (!this.compare(value, this._value_)) {
         this._subs_.shouldExec_ = true;
         this._value_ = value;
       }
@@ -53,7 +53,7 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
     return this._value_;
   }
 
-  protected override _compare_(_newValue: TValue, _oldValue: TValue): boolean {
+  public override compare(_newValue: TValue, _oldValue: TValue): boolean {
     // follow upstream val by default
     return false;
   }

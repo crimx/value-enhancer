@@ -11,6 +11,23 @@ describe("ReadonlyVal", () => {
     });
   });
 
+  describe("value", () => {
+    it("should expose compare method", () => {
+      const val = new ReadonlyValImpl(1);
+      expect(val.compare(val.value, 1)).toBe(true);
+      expect(val.compare(val.value, 2)).toBe(false);
+    });
+
+    it("should expose custom compare method", () => {
+      const val = new ReadonlyValImpl(
+        { a: 2 },
+        { compare: (a, b) => a.a === b.a }
+      );
+      expect(val.compare(val.value, { a: 2 })).toBe(true);
+      expect(val.compare(val.value, { a: 1 })).toBe(false);
+    });
+  });
+
   describe("start", () => {
     it("should be called before first subscription", () => {
       const start = jest.fn(() => void 0);

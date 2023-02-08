@@ -1,6 +1,8 @@
 export interface ReadonlyVal<TValue = any> {
   /** value */
   readonly value: TValue;
+  /** Compare two values. */
+  compare(newValue: TValue, oldValue: TValue): boolean;
   /**
    * Subscribe to value changes without immediate emission.
    * @param subscriber

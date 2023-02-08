@@ -13,12 +13,8 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   protected _value_: TValue;
 
-  protected _compare_(newValue: TValue, oldValue: TValue): boolean {
-    return newValue === oldValue;
-  }
-
   protected _set_(value: TValue): void {
-    if (!this._compare_(value, this._value_)) {
+    if (!this.compare(value, this._value_)) {
       this._subs_.shouldExec_ = true;
       this._value_ = value;
       this._subs_.invoke_();
@@ -33,7 +29,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     this._value_ = value;
 
     if (compare) {
-      this._compare_ = compare;
+      this.compare = compare;
     }
 
     this._subs_ = new Subscribers<TValue>(this, start);
@@ -41,6 +37,10 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public get value(): TValue {
     return this._value_;
+  }
+
+  public compare(newValue: TValue, oldValue: TValue): boolean {
+    return newValue === oldValue;
   }
 
   public reaction(
