@@ -23,9 +23,11 @@ class CombinedValImpl<
     >,
     config?: ValConfig<TValue>
   ) {
+    const getValue = () => transform(getValues(valInputs));
+
     super(INIT_VALUE, config, () => {
       if (this._value_ === INIT_VALUE) {
-        this._value_ = transform(getValues(this._sVal_));
+        this._value_ = getValue();
       } else {
         this._dirtyLevel_ = this._dirtyLevel_ || 1;
       }
@@ -40,16 +42,15 @@ class CombinedValImpl<
       return () => disposers.forEach(invoke);
     });
 
-    this._sVal_ = valInputs;
-    this._transform_ = transform;
+    this._getValue_ = getValue;
   }
 
   public override get value(): TValue {
     if (this._value_ === INIT_VALUE) {
-      this._value_ = this._transform_(getValues(this._sVal_));
+      this._value_ = this._getValue_();
       this._subs_.shouldExec_ = true;
     } else if (this._dirtyLevel_ || this._subs_.subscribers_.size <= 0) {
-      const value = this._transform_(getValues(this._sVal_));
+      const value = this._getValue_();
       if (!this._compare_(value, this._value_)) {
         this._subs_.shouldExec_ = true;
         this._value_ = value;
@@ -59,11 +60,7 @@ class CombinedValImpl<
     return this._value_;
   }
 
-  private _sVal_: TValInputs;
-  private _transform_: CombineValTransform<
-    TValue,
-    [...TValInputsValueTuple<TValInputs>]
-  >;
+  private _getValue_: () => TValue;
   private _dirtyLevel_ = 0;
 }
 

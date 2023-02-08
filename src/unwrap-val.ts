@@ -12,6 +12,7 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
     config?: ValConfig<TValue>
   ) {
     const getValue = () => get(val.value).value;
+
     super(getValue(), config, () => {
       this._value_ = getValue();
       const markDirty = () => {

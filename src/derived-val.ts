@@ -15,9 +15,11 @@ class DerivedValImpl<TSrcValue = any, TValue = any>
     transform: DerivedValTransform<TSrcValue, TValue>,
     config?: ValConfig<TValue>
   ) {
+    const getValue = () => transform(val.value);
+
     super(INIT_VALUE, config, () => {
       if (this._value_ === INIT_VALUE) {
-        this._value_ = this._transform_(this._sVal_.value);
+        this._value_ = getValue();
       } else {
         this._dirtyLevel_ = this._dirtyLevel_ || 1;
       }
@@ -29,16 +31,15 @@ class DerivedValImpl<TSrcValue = any, TValue = any>
       });
     });
 
-    this._sVal_ = val;
-    this._transform_ = transform;
+    this._getValue_ = getValue;
   }
 
   public override get value(): TValue {
     if (this._value_ === INIT_VALUE) {
-      this._value_ = this._transform_(this._sVal_.value);
+      this._value_ = this._getValue_();
       this._subs_.shouldExec_ = true;
     } else if (this._dirtyLevel_ || this._subs_.subscribers_.size <= 0) {
-      const value = this._transform_(this._sVal_.value);
+      const value = this._getValue_();
       if (!this._compare_(value, this._value_)) {
         this._subs_.shouldExec_ = true;
         this._value_ = value;
@@ -48,8 +49,7 @@ class DerivedValImpl<TSrcValue = any, TValue = any>
     return this._value_;
   }
 
-  private _sVal_: ReadonlyVal<TSrcValue>;
-  private _transform_: DerivedValTransform<TSrcValue, TValue>;
+  private _getValue_: () => TValue;
   private _dirtyLevel_ = 0;
 }
 
