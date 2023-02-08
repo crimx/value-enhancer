@@ -1,26 +1,33 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, Val, ValConfig } from "./typings";
+import { identity } from "./utils";
 
-class UnwrapValImpl<TValue = any>
+class UnwrapValImpl<TSrcValue = any, TValue = any>
   extends ReadonlyValImpl<TValue>
-  implements ReadonlyVal
+  implements ReadonlyVal<TValue>
 {
   public constructor(
-    val: ReadonlyVal<ReadonlyVal<TValue>>,
+    val: ReadonlyVal<TSrcValue>,
+    get: (value: TSrcValue) => ReadonlyVal<TValue> = identity as any,
     config?: ValConfig<TValue>
   ) {
-    super(val.value.value, config, () => {
-      this._value_ = this._sVal_.value.value;
+    const getValue = () => get(val.value).value;
+    super(getValue(), config, () => {
+      this._value_ = getValue();
       const markDirty = () => {
         if (!this._dirty_) {
           this._dirty_ = true;
           this._subs_.invoke_();
         }
       };
-      let innerDisposer = (val.value as ReadonlyValImpl)._compute_(markDirty);
+      let innerDisposer = (get(val.value) as ReadonlyValImpl)._compute_(
+        markDirty
+      );
       const outerDisposer = (val as ReadonlyValImpl)._compute_(() => {
         innerDisposer && innerDisposer();
-        innerDisposer = (val.value as ReadonlyValImpl)._compute_(markDirty);
+        innerDisposer = (get(val.value) as ReadonlyValImpl)._compute_(
+          markDirty
+        );
         markDirty();
       });
       return () => {
@@ -29,14 +36,14 @@ class UnwrapValImpl<TValue = any>
       };
     });
 
-    this._sVal_ = val;
     this._dirty_ = false;
+    this._getValue_ = getValue;
   }
 
   public override get value(): TValue {
     if (this._dirty_ || this._subs_.subscribers_.size <= 0) {
       this._dirty_ = false;
-      const value = this._sVal_.value.value;
+      const value = this._getValue_();
       if (!this._compare_(value, this._value_)) {
         this._subs_.shouldExec_ = true;
         this._value_ = value;
@@ -50,8 +57,8 @@ class UnwrapValImpl<TValue = any>
     return false;
   }
 
-  private _sVal_: ReadonlyVal<ReadonlyVal<TValue>>;
   private _dirty_: boolean;
+  private _getValue_: () => TValue;
 }
 
 /**
@@ -72,8 +79,35 @@ class UnwrapValImpl<TValue = any>
  * ```
  */
 export function unwrap<TValue = any>(
-  val: ReadonlyVal<Val<TValue> | ReadonlyVal<TValue>>,
+  val: ReadonlyVal<Val<TValue> | ReadonlyVal<TValue>>
+): ReadonlyVal<TValue>;
+/**
+ * Unwrap an inner val extracted from a source val to a val of the inner val value.
+ * @param val Input value.
+ * @param get extract inner val from source val.
+ * @returns An readonly val with value of inner val.
+ *
+ * @example
+ * ```js
+ * import { unwrap, val } from "value-enhancer";
+ *
+ * const inner$ = val(12);
+ * const outer$ = val({ inner$ });
+ *
+ * const unwrapped$ = unwrap(outer$, ({ inner$ }) => inner$);
+ *
+ * inner$.value === unwrapped$.value; // true
+ * ```
+ */
+export function unwrap<TSrcValue = any, TValue = any>(
+  val: ReadonlyVal<TSrcValue>,
+  get: (value: TSrcValue) => ReadonlyVal<TValue>,
+  config?: ValConfig<TValue>
+): ReadonlyVal<TValue>;
+export function unwrap<TSrcValue = any, TValue = any>(
+  val: ReadonlyVal<TSrcValue>,
+  get?: (value: TSrcValue) => ReadonlyVal<TValue>,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> {
-  return new UnwrapValImpl(val, config);
+  return new UnwrapValImpl(val, get, config);
 }

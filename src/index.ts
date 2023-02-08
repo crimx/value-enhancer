@@ -7,6 +7,8 @@ export type {
   ValConfig,
 } from "./typings";
 
+export { identity } from "./utils";
+
 export { val } from "./val";
 export { derive } from "./derived-val";
 export { combine } from "./combine";

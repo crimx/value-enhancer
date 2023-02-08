@@ -1,5 +1,5 @@
 import { describe, it, expect, jest } from "@jest/globals";
-import { derive, unwrap, val } from "../src";
+import { derive, identity, unwrap, val } from "../src";
 
 describe("unwrap", () => {
   it("should unwrap value", () => {
@@ -16,6 +16,25 @@ describe("unwrap", () => {
     expect(unwrapped$.value).toBe(2);
 
     outer$.set(val(3));
+
+    expect(inner$.value).toBe(2);
+    expect(unwrapped$.value).toBe(3);
+  });
+
+  it("should unwrap value from custom path", () => {
+    const inner$ = val(1);
+    const outer$ = val({ inner: inner$ });
+    const unwrapped$ = unwrap(outer$, ({ inner }) => inner);
+
+    expect(inner$.value).toBe(1);
+    expect(unwrapped$.value).toBe(1);
+
+    inner$.set(2);
+
+    expect(inner$.value).toBe(2);
+    expect(unwrapped$.value).toBe(2);
+
+    outer$.set({ inner: val(3) });
 
     expect(inner$.value).toBe(2);
     expect(unwrapped$.value).toBe(3);
@@ -84,7 +103,9 @@ describe("unwrap", () => {
   it("should perform custom compare", async () => {
     const val1 = val({ code: 2 });
     const val2 = val(val1);
-    const unwrapped = unwrap(val2, { compare: (a, b) => a.code === b.code });
+    const unwrapped = unwrap(val2, identity, {
+      compare: (a, b) => a.code === b.code,
+    });
 
     const sub = jest.fn();
     unwrapped.subscribe(sub);

@@ -1,5 +1,6 @@
 import type { ReadonlyVal, TValInputsValueTuple } from "./typings";
 
+/** Returns the value passed in. */
 export const identity = <TValue>(value: TValue): TValue => value;
 
 const getValue = <TValue>(val: ReadonlyVal<TValue>): TValue => val.value;
