@@ -15,7 +15,7 @@
     "dist"
   ],
   "scripts": {
-    "prepublish": "pnpm run build",
+    "prepublishOnly": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check .",
     "test": "jest --coverage",
     "docs": "typedoc --cname value-enhancer.js.org --includeVersion --excludePrivate --excludeProtected --excludeInternal --out docs src/index.ts",
