@@ -13,13 +13,13 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   protected _value_: TValue;
 
-  protected _set_(value: TValue): void {
+  protected _set_ = (value: TValue): void => {
     if (!this.compare(value, this._value_)) {
       this._subs_.shouldExec_ = true;
       this._value_ = value;
       this._subs_.invoke_();
     }
-  }
+  };
 
   public constructor(
     value: TValue,
