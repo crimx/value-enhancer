@@ -13,7 +13,7 @@ export class Subscribers<TValue = any> {
     val: ReadonlyVal<TValue>,
     start?: (() => void | ValDisposer | undefined) | null
   ) {
-    this._val_ = val;
+    this._getValue_ = () => val.value;
     this._start_ = start;
   }
 
@@ -79,7 +79,7 @@ export class Subscribers<TValue = any> {
           this.shouldExec_ = false;
         }
       } else {
-        value = this._val_.value;
+        value = this._getValue_();
         if (!this.shouldExec_) {
           return;
         }
@@ -109,7 +109,7 @@ export class Subscribers<TValue = any> {
     this._startDisposer_ && (this._startDisposer_ = this._startDisposer_());
   }
 
-  private readonly _val_: ReadonlyVal<TValue>;
+  private _getValue_: () => TValue;
 
   private [SubscriberMode.Async] = 0;
   private [SubscriberMode.Eager] = 0;
