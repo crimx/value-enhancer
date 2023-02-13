@@ -28,7 +28,7 @@ export interface ReadonlyVal<TValue = any> {
 export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   value: TValue;
   /** set new value */
-  set(value: TValue): void;
+  set(this: void, value: TValue): void;
 }
 
 export type ValSetValue<TValue = any> = (value: TValue) => void;
