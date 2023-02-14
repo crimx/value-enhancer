@@ -6,6 +6,15 @@
   "license": "MIT",
   "author": "CRIMX <straybugs@gmail.com> (https://github.com/crimx/)",
   "repository": "crimx/value-enhancer",
+  "keywords": [
+    "observable",
+    "react",
+    "reactive",
+    "model",
+    "frp",
+    "functional-reactive-programming",
+    "data flow"
+  ],
   "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
