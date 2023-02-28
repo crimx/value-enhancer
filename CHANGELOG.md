@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/crimx/value-enhancer/compare/v2.3.3...v2.4.0) (2023-02-28)
+
+
+### Features
+
+* add default eager config ([ae0ea27](https://github.com/crimx/value-enhancer/commit/ae0ea27ffd9a7753b996ffc0eff296e87cff6eba))
+* add setValue ([811d18a](https://github.com/crimx/value-enhancer/commit/811d18ae0043d90129145ba7538d1610d8fc5822))
+
 ### [2.3.3](https://github.com/crimx/value-enhancer/compare/v2.3.2...v2.3.3) (2023-02-13)
 
 ### [2.3.2](https://github.com/crimx/value-enhancer/compare/v2.3.1...v2.3.2) (2023-02-10)
