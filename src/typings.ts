@@ -49,6 +49,11 @@ export interface ValConfig<TValue = any> {
    * Compare two values. Default `===`.
    */
   compare?: ValCompare<TValue>;
+  /**
+   * Set the default behavior of subscription and reaction.
+   * Emission triggers synchronously if `true`. Default `false`.
+   */
+  eager?: boolean;
 }
 
 export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =

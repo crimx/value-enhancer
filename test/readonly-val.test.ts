@@ -28,6 +28,109 @@ describe("ReadonlyVal", () => {
     });
   });
 
+  describe("config", () => {
+    it("should perform custom compare", () => {
+      const spy = jest.fn();
+      const value1 = { value: 1 };
+      const value1Clone = { value: 1 };
+      const compare = (a: { value: number }, b: { value: number }) =>
+        a.value === b.value;
+
+      const val = new ReadonlyValImpl(value1, {
+        compare,
+      });
+      const set = getInternalSetter(val);
+      expect(val.value).toBe(value1);
+      expect(spy).toBeCalledTimes(0);
+
+      val.reaction(spy, true);
+      expect(val.value).toBe(value1);
+      expect(spy).toBeCalledTimes(0);
+
+      set(value1);
+      expect(val.value).toBe(value1);
+      expect(spy).toBeCalledTimes(0);
+
+      set(value1Clone);
+      expect(val.value).toBe(value1);
+      expect(spy).toBeCalledTimes(0);
+
+      val.unsubscribe();
+    });
+
+    it("should trigger subscription synchronously by default if eager is true", async () => {
+      const spy = jest.fn();
+      const val = new ReadonlyValImpl(1, {
+        eager: true,
+      });
+      const set = getInternalSetter(val);
+      expect(val.value).toBe(1);
+      expect(spy).toBeCalledTimes(0);
+
+      val.reaction(spy);
+      expect(val.value).toBe(1);
+      expect(spy).toBeCalledTimes(0);
+
+      const spyAsync = jest.fn();
+      val.reaction(spyAsync, false);
+      expect(val.value).toBe(1);
+      expect(spyAsync).toBeCalledTimes(0);
+
+      set(1);
+      expect(val.value).toBe(1);
+      expect(spy).toBeCalledTimes(0);
+      expect(spyAsync).toBeCalledTimes(0);
+
+      set(2);
+      expect(val.value).toBe(2);
+      expect(spy).toBeCalledTimes(1);
+      expect(spyAsync).toBeCalledTimes(0);
+
+      await Promise.resolve();
+
+      expect(spy).toBeCalledTimes(1);
+      expect(spyAsync).toBeCalledTimes(1);
+
+      val.unsubscribe();
+    });
+
+    it("should trigger subscription asynchronously by default if eager is false", async () => {
+      const spyAsync = jest.fn();
+      const val = new ReadonlyValImpl(1, {
+        eager: false,
+      });
+      const set = getInternalSetter(val);
+      expect(val.value).toBe(1);
+      expect(spyAsync).toBeCalledTimes(0);
+
+      val.reaction(spyAsync);
+      expect(val.value).toBe(1);
+      expect(spyAsync).toBeCalledTimes(0);
+
+      const spySync = jest.fn();
+      val.reaction(spySync, true);
+      expect(val.value).toBe(1);
+      expect(spySync).toBeCalledTimes(0);
+
+      set(1);
+      expect(val.value).toBe(1);
+      expect(spySync).toBeCalledTimes(0);
+      expect(spyAsync).toBeCalledTimes(0);
+
+      set(2);
+      expect(val.value).toBe(2);
+      expect(spySync).toBeCalledTimes(1);
+      expect(spyAsync).toBeCalledTimes(0);
+
+      await Promise.resolve();
+
+      expect(spySync).toBeCalledTimes(1);
+      expect(spyAsync).toBeCalledTimes(1);
+
+      val.unsubscribe();
+    });
+  });
+
   describe("start", () => {
     it("should be called before first subscription", () => {
       const start = jest.fn(() => void 0);
@@ -508,35 +611,6 @@ describe("ReadonlyVal", () => {
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(value2);
-
-      val.unsubscribe();
-    });
-
-    it("should perform custom compare", () => {
-      const spy = jest.fn();
-      const value1 = { value: 1 };
-      const value1Clone = { value: 1 };
-      const compare = (a: { value: number }, b: { value: number }) =>
-        a.value === b.value;
-
-      const val = new ReadonlyValImpl(value1, {
-        compare,
-      });
-      const set = getInternalSetter(val);
-      expect(val.value).toBe(value1);
-      expect(spy).toBeCalledTimes(0);
-
-      val.reaction(spy, true);
-      expect(val.value).toBe(value1);
-      expect(spy).toBeCalledTimes(0);
-
-      set(value1);
-      expect(val.value).toBe(value1);
-      expect(spy).toBeCalledTimes(0);
-
-      set(value1Clone);
-      expect(val.value).toBe(value1);
-      expect(spy).toBeCalledTimes(0);
 
       val.unsubscribe();
     });

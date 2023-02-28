@@ -23,10 +23,12 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public constructor(
     value: TValue,
-    { compare }: ValConfig<TValue> = {},
+    { compare, eager = false }: ValConfig<TValue> = {},
     start?: ValOnStart
   ) {
     this._value_ = value;
+
+    this.eager = eager;
 
     if (compare) {
       this.compare = compare;
@@ -39,13 +41,15 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     return this._value_;
   }
 
+  public eager: boolean;
+
   public compare(newValue: TValue, oldValue: TValue): boolean {
     return newValue === oldValue;
   }
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
-    eager?: boolean
+    eager: boolean = this.eager
   ): ValDisposer {
     return this._subs_.add_(
       subscriber,
@@ -55,7 +59,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public subscribe(
     subscriber: ValSubscriber<TValue>,
-    eager?: boolean
+    eager: boolean = this.eager
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     invoke(subscriber, this.value);
