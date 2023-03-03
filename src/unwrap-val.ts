@@ -1,6 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, Val, ValConfig } from "./typings";
-import { identity } from "./utils";
+import { identity, INIT_VALUE } from "./utils";
 
 class UnwrapValImpl<TSrcValue = any, TValue = any>
   extends ReadonlyValImpl<TValue>
@@ -11,45 +11,57 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
     get: (value: TSrcValue) => ReadonlyVal<TValue> = identity as any,
     config?: ValConfig<TValue>
   ) {
-    const getValue = () => get(val.value).value;
+    let innerVal: ReadonlyVal<TValue> | undefined;
+    const getValue = () => {
+      if (!innerVal || this._subs_.subscribers_.size <= 0) {
+        innerVal = get(val.value);
+      }
+      return innerVal.value;
+    };
 
-    super(getValue(), config, () => {
-      this._value_ = getValue();
+    super(INIT_VALUE, config, () => {
+      innerVal = get(val.value);
+
+      if (this._value_ === INIT_VALUE) {
+        this._value_ = innerVal.value;
+      } else {
+        this._dirtyLevel_ = this._dirtyLevel_ || 1;
+      }
+
       const markDirty = () => {
-        if (!this._dirty_) {
-          this._dirty_ = true;
+        if (this._dirtyLevel_ < 2) {
+          this._dirtyLevel_ = 2;
           this._subs_.invoke_();
         }
       };
-      let innerDisposer = (get(val.value) as ReadonlyValImpl)._compute_(
-        markDirty
-      );
+      let innerDisposer = (innerVal as ReadonlyValImpl)._compute_(markDirty);
       const outerDisposer = (val as ReadonlyValImpl)._compute_(() => {
-        innerDisposer && innerDisposer();
-        innerDisposer = (get(val.value) as ReadonlyValImpl)._compute_(
-          markDirty
-        );
+        innerDisposer();
+        innerVal = get(val.value);
+        innerDisposer = (innerVal as ReadonlyValImpl)._compute_(markDirty);
         markDirty();
       });
       return () => {
-        innerDisposer && innerDisposer();
+        innerDisposer();
         outerDisposer();
       };
     });
 
-    this._dirty_ = false;
     this._getValue_ = getValue;
   }
 
   public override get value(): TValue {
-    if (this._dirty_ || this._subs_.subscribers_.size <= 0) {
-      this._dirty_ = false;
+    if (this._value_ === INIT_VALUE) {
+      this._value_ = this._getValue_();
+      this._subs_.shouldExec_ = true;
+    } else if (this._dirtyLevel_ || this._subs_.subscribers_.size <= 0) {
       const value = this._getValue_();
       if (!this.compare(value, this._value_)) {
         this._subs_.shouldExec_ = true;
         this._value_ = value;
       }
     }
+    this._dirtyLevel_ = 0;
     return this._value_;
   }
 
@@ -58,8 +70,8 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
     return false;
   }
 
-  private _dirty_: boolean;
   private _getValue_: () => TValue;
+  private _dirtyLevel_ = 0;
 }
 
 /**

@@ -134,7 +134,7 @@ describe("combine", () => {
     expect(spy4).lastCalledWith(14);
   });
 
-  it("should combine a val list into a single val", () => {
+  it("should combine a val list into a single val", async () => {
     const val1 = val(1);
     const val2 = val({ code: 2 });
     const val3 = val<boolean>(false);
@@ -152,6 +152,26 @@ describe("combine", () => {
     expect(spy).toBeCalledTimes(1);
     expect(spy.mock.calls[0][0]).toEqual({
       val1: 1,
+      val2: { code: 2 },
+      val3: false,
+      val4: "4",
+    });
+
+    val1.set(2);
+    await Promise.resolve();
+    expect(spy).toBeCalledTimes(2);
+    expect(spy.mock.calls[1][0]).toEqual({
+      val1: 2,
+      val2: { code: 2 },
+      val3: false,
+      val4: "4",
+    });
+
+    val1.set(3);
+    await Promise.resolve();
+    expect(spy).toBeCalledTimes(3);
+    expect(spy.mock.calls[2][0]).toEqual({
+      val1: 3,
       val2: { code: 2 },
       val3: false,
       val4: "4",

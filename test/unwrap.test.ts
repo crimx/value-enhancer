@@ -1,5 +1,5 @@
 import { describe, it, expect, jest } from "@jest/globals";
-import { derive, identity, unwrap, val } from "../src";
+import { combine, derive, identity, unwrap, val } from "../src";
 
 describe("unwrap", () => {
   it("should unwrap value", () => {
@@ -202,5 +202,30 @@ describe("unwrap", () => {
 
     expect(spy).toBeCalledTimes(1);
     expect(spy).lastCalledWith(5);
+  });
+
+  it("should unwrap combined val", () => {
+    const vals = [val(1), val(2), val(3)];
+    const signal = val(null, { compare: () => false });
+    const countSpy = jest.fn();
+    const unwrapped = unwrap(signal, () => {
+      countSpy();
+      return combine([...vals]);
+    });
+
+    expect(countSpy).toHaveBeenCalledTimes(0);
+
+    const spy = jest.fn();
+    unwrapped.subscribe(spy, true);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(countSpy).toHaveBeenCalledTimes(1);
+
+    vals[0].set(4);
+    expect(spy).toHaveBeenCalledTimes(2);
+
+    vals[0].set(5);
+    expect(spy).toHaveBeenCalledTimes(3);
+
+    expect(countSpy).toHaveBeenCalledTimes(1);
   });
 });
