@@ -7,6 +7,8 @@ export type {
   ValConfig,
 } from "./typings";
 
+export { ReadonlyValImpl } from "./readonly-val";
+
 export { identity } from "./utils";
 
 export { val } from "./val";
