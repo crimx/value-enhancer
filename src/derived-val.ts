@@ -1,6 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig } from "./typings";
-import { identity, INIT_VALUE } from "./utils";
+import { compute, identity, INIT_VALUE } from "./utils";
 
 type DerivedValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue
@@ -23,7 +23,7 @@ class DerivedValImpl<TSrcValue = any, TValue = any>
       } else {
         this._dirtyLevel_ = this._dirtyLevel_ || 1;
       }
-      return (val as ReadonlyValImpl)._compute_(() => {
+      return compute(val, () => {
         if (this._dirtyLevel_ < 2) {
           this._dirtyLevel_ = 2;
           this._subs_.invoke_();

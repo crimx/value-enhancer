@@ -1,6 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, TValInputsValueTuple, ValConfig } from "./typings";
-import { invoke, getValues, INIT_VALUE, identity } from "./utils";
+import { invoke, getValues, INIT_VALUE, identity, compute } from "./utils";
 
 type CombineValTransform<
   TDerivedValue = any,
@@ -32,7 +32,7 @@ class CombinedValImpl<
         this._dirtyLevel_ = this._dirtyLevel_ || 1;
       }
       const disposers = valInputs.map(val =>
-        (val as ReadonlyValImpl)._compute_(() => {
+        compute(val, () => {
           if (this._dirtyLevel_ < 2) {
             this._dirtyLevel_ = 2;
             this._subs_.invoke_();
