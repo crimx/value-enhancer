@@ -2,7 +2,8 @@ import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig } from "./typings";
 import { compute, identity, INIT_VALUE } from "./utils";
 
-type DerivedValTransform<TValue = any, TDerivedValue = any> = (
+/** @ignore */
+export type DerivedValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue
 ) => TDerivedValue;
 

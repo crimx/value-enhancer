@@ -1,7 +1,7 @@
 import type { ReadonlyValImpl } from "./readonly-val";
 import type {
   ReadonlyVal,
-  TValInputsValueTuple,
+  ValInputsValueTuple,
   ValDisposer,
   ValSubscriber,
 } from "./typings";
@@ -13,8 +13,8 @@ const getValue = <TValue>(val: ReadonlyVal<TValue>): TValue => val.value;
 
 export const getValues = <TValInputs extends readonly ReadonlyVal[]>(
   valInputs: TValInputs
-): [...TValInputsValueTuple<TValInputs>] =>
-  valInputs.map(getValue) as [...TValInputsValueTuple<TValInputs>];
+): [...ValInputsValueTuple<TValInputs>] =>
+  valInputs.map(getValue) as [...ValInputsValueTuple<TValInputs>];
 
 export const invoke = <TValue>(
   fn: (value: TValue) => void,
@@ -31,7 +31,7 @@ export const INIT_VALUE: any = {};
 
 export const VAL_SYMBOL = "$\u2009val\u2009";
 
-/** Check if the `value` is `ReadonlyVal` or `Val`. */
+/** @returns `true` if `val` is `ReadonlyVal` or `Val`. */
 export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
   !!(val && (val as any)[VAL_SYMBOL]);
 

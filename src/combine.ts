@@ -1,8 +1,9 @@
 import { ReadonlyValImpl } from "./readonly-val";
-import type { ReadonlyVal, TValInputsValueTuple, ValConfig } from "./typings";
+import type { ReadonlyVal, ValInputsValueTuple, ValConfig } from "./typings";
 import { invoke, getValues, INIT_VALUE, identity, compute } from "./utils";
 
-type CombineValTransform<
+/** @ignore */
+export type CombineValTransform<
   TDerivedValue = any,
   TValues extends readonly any[] = any[],
   TMeta = any
@@ -19,7 +20,7 @@ class CombinedValImpl<
     valInputs: TValInputs,
     transform: CombineValTransform<
       TValue,
-      [...TValInputsValueTuple<TValInputs>]
+      [...ValInputsValueTuple<TValInputs>]
     >,
     config?: ValConfig<TValue>
   ) {
@@ -73,7 +74,7 @@ export function combine<
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
 >(
   valInputs: readonly [...TValInputs]
-): ReadonlyVal<[...TValInputsValueTuple<TValInputs>]>;
+): ReadonlyVal<[...ValInputsValueTuple<TValInputs>]>;
 /**
  * Combines an array of vals into a single val with transformed value.
  * @param valInputs An array of vals to combine.
@@ -86,7 +87,7 @@ export function combine<
   TValue = any
 >(
   valInputs: readonly [...TValInputs],
-  transform: CombineValTransform<TValue, [...TValInputsValueTuple<TValInputs>]>,
+  transform: CombineValTransform<TValue, [...ValInputsValueTuple<TValInputs>]>,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue>;
 export function combine<
@@ -96,10 +97,10 @@ export function combine<
   valInputs: readonly [...TValInputs],
   transform: CombineValTransform<
     TValue,
-    [...TValInputsValueTuple<TValInputs>]
+    [...ValInputsValueTuple<TValInputs>]
   > = identity as CombineValTransform<
     TValue,
-    [...TValInputsValueTuple<TValInputs>]
+    [...ValInputsValueTuple<TValInputs>]
   >,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> {

@@ -42,6 +42,7 @@ export type ValSubscriber<TValue = any> = (newValue: TValue) => void;
 
 export type ValDisposer = () => void;
 
+/** @ignore */
 export type ValOnStart = () => void | ValDisposer | undefined;
 
 export interface ValConfig<TValue = any> {
@@ -56,11 +57,13 @@ export interface ValConfig<TValue = any> {
   eager?: boolean;
 }
 
-export type TValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
+/** @ignore */
+export type ValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
   Readonly<{
     [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
   }>;
 
+/** @ignore */
 export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue>
   ? TValue
   : never;
