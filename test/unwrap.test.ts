@@ -40,6 +40,27 @@ describe("unwrap", () => {
     expect(unwrapped$.value).toBe(3);
   });
 
+  it("should unwrap normal value", () => {
+    const inner$ = val(1);
+    const outer$ = val({ inner: inner$ });
+    const unwrapped$ = unwrap(outer$, ({ inner }) =>
+      inner.value % 2 === 0 ? inner : null
+    );
+
+    expect(inner$.value).toBe(1);
+    expect(unwrapped$.value).toBe(null);
+
+    inner$.set(2);
+
+    expect(inner$.value).toBe(2);
+    expect(unwrapped$.value).toBe(2);
+
+    outer$.set({ inner: val(3) });
+
+    expect(inner$.value).toBe(2);
+    expect(unwrapped$.value).toBe(null);
+  });
+
   it("should subscribe", async () => {
     const spy = jest.fn();
     const val1 = val(1);
@@ -98,6 +119,51 @@ describe("unwrap", () => {
     expect(spy).lastCalledWith(9);
 
     unwrapped.unsubscribe();
+  });
+
+  it("should subscribe if first emitted value is normal value", async () => {
+    const spy = jest.fn();
+    const inner$ = val("inner");
+    const outer$ = val(1);
+    const unwrapped$ = unwrap(
+      outer$,
+      outer => (outer % 2 === 0 ? inner$ : null),
+      { compare: Object.is }
+    );
+
+    unwrapped$.subscribe(spy);
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).lastCalledWith(null);
+
+    spy.mockClear();
+
+    outer$.set(1);
+
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    outer$.set(3);
+
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    outer$.set(2);
+
+    expect(spy).toHaveBeenCalledTimes(0);
+
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).lastCalledWith("inner");
+
+    unwrapped$.unsubscribe();
   });
 
   it("should perform custom compare", async () => {

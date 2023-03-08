@@ -1,7 +1,7 @@
 export interface ReadonlyVal<TValue = any> {
   /** value */
   readonly value: TValue;
-  /** Compare two values. */
+  /** Compare two values. Default `===`. */
   compare(newValue: TValue, oldValue: TValue): boolean;
   /**
    * Subscribe to value changes without immediate emission.
@@ -28,7 +28,7 @@ export interface ReadonlyVal<TValue = any> {
 export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   value: TValue;
   /** set new value */
-  set(this: void, value: TValue): void;
+  readonly set: (this: void, value: TValue) => void;
 }
 
 export type ValSetValue<TValue = any> = (value: TValue) => void;

@@ -1,6 +1,6 @@
 import { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, Val, ValConfig } from "./typings";
-import { identity, INIT_VALUE } from "./utils";
+import { compute, identity, INIT_VALUE, isVal } from "./utils";
 
 class UnwrapValImpl<TSrcValue = any, TValue = any>
   extends ReadonlyValImpl<TValue>
@@ -8,22 +8,16 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
 {
   public constructor(
     val: ReadonlyVal<TSrcValue>,
-    get: (value: TSrcValue) => ReadonlyVal<TValue> = identity as any,
+    get: (value: TSrcValue) => ReadonlyVal<TValue> | TValue = identity as any,
     config?: ValConfig<TValue>
   ) {
-    let innerVal: ReadonlyVal<TValue> | undefined;
-    const getValue = () => {
-      if (!innerVal || this._subs_.subscribers_.size <= 0) {
-        innerVal = get(val.value);
-      }
-      return innerVal.value;
-    };
+    let innerValue: ReadonlyVal<TValue> | TValue | undefined;
 
     super(INIT_VALUE, config, () => {
-      innerVal = get(val.value);
+      innerValue = get(val.value);
 
       if (this._value_ === INIT_VALUE) {
-        this._value_ = innerVal.value;
+        this._value_ = isVal(innerValue) ? innerValue.value : innerValue;
       } else {
         this._dirtyLevel_ = this._dirtyLevel_ || 1;
       }
@@ -34,20 +28,27 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
           this._subs_.invoke_();
         }
       };
-      let innerDisposer = (innerVal as ReadonlyValImpl)._compute_(markDirty);
-      const outerDisposer = (val as ReadonlyValImpl)._compute_(() => {
-        innerDisposer();
-        innerVal = get(val.value);
-        innerDisposer = (innerVal as ReadonlyValImpl)._compute_(markDirty);
+
+      let innerDisposer = isVal(innerValue) && compute(innerValue, markDirty);
+
+      const outerDisposer = compute(val, () => {
+        innerDisposer && innerDisposer();
+        innerValue = get(val.value);
+        innerDisposer = isVal(innerValue) && compute(innerValue, markDirty);
         markDirty();
       });
       return () => {
-        innerDisposer();
+        innerDisposer && innerDisposer();
         outerDisposer();
       };
     });
 
-    this._getValue_ = getValue;
+    this._getValue_ = (): TValue => {
+      if (this._subs_.subscribers_.size <= 0 || !innerValue) {
+        innerValue = get(val.value);
+      }
+      return isVal(innerValue) ? innerValue.value : innerValue;
+    };
   }
 
   public override get value(): TValue {
@@ -92,12 +93,32 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
  * ```
  */
 export function unwrap<TValue = any>(
-  val: ReadonlyVal<Val<TValue> | ReadonlyVal<TValue>>
+  val: ReadonlyVal<ReadonlyVal<TValue>>
+): ReadonlyVal<TValue>;
+/**
+ * Unwrap a val of val to a val of the inner val value.
+ * @param val Input value.
+ * @returns An readonly val with value of inner val.
+ *
+ * @example
+ * ```js
+ * import { unwrap, val } from "value-enhancer";
+ *
+ * const inner$ = val(12);
+ * const outer$ = val(inner$);
+ *
+ * const unwrapped$ = unwrap(outer$);
+ *
+ * inner$.value === unwrapped$.value; // true
+ * ```
+ */
+export function unwrap<TValue = any>(
+  val: ReadonlyVal<Val<TValue>>
 ): ReadonlyVal<TValue>;
 /**
  * Unwrap an inner val extracted from a source val to a val of the inner val value.
  * @param val Input value.
- * @param get extract inner val from source val.
+ * @param get extract inner val or value from source val.
  * @returns An readonly val with value of inner val.
  *
  * @example
@@ -114,12 +135,12 @@ export function unwrap<TValue = any>(
  */
 export function unwrap<TSrcValue = any, TValue = any>(
   val: ReadonlyVal<TSrcValue>,
-  get: (value: TSrcValue) => ReadonlyVal<TValue>,
+  get: (value: TSrcValue) => ReadonlyVal<TValue> | TValue,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue>;
 export function unwrap<TSrcValue = any, TValue = any>(
   val: ReadonlyVal<TSrcValue>,
-  get?: (value: TSrcValue) => ReadonlyVal<TValue>,
+  get?: (value: TSrcValue) => ReadonlyVal<TValue> | TValue,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> {
   return new UnwrapValImpl(val, get, config);

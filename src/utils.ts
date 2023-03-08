@@ -1,4 +1,10 @@
-import type { ReadonlyVal, TValInputsValueTuple } from "./typings";
+import type { ReadonlyValImpl } from "./readonly-val";
+import type {
+  ReadonlyVal,
+  TValInputsValueTuple,
+  ValDisposer,
+  ValSubscriber,
+} from "./typings";
 
 /** Returns the value passed in. */
 export const identity = <TValue>(value: TValue): TValue => value;
@@ -28,3 +34,8 @@ export const VAL_SYMBOL = "$\u2009val\u2009";
 /** Check if the `value` is `ReadonlyVal` or `Val`. */
 export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
   !!(val && (val as any)[VAL_SYMBOL]);
+
+export const compute = (
+  val: ReadonlyVal,
+  subscriber: ValSubscriber<void>
+): ValDisposer => (val as ReadonlyValImpl)._compute_(subscriber);
