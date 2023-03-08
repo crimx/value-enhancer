@@ -9,7 +9,7 @@ export type {
 
 export { ReadonlyValImpl } from "./readonly-val";
 
-export { identity } from "./utils";
+export { identity, isVal } from "./utils";
 
 export { val } from "./val";
 export { derive } from "./derived-val";

@@ -6,7 +6,7 @@ import type {
   ValOnStart,
   ReadonlyVal,
 } from "./typings";
-import { invoke } from "./utils";
+import { invoke, VAL_SYMBOL } from "./utils";
 
 export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   protected _subs_: Subscribers<TValue>;
@@ -26,6 +26,8 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     { compare, eager = false }: ValConfig<TValue> = {},
     start?: ValOnStart
   ) {
+    Object.defineProperty(this, VAL_SYMBOL, { value: 1 });
+
     this._value_ = value;
 
     this.eager = eager;

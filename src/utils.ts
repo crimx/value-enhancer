@@ -22,3 +22,9 @@ export const invoke = <TValue>(
 };
 
 export const INIT_VALUE: any = {};
+
+export const VAL_SYMBOL = "$\u2009val\u2009";
+
+/** Check if the `value` is `ReadonlyVal` or `Val`. */
+export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
+  !!(val && (val as any)[VAL_SYMBOL]);
