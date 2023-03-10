@@ -191,8 +191,10 @@ This issue does not exist in `value-enhancer` because we do not collect dependen
 
 ## Usage
 
+## Create Val
+
 ```js
-import { val, combine, derive } from "value-enhancer";
+import { val } from "value-enhancer";
 
 const count$ = val(2);
 
@@ -201,28 +203,124 @@ console.log(count$.value); // 2
 count$.set(3);
 console.log(count$.value); // 3
 
-count$.subscribe(count => console.log(`subscribe: ${count}`)); // subscribe: 3
+count$.value = 4;
+console.log(count$.value); // 4
+```
 
-count$.reaction(count => console.log(`reaction: ${count}`)); // (nothing printed, only subscribe to changes)
+## Subscribe to value changes
 
+```js
+import { val, combine, derive } from "value-enhancer";
+
+const count$ = val(3);
+
+// Emit the current value synchronously, then emit the new value when it changes.
+const disposeSubscribe = count$.subscribe(count => {
+  console.log(`subscribe: ${count}`);
+}); // printed "subscribe: 3"
+
+// Only emit the new value when it changes.
+const disposeReaction = count$.reaction(count => {
+  console.log(`reaction: ${count}`);
+}); // (nothing printed)
+
+// `===` equality check by default
 count$.set(3); // nothing happened
 
-count$.value = 4; // prints subscribe: 4, reaction: 4
+// subscription triggered asynchronously by default
+count$.set(4); // nothing happened
 
-const derive$ = derive(count$, count => count * 3);
-console.log(derived$.value); // 12
-derived$.subscribe(derived => console.log(`derived: ${derived}`)); // derived: 12
+await Promise.resolve(); // wait for the next tick
+
+// printed "subscribe: 4"
+// printed "reaction: 4"
+
+disposeSubscribe();
+disposeReaction();
+```
+
+## Derive Val
+
+Derive a new Val from another Val.
+
+```js
+import { val, derive } from "value-enhancer";
+
+const count$ = val(2);
+
+const derived$ = derive(count$, count => count * 3);
+
+console.log(derived$.value); // 6
+```
+
+## Combine Val
+
+Combine multiple Vals into a new Val.
+
+```js
+import { val, derive, combine } from "value-enhancer";
+
+const count$ = val(2);
+
+const derived$ = derive(count$, count => count * 3);
 
 const combined$ = combine(
   [count$, derived$],
   ([count, derived]) => count + derived
 );
-console.log(combined$.value); // 16
-combined$.subscribe(combined => console.log(`combined: ${combined}`)); // combined: 16
 
-count$.set(5); // subscribe: 5, reaction: 5, derived: 15, combined: 20
+console.log(combined$.value); // 8
 ```
 
-## Legacy
+## Unwrap Val
 
-[(v1)](https://github.com/crimx/value-enhancer/tree/v1)
+Unwrap the inner Val from a Val of Val. This is useful for subscribing to a dynamic Val that is inside another Val.
+
+```js
+import { val, unwrap } from "value-enhancer";
+
+const itemList$ = val([val(1), val(2), val(3)]);
+
+const firstItem$ = unwrap(itemList$, itemList => itemList[0]);
+
+console.log(firstItem$.value); // 1
+
+itemList$.set([val(4), val(5), val(6)]);
+
+console.log(firstItem$.value); // 4
+```
+
+## Custom Compare
+
+By default, `===` equality check is used to determine whether a value has changed. You can customize the equality check by passing a `compare` function.
+
+```js
+import { val } from "value-enhancer";
+
+const isSameXYPosition = (p1, p2) => p1.x === p2.x && p1.y === p2.y;
+const isSameXYZPosition = (p1, p2) =>
+  p1.x === p2.x && p1.y === p2.y && p1.z === p2.z;
+
+const xyzPosition$ = val({ x: 0, y: 0, z: 0 }, { compare: isSameXYZPosition });
+const xyPosition$ = derive(xyPosition, { compare: isSameXYPosition });
+
+xyPosition$.set({ x: 0, y: 0, z: 0 }); // nothing happened
+```
+
+## Synchronous subscription
+
+Subscription is triggered asynchronously on next tick by default. To trigger synchronously, set `eager` parameter to `true`.
+
+```js
+count$.subscribe(count => console.log(`subscribe: ${count}`), true);
+count$.reaction(count => console.log(`reaction: ${count}`), true);
+```
+
+Or set `eager` to `true` when creating the Val.
+
+```js
+// subscription of count$ is trigger synchronously by default
+const count$ = val(3, { eager: true });
+
+const derived$ = derive(count$, count => count * 3, { eager: true });
+```
