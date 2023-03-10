@@ -125,10 +125,8 @@ describe("unwrap", () => {
     const spy = jest.fn();
     const inner$ = val("inner");
     const outer$ = val(1);
-    const unwrapped$ = unwrap(
-      outer$,
-      outer => (outer % 2 === 0 ? inner$ : null),
-      { compare: Object.is }
+    const unwrapped$ = unwrap(outer$, outer =>
+      outer % 2 === 0 ? inner$ : null
     );
 
     unwrapped$.subscribe(spy);

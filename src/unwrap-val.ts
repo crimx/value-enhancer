@@ -49,6 +49,11 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
       }
       return isVal(innerValue) ? innerValue.value : innerValue;
     };
+
+    this._compare_ = (newValue, oldValue) =>
+      isVal(innerValue)
+        ? innerValue.compare(newValue, oldValue)
+        : super.compare(newValue, oldValue);
   }
 
   public override get value(): TValue {
@@ -66,11 +71,12 @@ class UnwrapValImpl<TSrcValue = any, TValue = any>
     return this._value_;
   }
 
-  public override compare(_newValue: TValue, _oldValue: TValue): boolean {
+  public override compare(newValue: TValue, oldValue: TValue): boolean {
     // follow upstream val by default
-    return false;
+    return this._compare_(newValue, oldValue);
   }
 
+  private _compare_: (newValue: TValue, oldValue: TValue) => boolean;
   private _getValue_: () => TValue;
   private _dirtyLevel_ = 0;
 }
