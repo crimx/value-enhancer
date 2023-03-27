@@ -12,7 +12,7 @@ export type {
 
 export { ReadonlyValImpl } from "./readonly-val";
 
-export { identity, isVal } from "./utils";
+export { identity, isVal, markVal } from "./utils";
 
 export { val } from "./val";
 export { derive, type DerivedValTransform } from "./derived-val";

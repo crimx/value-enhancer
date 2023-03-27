@@ -16,7 +16,21 @@ const config = {
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
-    "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        argsIgnorePattern: "^_",
+        destructuredArrayIgnorePattern: "^_",
+        ignoreRestSiblings: true,
+      },
+    ],
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        types: { "{}": false },
+        extendDefaults: true,
+      },
+    ],
   },
 };
 

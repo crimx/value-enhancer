@@ -324,3 +324,56 @@ const count$ = val(3, { eager: true });
 
 const derived$ = derive(count$, count => count * 3, { eager: true });
 ```
+
+## Custom Val
+
+You can create your own Val by extending `ReadonlyValImpl` class, or implement the `ReadonlyVal` interface and mark manually with `markVal` function.
+
+```js
+import { ReadonlyValImpl, isVal } from "value-enhancer";
+
+class MyVal extends ReadonlyValImpl {
+  constructor(value) {
+    super(value);
+  }
+
+  set(value) {
+    console.log("set", value);
+    this._set(value);
+  }
+}
+
+const myVal = new MyVal(11);
+myVal.set(22); // printed "set 22"
+
+console.log(isVal(myVal)); // true
+```
+
+```js
+import { val, isVal, markVal, identity } from "value-enhancer";
+
+const createMyVal = value => {
+  const v = val(value);
+
+  const myVal = {
+    value: 11,
+    compare: identity,
+    reaction: v.reaction.bind(v),
+    subscribe: v.subscribe.bind(v),
+    unsubscribe: v.unsubscribe.bind(v),
+    set(value) {
+      console.log("set", value);
+      this.value = value;
+    },
+  };
+
+  markVal(myVal);
+
+  return myVal;
+};
+
+const myVal = createMyVal(11);
+myVal.set(22); // printed "set 22"
+
+console.log(isVal(myVal)); // true
+```

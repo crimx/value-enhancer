@@ -29,11 +29,23 @@ export const invoke = <TValue>(
 
 export const INIT_VALUE: any = {};
 
-export const VAL_SYMBOL = "$\u2009val\u2009";
+const VAL_SYMBOL = "$\u2009val\u2009";
 
-/** @returns `true` if `val` is `ReadonlyVal` or `Val`. */
+/**
+ * Checks if `val` is `ReadonlyVal` or `Val`.
+ *
+ * @returns `true` if `val` is `ReadonlyVal` or `Val`.
+ */
 export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
   !!(val && (val as any)[VAL_SYMBOL]);
+
+/**
+ * Marks an object that implements `ReadonlyVal` interface to be `isVal` detectable.
+ */
+export const markVal = <T extends ReadonlyVal>(val: T): T => {
+  Object.defineProperty(val, VAL_SYMBOL, { value: 1 });
+  return val;
+};
 
 export const compute = (
   val: ReadonlyVal,
