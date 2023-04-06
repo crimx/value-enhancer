@@ -4,10 +4,11 @@
   <img width="200" src="https://raw.githubusercontent.com/crimx/value-enhancer/main/assets/value-enhancer.svg">
 </p>
 
-[![Build Status](https://github.com/crimx/value-enhancer/actions/workflows/build.yml/badge.svg)](https://github.com/crimx/value-enhancer/actions/workflows/build.yml)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/crimx/value-enhancer/build.yml)](https://github.com/crimx/value-enhancer/actions/workflows/build.yml)
 [![npm-version](https://img.shields.io/npm/v/value-enhancer.svg)](https://www.npmjs.com/package/value-enhancer)
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/value-enhancer/main)](https://coveralls.io/github/crimx/value-enhancer?branch=main)
-[![minified-size](https://img.shields.io/bundlephobia/minzip/value-enhancer)](https://bundlephobia.com/package/value-enhancer)
+[![core-size](https://img.shields.io/endpoint?label=core%20size&url=https%3A%2F%2Frunkit.io%2Fcrimx%2F642e675fa513a60008956366%2Fbranches%2Fmaster%3Fq%3Dvalue-enhancer%26treeshake%3D%255B%257Bval%257D%255D)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
+[![full-size](https://img.shields.io/endpoint?label=full%20size&url=https%3A%2F%2Frunkit.io%2Fcrimx%2F642e675fa513a60008956366%2Fbranches%2Fmaster%3Fq%3Dvalue-enhancer)](https://bundlejs.com/?q=value-enhancer)
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?maxAge=2592000)](http://commitizen.github.io/cz-cli/)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg?maxAge=2592000)](https://conventionalcommits.org)
