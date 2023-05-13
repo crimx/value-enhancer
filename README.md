@@ -8,8 +8,8 @@
 [![npm-version](https://img.shields.io/npm/v/value-enhancer.svg)](https://www.npmjs.com/package/value-enhancer)
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/value-enhancer/main)](https://coveralls.io/github/crimx/value-enhancer?branch=main)
 
-[![full-size](https://img.shields.io/endpoint?label=full%20size&url=https%3A%2F%2Frunkit.io%2Fcrimx%2F642e675fa513a60008956366%2Fbranches%2Fmaster%3Fq%3Dvalue-enhancer)](https://bundlejs.com/?q=value-enhancer)
-[![core-size](https://img.shields.io/endpoint?label=core%20size&url=https%3A%2F%2Frunkit.io%2Fcrimx%2F642e675fa513a60008956366%2Fbranches%2Fmaster%3Fq%3Dvalue-enhancer%26treeshake%3D%255B%257Bval%257D%255D)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
+[![full-size](https://img.shields.io/bundlephobia/minzip/value-enhancer)](https://bundlejs.com/?q=value-enhancer)
+[![core-size](https://runkit.io/crimx/bundlejs-badge/branches/master?q=value-enhancer&exports=val&label=core%20size)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
 [![tree-shakable](https://img.shields.io/badge/%20tree-shakable-success)](https://bundlejs.com/?q=value-enhancer)
 [![no-dependencies](https://img.shields.io/badge/dependencies-none-success)](https://bundlejs.com/?q=value-enhancer)
 [![side-effect-free](https://img.shields.io/badge/%20side--effect-free-success)](https://bundlejs.com/?q=value-enhancer)
