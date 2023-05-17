@@ -521,6 +521,38 @@ describe("ReadonlyVal", () => {
 
       val.unsubscribe();
     });
+
+    it("should log subscriber error", async () => {
+      const val = new ReadonlyValImpl(1);
+      const set = getInternalSetter(val);
+
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
+      expect(consoleErrorMock).toBeCalledTimes(0);
+
+      const error = new Error("Hello");
+      val.subscribe(() => {
+        throw error;
+      });
+
+      expect(consoleErrorMock).toBeCalledTimes(1);
+      expect(consoleErrorMock).toBeCalledWith(error);
+
+      consoleErrorMock.mockClear();
+
+      set(2);
+
+      expect(consoleErrorMock).toBeCalledTimes(0);
+
+      await Promise.resolve();
+
+      expect(consoleErrorMock).toBeCalledTimes(1);
+      expect(consoleErrorMock).toBeCalledWith(error);
+
+      consoleErrorMock.mockRestore();
+    });
   });
 
   describe("reaction", () => {
@@ -763,36 +795,76 @@ describe("ReadonlyVal", () => {
       val.unsubscribe();
     });
 
-    it("should log subscriber error", async () => {
-      const val = new ReadonlyValImpl(1);
+    it("should unsubscribe all callbacks", async () => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const val = new ReadonlyValImpl<number>(1);
       const set = getInternalSetter(val);
 
-      const consoleErrorMock = jest
-        .spyOn(console, "error")
-        .mockImplementation(() => void 0);
+      val.subscribe(spy1);
+      val.reaction(spy2);
 
-      expect(consoleErrorMock).toBeCalledTimes(0);
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(0);
 
-      const error = new Error("Hello");
-      val.subscribe(() => {
-        throw error;
-      });
-
-      expect(consoleErrorMock).toBeCalledTimes(1);
-      expect(consoleErrorMock).toBeCalledWith(error);
-
-      consoleErrorMock.mockClear();
+      spy1.mockClear();
+      spy2.mockClear();
 
       set(2);
-
-      expect(consoleErrorMock).toBeCalledTimes(0);
-
       await Promise.resolve();
+      expect(val.value).toBe(2);
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(1);
+      expect(spy1).lastCalledWith(2);
+      expect(spy2).lastCalledWith(2);
 
-      expect(consoleErrorMock).toBeCalledTimes(1);
-      expect(consoleErrorMock).toBeCalledWith(error);
+      val.unsubscribe();
 
-      consoleErrorMock.mockRestore();
+      spy1.mockClear();
+      spy2.mockClear();
+
+      set(3);
+      await Promise.resolve();
+      expect(val.value).toBe(3);
+      expect(spy1).toBeCalledTimes(0);
+      expect(spy2).toBeCalledTimes(0);
+    });
+  });
+
+  describe("dispose", () => {
+    it("should unsubscribe all callbacks", async () => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const val = new ReadonlyValImpl<number>(1);
+      const set = getInternalSetter(val);
+
+      val.subscribe(spy1);
+      val.reaction(spy2);
+
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(0);
+
+      spy1.mockClear();
+      spy2.mockClear();
+
+      set(2);
+      await Promise.resolve();
+      expect(val.value).toBe(2);
+      expect(spy1).toBeCalledTimes(1);
+      expect(spy2).toBeCalledTimes(1);
+      expect(spy1).lastCalledWith(2);
+      expect(spy2).lastCalledWith(2);
+
+      val.dispose();
+
+      spy1.mockClear();
+      spy2.mockClear();
+
+      set(3);
+      await Promise.resolve();
+      expect(val.value).toBe(3);
+      expect(spy1).toBeCalledTimes(0);
+      expect(spy2).toBeCalledTimes(0);
     });
   });
 

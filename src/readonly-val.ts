@@ -84,6 +84,10 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     }
   }
 
+  public dispose(): void {
+    this._subs_.clear_();
+  }
+
   /**
    * @returns the string representation of `this.value`.
    *

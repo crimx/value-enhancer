@@ -23,6 +23,10 @@ export interface ReadonlyVal<TValue = any> {
    * @param subscriber
    */
   unsubscribe(subscriber?: (...args: any[]) => any): void;
+  /**
+   * Remove all subscribers.
+   */
+  dispose(): void;
 }
 
 export interface Val<TValue = any> extends ReadonlyVal<TValue> {
