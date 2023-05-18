@@ -1,0 +1,14 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "cname": "value-enhancer.js.org",
+  "entryPoints": ["./src/index.ts"],
+  "out": "docs",
+  "customCss": "./assets/docs.css",
+  "visibilityFilters": {},
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "cleanOutputDir": true,
+  "includeVersion": true,
+  "hideGenerator": true
+}
