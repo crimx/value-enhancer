@@ -45,7 +45,7 @@ describe("unwrapFrom", () => {
     const sub = jest.fn();
     const startSpy = jest.fn();
 
-    let currentValue = 1;
+    let currentValue: ReadonlyVal<number> | number = val(1);
     let onChange: (() => void) | undefined;
     const set = (value: typeof currentValue) => {
       currentValue = value;
@@ -74,7 +74,7 @@ describe("unwrapFrom", () => {
     sub.mockClear();
     startSpy.mockClear();
 
-    set(1);
+    set(val(1));
 
     expect(sub).toHaveBeenCalledTimes(0);
 
@@ -89,7 +89,7 @@ describe("unwrapFrom", () => {
 
     sub.mockClear();
 
-    set(3);
+    set(val(3));
 
     expect(sub).toHaveBeenCalledTimes(0);
 
@@ -107,7 +107,7 @@ describe("unwrapFrom", () => {
     const sub = jest.fn();
     const startSpy = jest.fn();
 
-    let currentValue = { content: 1 };
+    let currentValue = val({ content: 1 });
     let onChange: (() => void) | undefined;
     const set = (value: typeof currentValue) => {
       currentValue = value;
@@ -139,7 +139,7 @@ describe("unwrapFrom", () => {
     sub.mockClear();
     startSpy.mockClear();
 
-    set({ content: 1 });
+    set(val({ content: 1 }));
     expect(sub).toBeCalledTimes(0);
 
     await Promise.resolve();
@@ -148,7 +148,7 @@ describe("unwrapFrom", () => {
 
     sub.mockClear();
 
-    set({ content: 2 });
+    set(val({ content: 2 }));
     expect(sub).toBeCalledTimes(0);
 
     await Promise.resolve();
@@ -163,7 +163,7 @@ describe("unwrapFrom", () => {
   it("should not trigger async subscribers if not changed", async () => {
     const startSpy = jest.fn();
 
-    let currentValue = { content: 1 };
+    let currentValue = val({ content: 1 });
     let onChange: (() => void) | undefined;
     const set = (value: typeof currentValue) => {
       currentValue = value;
@@ -196,7 +196,7 @@ describe("unwrapFrom", () => {
     spySub.mockClear();
     startSpy.mockClear();
 
-    set({ content: 2 });
+    set(val({ content: 2 }));
 
     expect(spySub).toBeCalledTimes(0);
 
@@ -207,7 +207,7 @@ describe("unwrapFrom", () => {
 
     spySub.mockClear();
 
-    set({ content: 3 });
+    set(val({ content: 3 }));
 
     expect(spySub).toBeCalledTimes(0);
 
@@ -223,7 +223,7 @@ describe("unwrapFrom", () => {
   it("should not trigger eager subscribers if not changed", async () => {
     const startSpy = jest.fn();
 
-    let currentValue = { content: 1 };
+    let currentValue = val({ content: 1 });
     let onChange: (() => void) | undefined;
     const set = (value: typeof currentValue) => {
       currentValue = value;
@@ -244,7 +244,7 @@ describe("unwrapFrom", () => {
       }
     );
 
-    set({ content: 2 });
+    set(val({ content: 2 }));
 
     expect(startSpy).toBeCalledTimes(0);
 
@@ -258,11 +258,11 @@ describe("unwrapFrom", () => {
     sub.mockClear();
     startSpy.mockClear();
 
-    set({ content: 2 });
+    set(val({ content: 2 }));
 
     expect(sub).toBeCalledTimes(0);
 
-    set({ content: 3 });
+    set(val({ content: 3 }));
 
     expect(sub).toBeCalledTimes(1);
     expect(sub).lastCalledWith({ content: 3 });
@@ -276,7 +276,7 @@ describe("unwrapFrom", () => {
     const disposeSpy = jest.fn();
     const startSpy = jest.fn(() => disposeSpy);
 
-    const val$ = unwrapFrom(() => 1, startSpy);
+    const val$ = unwrapFrom(() => val(1), startSpy);
 
     expect(startSpy).toBeCalledTimes(0);
 
@@ -351,7 +351,7 @@ describe("unwrapFrom", () => {
   });
 
   it("should getValue only once for async subscribers", async () => {
-    let currentValue = 1;
+    let currentValue = val(1);
     let onChange: (() => void) | undefined;
 
     const startSpy = jest.fn(noop);
@@ -379,7 +379,7 @@ describe("unwrapFrom", () => {
     getValueSpy.mockClear();
     startSpy.mockClear();
 
-    set(2);
+    set(val(2));
 
     expect(getValueSpy).toBeCalledTimes(0);
     expect(startSpy).toBeCalledTimes(0);
@@ -396,7 +396,7 @@ describe("unwrapFrom", () => {
     startSpy.mockClear();
     spy1.mockClear();
 
-    set(3);
+    set(val(3));
 
     expect(getValueSpy).toBeCalledTimes(1);
     expect(startSpy).toBeCalledTimes(0);
@@ -417,7 +417,7 @@ describe("unwrapFrom", () => {
   });
 
   it("should getValue only once for eager subscribers", async () => {
-    let currentValue = 1;
+    let currentValue = val(1);
     let onChange: (() => void) | undefined;
 
     const startSpy = jest.fn(noop);
@@ -445,7 +445,7 @@ describe("unwrapFrom", () => {
     getValueSpy.mockClear();
     startSpy.mockClear();
 
-    set(2);
+    set(val(2));
 
     expect(getValueSpy).toBeCalledTimes(0);
     expect(startSpy).toBeCalledTimes(0);
@@ -462,7 +462,7 @@ describe("unwrapFrom", () => {
     startSpy.mockClear();
     spy1.mockClear();
 
-    set(3);
+    set(val(3));
 
     expect(getValueSpy).toBeCalledTimes(1);
     expect(startSpy).toBeCalledTimes(0);
