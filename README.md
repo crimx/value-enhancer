@@ -34,7 +34,7 @@ npm add value-enhancer
   Without the implicit-cast Proxy magic like Vue Reactivity and MobX.
 - Single-layer shallow reactivity.  
   It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
-- Safe and fast.  
+- Safe and fast lazy computation.  
   It solves multi-level derivation issue (like in Svelte Stores) with smart lazy value evaluation.
 - Explicit.  
   Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
@@ -50,7 +50,7 @@ npm add value-enhancer
 
 MobX is cleverly designed to make properties magically reactive. But after using it in many of our large projects people started to complain about this implicit behavior. It is hard to tell if a property is reactive unless enforcing some kind of code style rules. Rules of MobX are easy to be broken especially for new team members.
 
-MobX does not work well with other libraries. It could break other libraries if you forget to exclude instances from other libraries from making observable. `toJS` is also needed if data is passed to other libraries.
+MobX does not work well with other libraries. It could break other libraries if you forget to exclude third-party instances from making observable. `toJS` is also needed if data is passed to other libraries.
 
 MobX also prints error when it sees another version of MobX in the global. It is not a good choice for making SDK or library that will be delivered into customer's environment.
 
@@ -130,6 +130,8 @@ Svelte also adds a `$xxx` syntax for subscribing Observables as values. The comp
 
 `value-enhancer` is compatible with Svelte Store contract. It can be used in Svelte just like Svelte stores.
 
+`value-enhancer` also fixes the edge cases of Svelte stores by leveraging Vue's layered subscriber design.
+
 </details>
 
 <details>
@@ -196,7 +198,7 @@ This issue does not exist in `value-enhancer` because we do not collect dependen
 
 ## Usage
 
-## Create Val
+## Create Writable Val
 
 ```js
 import { val } from "value-enhancer";
@@ -206,6 +208,22 @@ const count$ = val(2);
 console.log(count$.value); // 2
 
 count$.set(3);
+console.log(count$.value); // 3
+
+count$.value = 4;
+console.log(count$.value); // 4
+```
+
+## Create Readonly Val
+
+```js
+import { readonlyVal } from "value-enhancer";
+
+const [count$, setCount] = readonlyVal(2);
+
+console.log(count$.value); // 2
+
+setCount(3);
 console.log(count$.value); // 3
 
 count$.value = 4;
@@ -235,7 +253,7 @@ count$.set(3); // nothing happened
 // subscription triggered asynchronously by default
 count$.set(4); // nothing happened
 
-await Promise.resolve(); // wait for the next tick
+await Promise.resolve(); // subscription triggered asynchronously by default
 
 // printed "subscribe: 4"
 // printed "reaction: 4"
@@ -246,7 +264,7 @@ disposeReaction();
 
 ## Derive Val
 
-Derive a new Val from another Val.
+`derive` a new Val from another Val.
 
 ```js
 import { val, derive } from "value-enhancer";
@@ -260,7 +278,7 @@ console.log(derived$.value); // 6
 
 ## Combine Val
 
-Combine multiple Vals into a new Val.
+`combine` multiple Vals into a new Val.
 
 ```js
 import { val, derive, combine } from "value-enhancer";
@@ -279,7 +297,7 @@ console.log(combined$.value); // 8
 
 ## Unwrap Val
 
-Unwrap the inner Val from a Val of Val. This is useful for subscribing to a dynamic Val that is inside another Val.
+`unwrap` the inner Val from a Val of Val. This is useful for subscribing to a dynamic Val that is inside another Val.
 
 ```js
 import { val, unwrap } from "value-enhancer";
@@ -294,6 +312,28 @@ itemList$.set([val(4), val(5), val(6)]);
 
 console.log(firstItem$.value); // 4
 ```
+
+## From
+
+`from` creates a Val from any value source. Both `derive` and `combine` are implemented using `from`.
+
+```ts
+import { from } from "value-enhancer";
+
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+const isDarkMode$ = from(
+  () => prefersDark.matches,
+  notify => {
+    prefersDark.addEventListener("change", notify);
+    return () => prefersDark.removeEventListener("change", notify);
+  }
+);
+```
+
+## UnwrapFrom
+
+`unwrapFrom` creates a Val from any value source like `from` but also unwrap the value if the value is a Val. `unwrap` is implemented using `unwrapFrom`.
 
 ## Custom Compare
 
