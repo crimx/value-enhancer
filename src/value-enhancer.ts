@@ -1,4 +1,4 @@
-import type { ReadonlyVal, Val, ValSubscriber, ValDisposer } from "./typings";
+import type { ReadonlyVal, Val, ValDisposer, ValSubscriber } from "./typings";
 
 /**
  * Set the value of a val.
@@ -8,7 +8,7 @@ import type { ReadonlyVal, Val, ValSubscriber, ValDisposer } from "./typings";
 export const setValue = <TValue>(
   val: ReadonlyVal<TValue>,
   value: TValue
-): void => (val as Val<TValue>).set && (val as Val<TValue>).set(value);
+): void => (val as Val<TValue>).set?.(value);
 
 /**
  * Subscribe to value changes with immediate emission.

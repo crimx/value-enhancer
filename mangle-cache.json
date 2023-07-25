@@ -1,14 +1,12 @@
 {
-  "_subs_": "_u",
-  "_value_": "_v",
-  "_compare_": "_m",
-  "_set_": "_s",
+  "_eager_": "_e",
   "_compute_": "_c",
 
-  "_sVal_": "_l",
-  "_dirtyLevel_": "_d",
-  "_dirty_": "_y",
   "_getValue_": "_g",
+
+  "_change$_": "_t",
+  "_markChange_": "_r",
+  "_data_": "_a",
 
   "size_": "z",
   "invoke_": "i",

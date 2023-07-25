@@ -1,6 +1,6 @@
-import { describe, it, expect } from "@jest/globals";
+import { describe, expect, it } from "@jest/globals";
 import type { ReadonlyVal } from "../src";
-import { setValue, val, derive } from "../src";
+import { derive, setValue, val } from "../src";
 
 describe("setValue", () => {
   it("should setValue to Val", async () => {

@@ -1,59 +1,58 @@
-import { SubscriberMode, Subscribers } from "./subscribers";
+import type { Subscribers, ValOnStart } from "./subscribers";
 import type {
-  ValDisposer,
-  ValSubscriber,
-  ValConfig,
-  ValOnStart,
   ReadonlyVal,
+  ValConfig,
+  ValDisposer,
+  ValSetValue,
+  ValSubscriber,
 } from "./typings";
-import { invoke, markVal } from "./utils";
 
+import { SubscriberMode, SubscribersImpl } from "./subscribers";
+import { defaultCompare, invoke, markVal } from "./utils";
+
+/**
+ * Bare minimum implementation of a readonly val.
+ */
 export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
-  protected _subs_: Subscribers<TValue>;
+  /**
+   * Manage subscribers for a val.
+   */
+  protected _subs: SubscribersImpl<TValue>;
 
-  protected _value_: TValue;
+  private _eager_?: boolean;
 
-  protected _set_ = (value: TValue): void => {
-    if (!this.compare(value, this._value_)) {
-      this._subs_.shouldExec_ = true;
-      this._value_ = value;
-      this._subs_.invoke_();
-    }
-  };
-
+  /**
+   * @param get A pure function that returns the current value of the val.
+   * @param config Custom config for the val.
+   * @param start A function that is called when a val get its first subscriber.
+   *        The returned disposer will be called when the last subscriber unsubscribed from the val.
+   */
   public constructor(
-    value: TValue,
-    { compare, eager = false }: ValConfig<TValue> = {},
+    get: () => TValue,
+    { compare = defaultCompare, eager }: ValConfig<TValue> = {},
     start?: ValOnStart
   ) {
     markVal(this);
 
-    this._value_ = value;
-
-    this.eager = eager;
-
-    if (compare) {
-      this.compare = compare;
-    }
-
-    this._subs_ = new Subscribers<TValue>(this, start);
+    this.get = get;
+    this.compare = compare;
+    this._eager_ = eager;
+    this._subs = new SubscribersImpl<TValue>(get, start);
   }
 
   public get value(): TValue {
-    return this._value_;
+    return this.get();
   }
 
-  public eager: boolean;
+  public get: (this: void) => TValue;
 
-  public compare(newValue: TValue, oldValue: TValue): boolean {
-    return newValue === oldValue;
-  }
+  public compare: (this: void, newValue: TValue, oldValue: TValue) => boolean;
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
-    eager: boolean = this.eager
+    eager = this._eager_
   ): ValDisposer {
-    return this._subs_.add_(
+    return this._subs.add_(
       subscriber,
       eager ? SubscriberMode.Eager : SubscriberMode.Async
     );
@@ -61,7 +60,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public subscribe(
     subscriber: ValSubscriber<TValue>,
-    eager: boolean = this.eager
+    eager = this._eager_
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     invoke(subscriber, this.value);
@@ -73,19 +72,19 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * For computed vals
    */
   public _compute_(subscriber: ValSubscriber<void>): ValDisposer {
-    return this._subs_.add_(subscriber, SubscriberMode.Computed);
+    return this._subs.add_(subscriber, SubscriberMode.Computed);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {
     if (subscriber) {
-      this._subs_.remove_(subscriber);
+      this._subs.remove_(subscriber);
     } else {
-      this._subs_.clear_();
+      this._subs.clear_();
     }
   }
 
   public dispose(): void {
-    this._subs_.clear_();
+    this._subs.clear_();
   }
 
   /**
@@ -118,3 +117,39 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     return value && value.toJSON ? value.toJSON(key) : value;
   }
 }
+
+/**
+ * Creates a readonly val with the given value.
+ *
+ * @param value Value for the val
+ * @param config Custom config for the val.
+ * @returns A tuple with the readonly val and a function to set the value.
+ */
+export const readonlyVal = <TValue = any>(
+  value: TValue,
+  config?: ValConfig<TValue>
+): [ReadonlyVal<TValue>, ValSetValue<TValue>] => {
+  let currentValue = value;
+
+  let subs: Subscribers;
+
+  const set = (value: TValue): void => {
+    if (!val.compare(value, currentValue)) {
+      currentValue = value;
+      if (subs) {
+        subs.dirty = true;
+        subs.notify();
+      }
+    }
+  };
+
+  const val = new ReadonlyValImpl(
+    () => currentValue,
+    config,
+    s => {
+      subs = s;
+    }
+  );
+
+  return [val, set];
+};

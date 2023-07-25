@@ -1,13 +1,18 @@
 import type { ReadonlyValImpl } from "./readonly-val";
 import type {
   ReadonlyVal,
-  ValInputsValueTuple,
   ValDisposer,
+  ValInputsValueTuple,
   ValSubscriber,
 } from "./typings";
 
 /** Returns the value passed in. */
 export const identity = <TValue>(value: TValue): TValue => value;
+
+export const defaultCompare = <TValue = any>(
+  newValue: TValue,
+  oldValue: TValue
+): boolean => newValue === oldValue;
 
 const getValue = <TValue>(val: ReadonlyVal<TValue>): TValue => val.value;
 
@@ -37,7 +42,7 @@ const VAL_SYMBOL = "$\u2009val\u2009";
  * @returns `true` if `val` is `ReadonlyVal` or `Val`.
  */
 export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
-  !!(val && (val as any)[VAL_SYMBOL]);
+  !!(val as any)?.[VAL_SYMBOL];
 
 /**
  * Marks an object that implements `ReadonlyVal` interface to be `isVal` detectable.

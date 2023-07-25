@@ -1,31 +1,38 @@
-import { ReadonlyValImpl } from "./readonly-val";
 import type { Val, ValConfig } from "./typings";
 
-class ValImpl<TValue = any>
-  extends ReadonlyValImpl<TValue>
-  implements Val<TValue>
-{
-  public constructor(value: TValue, config?: ValConfig<TValue>) {
-    super(value, config);
+import { ReadonlyValImpl } from "./readonly-val";
+
+class ValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
+  public constructor(currentValue: TValue, config?: ValConfig<TValue>) {
+    const get = () => currentValue;
+
+    super(get, config);
+
+    this.set = (value: TValue) => {
+      if (!this.compare(value, currentValue)) {
+        this._subs.dirty = true;
+        currentValue = value;
+        this._subs.notify();
+      }
+    };
   }
 
-  public override get value(): TValue {
-    return this._value_;
+  public set: (this: void, value: TValue) => void;
+
+  public override get value() {
+    return this.get();
   }
 
   public override set value(value: TValue) {
-    this._set_(value);
+    this.set(value);
   }
-
-  /** Set new value */
-  public set: (value: TValue) => void = this._set_;
 }
 
 /**
  * Creates a writable val.
  * @returns A val with undefined value.
  */
-export function val(): Val<undefined>;
+export function val<TValue>(): Val<TValue | undefined>;
 /**
  * Creates a writable val.
  * @param value Initial value.

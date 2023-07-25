@@ -1,11 +1,11 @@
-import { describe, it, expect, jest } from "@jest/globals";
+import { describe, expect, it, jest } from "@jest/globals";
 import { derive, val } from "../src";
 
 describe("derive", () => {
   it("should lazy-calculate value", () => {
     const spy = jest.fn(value => value);
     const val1 = val(1);
-    const combined = derive(val1, spy);
+    const derived = derive(val1, spy);
 
     expect(spy).toBeCalledTimes(0);
 
@@ -13,7 +13,7 @@ describe("derive", () => {
 
     expect(spy).toBeCalledTimes(0);
 
-    expect(combined.value).toEqual(2);
+    expect(derived.value).toEqual(2);
 
     expect(spy).toBeCalledTimes(1);
   });

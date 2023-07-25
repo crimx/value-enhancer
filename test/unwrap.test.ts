@@ -1,4 +1,4 @@
-import { describe, it, expect, jest } from "@jest/globals";
+import { describe, expect, it, jest } from "@jest/globals";
 import { combine, derive, identity, unwrap, val } from "../src";
 
 describe("unwrap", () => {
@@ -268,7 +268,7 @@ describe("unwrap", () => {
     expect(spy).lastCalledWith(5);
   });
 
-  it("should unwrap combined val", () => {
+  it("should unwrap combined val", async () => {
     const vals = [val(1), val(2), val(3)];
     const signal = val(null, { compare: () => false });
     const countSpy = jest.fn();

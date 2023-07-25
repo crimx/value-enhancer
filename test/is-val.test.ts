@@ -1,20 +1,7 @@
-import { describe, it, expect } from "@jest/globals";
-import {
-  combine,
-  derive,
-  identity,
-  isVal,
-  ReadonlyValImpl,
-  unwrap,
-  val,
-} from "../src";
+import { describe, expect, it } from "@jest/globals";
+import { combine, derive, identity, isVal, unwrap, val } from "../src";
 
 describe("combine", () => {
-  it("should check ReadonlyVal", () => {
-    const val$ = new ReadonlyValImpl(1);
-    expect(isVal(val$)).toBe(true);
-  });
-
   it("should check Val", () => {
     const val$ = val(1);
     expect(isVal(val$)).toBe(true);

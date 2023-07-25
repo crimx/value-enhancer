@@ -1,5 +1,6 @@
+import type { ValDisposer, ValSubscriber } from "./typings";
+
 import { cancelTask, schedule } from "./scheduler";
-import type { ReadonlyVal, ValDisposer, ValSubscriber } from "./typings";
 import { invoke } from "./utils";
 
 export enum SubscriberMode {
@@ -8,16 +9,39 @@ export enum SubscriberMode {
   Computed = 3,
 }
 
-export class Subscribers<TValue = any> {
-  public constructor(
-    val: ReadonlyVal<TValue>,
-    start?: (() => void | ValDisposer | undefined) | null
-  ) {
-    this._getValue_ = () => val.value;
+/**
+ * Manage subscribers for a val.
+ */
+export interface Subscribers {
+  /**
+   * Whether subscribers should be notified after next value check.
+   */
+  dirty: boolean;
+  /**
+   * Notify Subscribers Manager that the value may have changed.
+   * A task will be scheduled to check the value.
+   */
+  notify(): void;
+}
+
+/**
+ * A function that is called when a val get its first subscriber.
+ * The returned disposer will be called when the last subscriber unsubscribed from the val.
+ */
+export type ValOnStart = (subs: Subscribers) => void | ValDisposer | undefined;
+
+/**
+ * Manage subscribers for a val.
+ */
+export class SubscribersImpl<TValue = any> implements Subscribers {
+  public constructor(getValue: () => TValue, start?: ValOnStart | null) {
+    this._getValue_ = getValue;
     this._start_ = start;
   }
 
-  public invoke_(): void {
+  public dirty = false;
+
+  public notify(): void {
     if (this._notReadySubscribers_.size > 0) {
       this._notReadySubscribers_.clear();
     }
@@ -28,13 +52,13 @@ export class Subscribers<TValue = any> {
         schedule(this);
       }
     } else {
-      this.shouldExec_ = false;
+      this.dirty = false;
     }
   }
 
   public add_(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
     if (this._start_ && this.subscribers_.size <= 0) {
-      this._startDisposer_ = this._start_();
+      this._startDisposer_ = this._start_(this);
     }
 
     const currentMode = this.subscribers_.get(subscriber);
@@ -76,18 +100,18 @@ export class Subscribers<TValue = any> {
       let value: TValue | undefined;
       if (mode === SubscriberMode.Computed) {
         if (this[SubscriberMode.Async] + this[SubscriberMode.Eager] <= 0) {
-          this.shouldExec_ = false;
+          this.dirty = false;
         }
       } else {
         value = this._getValue_();
-        if (!this.shouldExec_) {
+        if (!this.dirty) {
           return;
         }
         if (
           mode === SubscriberMode.Async ||
           /* mode === SubscriberMode.Computed */ this[SubscriberMode.Async] <= 0
         ) {
-          this.shouldExec_ = false;
+          this.dirty = false;
         }
       }
       for (const [sub, subMode] of this.subscribers_) {
@@ -97,8 +121,6 @@ export class Subscribers<TValue = any> {
       }
     }
   }
-
-  public shouldExec_ = false;
 
   public readonly subscribers_ = new Map<
     ValSubscriber<TValue>,
@@ -117,6 +139,6 @@ export class Subscribers<TValue = any> {
 
   private readonly _notReadySubscribers_ = new Set<ValSubscriber<TValue>>();
 
-  private _start_?: (() => void | ValDisposer | undefined) | null;
+  private _start_?: ValOnStart | null;
   private _startDisposer_?: ValDisposer | void | null;
 }

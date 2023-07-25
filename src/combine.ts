@@ -1,6 +1,7 @@
-import { ReadonlyValImpl } from "./readonly-val";
-import type { ReadonlyVal, ValInputsValueTuple, ValConfig } from "./typings";
-import { invoke, getValues, INIT_VALUE, identity, compute } from "./utils";
+import type { ReadonlyVal, ValConfig, ValInputsValueTuple } from "./typings";
+
+import { from } from "./from";
+import { compute, getValues, identity, invoke } from "./utils";
 
 /** @ignore */
 export type CombineValTransform<
@@ -8,62 +9,6 @@ export type CombineValTransform<
   TValues extends readonly any[] = any[],
   TMeta = any
 > = (newValues: TValues, oldValues?: TValues, meta?: TMeta) => TDerivedValue;
-
-class CombinedValImpl<
-    TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-    TValue = any
-  >
-  extends ReadonlyValImpl<TValue>
-  implements ReadonlyVal<TValue>
-{
-  public constructor(
-    valInputs: TValInputs,
-    transform: CombineValTransform<
-      TValue,
-      [...ValInputsValueTuple<TValInputs>]
-    >,
-    config?: ValConfig<TValue>
-  ) {
-    const getValue = () => transform(getValues(valInputs));
-
-    super(INIT_VALUE, config, () => {
-      if (this._value_ === INIT_VALUE) {
-        this._value_ = getValue();
-      } else {
-        this._dirtyLevel_ = this._dirtyLevel_ || 1;
-      }
-      const disposers = valInputs.map(val =>
-        compute(val, () => {
-          if (this._dirtyLevel_ < 2) {
-            this._dirtyLevel_ = 2;
-            this._subs_.invoke_();
-          }
-        })
-      );
-      return () => disposers.forEach(invoke);
-    });
-
-    this._getValue_ = getValue;
-  }
-
-  public override get value(): TValue {
-    if (this._value_ === INIT_VALUE) {
-      this._value_ = this._getValue_();
-      this._subs_.shouldExec_ = true;
-    } else if (this._dirtyLevel_ || this._subs_.subscribers_.size <= 0) {
-      const value = this._getValue_();
-      if (!this.compare(value, this._value_)) {
-        this._subs_.shouldExec_ = true;
-        this._value_ = value;
-      }
-    }
-    this._dirtyLevel_ = 0;
-    return this._value_;
-  }
-
-  private _getValue_: () => TValue;
-  private _dirtyLevel_ = 0;
-}
 
 /**
  * Combines an array of vals into a single val with the array of values.
@@ -104,5 +49,12 @@ export function combine<
   >,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> {
-  return new CombinedValImpl(valInputs, transform, config);
+  return from(
+    () => transform(getValues(valInputs)),
+    notify => {
+      const disposers = valInputs.map(val => compute(val, notify));
+      return () => disposers.forEach(invoke);
+    },
+    config
+  );
 }

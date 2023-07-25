@@ -1,5 +1,5 @@
-import { describe, it, expect, jest } from "@jest/globals";
-import { val, unsubscribe } from "../src";
+import { describe, expect, it, jest } from "@jest/globals";
+import { unsubscribe, val } from "../src";
 
 describe("unsubscribe", () => {
   it("should unsubscribe a subscribe callback", async () => {

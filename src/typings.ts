@@ -1,8 +1,10 @@
 export interface ReadonlyVal<TValue = any> {
-  /** value */
+  /** Current value of the val */
   readonly value: TValue;
+  /** Get current value of the val */
+  get(this: void): TValue;
   /** Compare two values. Default `===`. */
-  compare(newValue: TValue, oldValue: TValue): boolean;
+  compare(this: void, newValue: TValue, oldValue: TValue): boolean;
   /**
    * Subscribe to value changes without immediate emission.
    * @param subscriber
@@ -30,9 +32,10 @@ export interface ReadonlyVal<TValue = any> {
 }
 
 export interface Val<TValue = any> extends ReadonlyVal<TValue> {
+  /** Current value of the val */
   value: TValue;
-  /** set new value */
-  readonly set: (this: void, value: TValue) => void;
+  /** Set new value */
+  set(this: void, value: TValue): void;
 }
 
 export type ValSetValue<TValue = any> = (value: TValue) => void;
@@ -46,9 +49,9 @@ export type ValSubscriber<TValue = any> = (newValue: TValue) => void;
 
 export type ValDisposer = () => void;
 
-/** @ignore */
-export type ValOnStart = () => void | ValDisposer | undefined;
-
+/**
+ * Custom config for the val.
+ */
 export interface ValConfig<TValue = any> {
   /**
    * Compare two values. Default `===`.
