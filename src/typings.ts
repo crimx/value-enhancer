@@ -20,6 +20,12 @@ export interface ReadonlyVal<TValue = any> {
    */
   subscribe(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
   /**
+   * Subscribe to value changes and get invoked before {@link ReadonlyVal#subscribe} and {@link ReadonlyVal#reaction}.
+   * @param subscriber
+   * @returns a disposer function that cancels the subscription
+   */
+  $valCompute(subscriber: ValSubscriber<void>): ValDisposer;
+  /**
    * Remove the given subscriber.
    * Remove all if no subscriber provided.
    * @param subscriber

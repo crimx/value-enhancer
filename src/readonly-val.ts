@@ -8,7 +8,7 @@ import type {
 } from "./typings";
 
 import { SubscriberMode, SubscribersImpl } from "./subscribers";
-import { defaultCompare, invoke, markVal } from "./utils";
+import { defaultCompare, invoke } from "./utils";
 
 /**
  * Bare minimum implementation of a readonly val.
@@ -32,8 +32,6 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     { compare = defaultCompare, eager }: ValConfig<TValue> = {},
     start?: ValOnStart
   ) {
-    markVal(this);
-
     this.get = get;
     this.compare = compare;
     this._eager_ = eager;
@@ -67,11 +65,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     return disposer;
   }
 
-  /**
-   * @internal
-   * For computed vals
-   */
-  public _compute_(subscriber: ValSubscriber<void>): ValDisposer {
+  public $valCompute(subscriber: ValSubscriber<void>): ValDisposer {
     return this._subs.add_(subscriber, SubscriberMode.Computed);
   }
 

@@ -1,7 +1,7 @@
 import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
-import { INIT_VALUE, compute, defaultCompare, isVal } from "./utils";
+import { INIT_VALUE, defaultCompare, isVal } from "./utils";
 
 class UnwrapFromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
   public constructor(
@@ -46,7 +46,7 @@ class UnwrapFromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
         innerMaybeVal = maybeVal;
         innerVal = isVal(maybeVal) ? maybeVal : null;
         innerDisposer?.();
-        innerDisposer = innerVal && compute(innerVal, notify);
+        innerDisposer = innerVal && innerVal.$valCompute(notify);
         currentCompare =
           initialCompare || (innerVal ? innerVal.compare : defaultCompare);
       }

@@ -1,10 +1,4 @@
-import type { ReadonlyValImpl } from "./readonly-val";
-import type {
-  ReadonlyVal,
-  ValDisposer,
-  ValInputsValueTuple,
-  ValSubscriber,
-} from "./typings";
+import type { ReadonlyVal, ValInputsValueTuple } from "./typings";
 
 /** Returns the value passed in. */
 export const identity = <TValue>(value: TValue): TValue => value;
@@ -34,25 +28,16 @@ export const invoke = <TValue>(
 
 export const INIT_VALUE: any = {};
 
-const VAL_SYMBOL = "$\u2009val\u2009";
-
 /**
  * Checks if `val` is `ReadonlyVal` or `Val`.
  *
  * @returns `true` if `val` is `ReadonlyVal` or `Val`.
  */
 export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
-  !!(val as any)?.[VAL_SYMBOL];
+  !!(val as ReadonlyVal | undefined)?.$valCompute;
 
 /**
- * Marks an object that implements `ReadonlyVal` interface to be `isVal` detectable.
+ * @ignore
+ * @deprecated No longer needed. `isVal` works without `markVal` now.
  */
-export const markVal = <T extends ReadonlyVal>(val: T): T => {
-  Object.defineProperty(val, VAL_SYMBOL, { value: 1 });
-  return val;
-};
-
-export const compute = (
-  val: ReadonlyVal,
-  subscriber: ValSubscriber<void>
-): ValDisposer => (val as ReadonlyValImpl)._compute_(subscriber);
+export const markVal: <T extends ReadonlyVal>(val: T) => T = identity;

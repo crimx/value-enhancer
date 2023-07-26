@@ -1,7 +1,7 @@
 import type { ReadonlyVal, Val, ValConfig } from "./typings";
 
 import { unwrapFrom } from "./unwrap-from";
-import { compute, identity } from "./utils";
+import { identity } from "./utils";
 
 /**
  * Unwrap a val of val to a val of the inner val value.
@@ -74,7 +74,7 @@ export function unwrap<TSrcValue = any, TValue = any>(
 ): ReadonlyVal<TValue> {
   return unwrapFrom(
     () => get(val.value) as TValue,
-    notify => compute(val, notify),
+    notify => val.$valCompute(notify),
     config
   );
 }

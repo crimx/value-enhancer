@@ -12,7 +12,7 @@ export type {
 
 export type { Subscribers, ValOnStart } from "./subscribers";
 
-export { ReadonlyValImpl, readonlyVal } from "./readonly-val";
+export { readonlyVal } from "./readonly-val";
 
 export { identity, isVal, markVal } from "./utils";
 

@@ -1,7 +1,7 @@
 import type { ReadonlyVal, ValConfig, ValInputsValueTuple } from "./typings";
 
 import { from } from "./from";
-import { compute, getValues, identity, invoke } from "./utils";
+import { getValues, identity, invoke } from "./utils";
 
 /** @ignore */
 export type CombineValTransform<
@@ -52,7 +52,7 @@ export function combine<
   return from(
     () => transform(getValues(valInputs)),
     notify => {
-      const disposers = valInputs.map(val => compute(val, notify));
+      const disposers = valInputs.map(val => val.$valCompute(notify));
       return () => disposers.forEach(invoke);
     },
     config

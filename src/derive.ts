@@ -1,7 +1,7 @@
 import type { ReadonlyVal, ValConfig } from "./typings";
 
 import { from } from "./from";
-import { compute, identity } from "./utils";
+import { identity } from "./utils";
 
 /** @ignore */
 export type DerivedValTransform<TValue = any, TDerivedValue = any> = (
@@ -38,7 +38,7 @@ export function derive<TSrcValue = any, TValue = any>(
 ): ReadonlyVal<TValue> {
   return from(
     () => transform(val.value),
-    notify => compute(val, notify),
+    notify => val.$valCompute(notify),
     config
   );
 }
