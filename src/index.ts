@@ -1,24 +1,20 @@
 export type {
-  ExtractValValue,
   ReadonlyVal,
+  UnwrapVal,
   Val,
   ValCompare,
   ValConfig,
   ValDisposer,
-  ValInputsValueTuple,
   ValSetValue,
   ValSubscriber,
 } from "./typings";
-
-export type { Subscribers, ValOnStart } from "./subscribers";
-
-export { readonlyVal } from "./readonly-val";
 
 export { identity, isVal, markVal } from "./utils";
 
 export { combine, type CombineValTransform } from "./combine";
 export { derive, type DerivedValTransform } from "./derive";
 export { from } from "./from";
+export { readonlyVal } from "./readonly-val";
 export { unwrap } from "./unwrap";
 export { unwrapFrom } from "./unwrap-from";
 export { val } from "./val";

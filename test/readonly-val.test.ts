@@ -1,5 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { ReadonlyValImpl, readonlyVal } from "../src";
+import { readonlyVal } from "../src";
+import { ReadonlyValImpl } from "../src/readonly-val";
 
 describe("ReadonlyVal", () => {
   describe("value", () => {

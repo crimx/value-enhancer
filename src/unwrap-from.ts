@@ -1,11 +1,14 @@
-import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
+import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
 import { INIT_VALUE, defaultCompare, isVal } from "./utils";
 
-class UnwrapFromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
+class UnwrapFromImpl<
+  TValOrValue = any,
+  TValue = UnwrapVal<TValOrValue>
+> extends ReadonlyValImpl<TValue> {
   public constructor(
-    getValue: () => ReadonlyVal<TValue> | TValue,
+    getValue: () => TValOrValue,
     listen: (handler: () => void) => ValDisposer | void | undefined,
     config?: ValConfig<TValue>
   ) {
@@ -14,7 +17,7 @@ class UnwrapFromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     let currentValue = INIT_VALUE as TValue;
     let dirtyLevel = 0;
 
-    let innerMaybeVal: ReadonlyVal<TValue> | TValue | undefined;
+    let innerMaybeVal: TValOrValue | undefined;
     let innerVal: ReadonlyVal<TValue> | undefined | null;
     let innerDisposer: ValDisposer | undefined | null;
 
@@ -96,8 +99,9 @@ class UnwrapFromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
  * @param config custom config for the val.
  * @returns A readonly val with value of inner val.
  */
-export const unwrapFrom = <TValue = any>(
-  getValue: () => ReadonlyVal<TValue> | TValue,
+export const unwrapFrom = <TValOrValue = any>(
+  getValue: () => TValOrValue,
   listen: (notify: () => void) => ValDisposer | void | undefined,
-  config?: ValConfig<TValue>
-): ReadonlyVal<TValue> => new UnwrapFromImpl(getValue, listen, config);
+  config?: ValConfig<UnwrapVal<TValOrValue>>
+): ReadonlyVal<UnwrapVal<TValOrValue>> =>
+  new UnwrapFromImpl(getValue, listen, config);

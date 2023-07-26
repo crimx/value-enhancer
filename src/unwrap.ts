@@ -1,11 +1,10 @@
-import type { ReadonlyVal, Val, ValConfig } from "./typings";
+import type { ReadonlyVal, UnwrapVal, ValConfig } from "./typings";
 
 import { unwrapFrom } from "./unwrap-from";
 import { identity } from "./utils";
 
 /**
  * Unwrap a val of val to a val of the inner val value.
- *
  * @param val Input value.
  * @returns A readonly val with value of inner val.
  *
@@ -21,29 +20,9 @@ import { identity } from "./utils";
  * inner$.value === unwrapped$.value; // true
  * ```
  */
-export function unwrap<TValue = any>(
-  val: ReadonlyVal<ReadonlyVal<TValue>>
-): ReadonlyVal<TValue>;
-/**
- * Unwrap a val of val to a val of the inner val value.
- * @param val Input value.
- * @returns A readonly val with value of inner val.
- *
- * @example
- * ```js
- * import { unwrap, val } from "value-enhancer";
- *
- * const inner$ = val(12);
- * const outer$ = val(inner$);
- *
- * const unwrapped$ = unwrap(outer$);
- *
- * inner$.value === unwrapped$.value; // true
- * ```
- */
-export function unwrap<TValue = any>(
-  val: ReadonlyVal<Val<TValue>>
-): ReadonlyVal<TValue>;
+export function unwrap<TValOrValue = any>(
+  val: ReadonlyVal<TValOrValue>
+): ReadonlyVal<UnwrapVal<TValOrValue>>;
 /**
  * Unwrap an inner val extracted from a source val to a val of the inner val value.
  * @param val Input value.
@@ -62,18 +41,18 @@ export function unwrap<TValue = any>(
  * inner$.value === unwrapped$.value; // true
  * ```
  */
-export function unwrap<TSrcValue = any, TValue = any>(
+export function unwrap<TSrcValue = any, TValOrValue = any>(
   val: ReadonlyVal<TSrcValue>,
-  get: (value: TSrcValue) => ReadonlyVal<TValue> | TValue,
-  config?: ValConfig<TValue>
-): ReadonlyVal<TValue>;
-export function unwrap<TSrcValue = any, TValue = any>(
+  get: (value: TSrcValue) => TValOrValue,
+  config?: ValConfig<UnwrapVal<TValOrValue>>
+): ReadonlyVal<UnwrapVal<TValOrValue>>;
+export function unwrap<TSrcValue = any, TValOrValue = any>(
   val: ReadonlyVal<TSrcValue>,
-  get: (value: TSrcValue) => ReadonlyVal<TValue> | TValue = identity as any,
-  config?: ValConfig<TValue>
-): ReadonlyVal<TValue> {
+  get: (value: TSrcValue) => TValOrValue = identity as any,
+  config?: ValConfig<UnwrapVal<TValOrValue>>
+): ReadonlyVal<UnwrapVal<TValOrValue>> {
   return unwrapFrom(
-    () => get(val.value) as TValue,
+    () => get(val.value),
     notify => val.$valCompute(notify),
     config
   );
