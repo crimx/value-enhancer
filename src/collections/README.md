@@ -1,6 +1,6 @@
 # Reactive Collections
 
-Reactive collections are a set of classes that extend the native JavaScript collections. Making changes of the collections observable.
+The Reactive Collections are a group of classes that expand on the built-in JavaScript collections, allowing changes to the collections to be observed. See [docs](https://value-enhancer.js.org/modules/collections.html) for API details.
 
 ```ts
 import {

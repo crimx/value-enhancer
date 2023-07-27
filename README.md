@@ -43,7 +43,7 @@ npm add value-enhancer
 - Explicit.  
   Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
 - Simple DX.  
-  No hidden rules for getting or setting values. What you see is what you get.
+  Designed with ergonomics in mind. No hidden rules for getting or setting values. What you see is what you get.
 - Bundle size and Performance.  
   By carefully defining scope and choosing right features that balance usability and performance, less work needed to be done in `value-enhancer` which makes it smaller and faster.
 
@@ -376,7 +376,7 @@ const derived$ = derive(count$, count => count * 3, { eager: true });
 
 ## Reactive Collections
 
-Reactive collections are a set of classes that extend the native JavaScript collections. Making changes of the collections observable. See [docs](https://value-enhancer.js.org/modules/collections.html) for API details.
+The Reactive Collections are a group of classes that expand on the built-in JavaScript collections, allowing changes to the collections to be observed. See [docs](https://value-enhancer.js.org/modules/collections.html) for API details.
 
 ```ts
 import { ReactiveList, fromCollection } from "value-enhancer/collections";
