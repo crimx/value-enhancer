@@ -3,7 +3,6 @@ import type { ReadonlyVal, ValConfig, ValInputsValueTuple } from "./typings";
 import { from } from "./from";
 import { getValues, identity, invoke } from "./utils";
 
-/** @ignore */
 export type CombineValTransform<
   TDerivedValue = any,
   TValues extends readonly any[] = any[],

@@ -72,13 +72,13 @@ export interface ValConfig<TValue = any> {
 
 export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
 
-/** @ignore */
+/** @internal */
 export type ValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
   Readonly<{
     [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
   }>;
 
-/** @ignore */
+/** @internal */
 export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue>
   ? TValue
   : never;

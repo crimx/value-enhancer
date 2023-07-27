@@ -3,7 +3,6 @@ import type { ReadonlyVal, ValConfig } from "./typings";
 import { from } from "./from";
 import { identity } from "./utils";
 
-/** @ignore */
 export type DerivedValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue
 ) => TDerivedValue;
