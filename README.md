@@ -28,6 +28,10 @@ Docs: <https://value-enhancer.js.org>
 npm add value-enhancer
 ```
 
+## Docs
+
+<https://value-enhancer.js.org/>
+
 ## Features
 
 - Plain reactivity.  
@@ -368,4 +372,42 @@ Or set `eager` to `true` when creating the Val.
 const count$ = val(3, { eager: true });
 
 const derived$ = derive(count$, count => count * 3, { eager: true });
+```
+
+## Reactive Collections
+
+Reactive collections are a set of classes that extend the native JavaScript collections. Making changes of the collections observable. See [docs](https://value-enhancer.js.org/modules/collections.html) for API details.
+
+```ts
+import { ReactiveList, fromCollection } from "value-enhancer/collections";
+
+const list = new ReactiveList(["a", "b", "c"]);
+
+const item$ = fromCollection(list, 2); // watch the item at index 2
+
+console.log(item$.value); // "c"
+
+list.set(2, "d");
+
+console.log(item$.value); // "d"
+```
+
+```ts
+import { ReactiveMap, unwrapFromCollection } from "value-enhancer/collections";
+import { val } from "value-enhancer";
+
+const map = new ReactiveMap();
+const v = val("someValue");
+
+const item$ = unwrapFromCollection(map, "someKey"); // watch the item at "someKey"
+
+console.log(item$.value); // undefined
+
+map.set("someKey", v);
+
+console.log(item$.value); // "someValue"
+
+v.set("someValue2");
+
+console.log(item$.value); // "someValue2"
 ```

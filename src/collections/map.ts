@@ -2,6 +2,25 @@ import type { ReactiveCollection } from "./typings";
 
 import { invoke } from "../utils";
 
+/**
+ * A reactive map inherited from `Map`.
+ * Changes to the map will be notified to subscribers of `watch`.
+ *
+ * @example
+ * ```ts
+ * import { ReactiveMap, fromCollection } from "value-enhancer/collections"
+ *
+ * const map = new ReactiveMap();
+ *
+ * const item$ = fromCollection(map, "someKey"); // watch the item at "someKey"
+ *
+ * console.log(item$.value); // undefined
+ *
+ * map.set("someKey", "someValue");
+ *
+ * console.log(item$.value); // "someValue"
+ * ```
+ */
 export class ReactiveMap<TKey, TValue>
   extends Map<TKey, TValue>
   implements ReactiveCollection<TKey, TValue>

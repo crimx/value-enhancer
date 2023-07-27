@@ -2,6 +2,25 @@ import type { ReactiveCollection } from "./typings";
 
 import { invoke } from "../utils";
 
+/**
+ * A reactive set inherited from `Set`.
+ * Changes to the set will be notified to subscribers of `watch`.
+ *
+ * @example
+ * ```ts
+ * import { ReactiveSet, fromCollection } from "value-enhancer/collections"
+ *
+ * const set = new ReactiveSet();
+ *
+ * const item$ = fromCollection(map, "someValue"); // watch the existence of "someValue"
+ *
+ * console.log(item$.value); // false
+ *
+ * map.add("someValue");
+ *
+ * console.log(item$.value); // true
+ * ```
+ */
 export class ReactiveSet<TValue>
   extends Set<TValue>
   implements ReactiveCollection<TValue, boolean>
