@@ -1,19 +1,18 @@
 {
+  "_subs_": "_s",
   "_eager_": "_e",
-  "_compute_": "_c",
 
   "_getValue_": "_g",
 
-  "_change$_": "_t",
-  "_markChange_": "_r",
   "_data_": "_a",
+  "_watchers_": "_w",
 
   "size_": "z",
-  "invoke_": "i",
+  "notify_": "n",
   "add_": "a",
   "remove_": "r",
   "clear_": "c",
   "exec_": "e",
-  "shouldExec_": "s",
+  "dirty_": "d",
   "subscribers_": "b"
 }

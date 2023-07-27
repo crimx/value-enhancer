@@ -23,19 +23,19 @@ class UnwrapFromImpl<
     let innerDisposer: ValDisposer | undefined | null;
 
     const computeValue = (): TValue => {
-      if (this._subs.subscribers_.size <= 0) {
+      if (this._subs_.subscribers_.size <= 0) {
         updateInnerVal();
       }
       return innerVal ? innerVal.value : (innerMaybeVal as TValue);
     };
 
     const get = () => {
-      if (currentValue === INIT_VALUE || this._subs.subscribers_.size <= 0) {
+      if (currentValue === INIT_VALUE || this._subs_.subscribers_.size <= 0) {
         currentValue = computeValue();
       } else if (dirty) {
         const value = computeValue();
         if (!this.compare(value, currentValue)) {
-          this._subs.dirty = true;
+          this._subs_.dirty_ = true;
           currentValue = value;
         }
       }
@@ -59,7 +59,7 @@ class UnwrapFromImpl<
       dirty = true;
       if (!notified) {
         notified = true;
-        this._subs.notify();
+        this._subs_.notify_();
       }
     };
 

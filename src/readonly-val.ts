@@ -1,4 +1,4 @@
-import type { Subscribers, ValOnStart } from "./subscribers";
+import type { ValOnStart } from "./subscribers";
 import type {
   ReadonlyVal,
   ValConfig,
@@ -7,7 +7,7 @@ import type {
   ValSubscriber,
 } from "./typings";
 
-import { SubscriberMode, SubscribersImpl } from "./subscribers";
+import { SubscriberMode, Subscribers } from "./subscribers";
 import { defaultCompare, invoke } from "./utils";
 
 /**
@@ -17,7 +17,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   /**
    * Manage subscribers for a val.
    */
-  protected _subs: SubscribersImpl<TValue>;
+  protected _subs_: Subscribers<TValue>;
 
   private _eager_?: boolean;
 
@@ -35,7 +35,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     this.get = get;
     this.compare = compare;
     this._eager_ = eager;
-    this._subs = new SubscribersImpl<TValue>(get, start);
+    this._subs_ = new Subscribers<TValue>(get, start);
   }
 
   public get value(): TValue {
@@ -50,7 +50,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     subscriber: ValSubscriber<TValue>,
     eager = this._eager_
   ): ValDisposer {
-    return this._subs.add_(
+    return this._subs_.add_(
       subscriber,
       eager ? SubscriberMode.Eager : SubscriberMode.Async
     );
@@ -62,24 +62,24 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     invoke(subscriber, this.value);
-    this._subs.dirty = false;
+    this._subs_.dirty_ = false;
     return disposer;
   }
 
   public $valCompute(subscriber: ValSubscriber<void>): ValDisposer {
-    return this._subs.add_(subscriber, SubscriberMode.Computed);
+    return this._subs_.add_(subscriber, SubscriberMode.Computed);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {
     if (subscriber) {
-      this._subs.remove_(subscriber);
+      this._subs_.remove_(subscriber);
     } else {
-      this._subs.clear_();
+      this._subs_.clear_();
     }
   }
 
   public dispose(): void {
-    this._subs.clear_();
+    this._subs_.clear_();
   }
 
   /**
@@ -132,8 +132,8 @@ export const readonlyVal = <TValue = any>(
     if (!val.compare(value, currentValue)) {
       currentValue = value;
       if (subs) {
-        subs.dirty = true;
-        subs.notify();
+        subs.dirty_ = true;
+        subs.notify_();
       }
     }
   };

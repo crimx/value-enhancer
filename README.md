@@ -9,7 +9,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/value-enhancer/main)](https://coveralls.io/github/crimx/value-enhancer?branch=main)
 
 [![full-size](https://img.shields.io/bundlephobia/minzip/value-enhancer)](https://bundlejs.com/?q=value-enhancer)
-[![core-size](https://runkit.io/crimx/bundlejs-badge/branches/master?q=value-enhancer&exports=val&label=core%20size)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
+[![core-size](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdeno.bundlejs.com%2F%3Fq%3Dvalue-enhancer%26treeshake%3D%255B%257B%2520val%2520%257D%255D&query=%24.size.size&label=core%20size)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
 [![tree-shakable](https://img.shields.io/badge/%20tree-shakable-success)](https://bundlejs.com/?q=value-enhancer)
 [![no-dependencies](https://img.shields.io/badge/dependencies-none-success)](https://bundlejs.com/?q=value-enhancer)
 [![side-effect-free](https://img.shields.io/badge/%20side--effect-free-success)](https://bundlejs.com/?q=value-enhancer)
@@ -368,57 +368,4 @@ Or set `eager` to `true` when creating the Val.
 const count$ = val(3, { eager: true });
 
 const derived$ = derive(count$, count => count * 3, { eager: true });
-```
-
-## Custom Val
-
-You can create your own Val by extending `ReadonlyValImpl` class, or implement the `ReadonlyVal` interface and mark manually with `markVal` function.
-
-```js
-import { ReadonlyValImpl, isVal } from "value-enhancer";
-
-class MyVal extends ReadonlyValImpl {
-  constructor(value) {
-    super(value);
-  }
-
-  set(value) {
-    console.log("set", value);
-    this._set(value);
-  }
-}
-
-const myVal = new MyVal(11);
-myVal.set(22); // printed "set 22"
-
-console.log(isVal(myVal)); // true
-```
-
-```js
-import { val, isVal, markVal, identity } from "value-enhancer";
-
-const createMyVal = value => {
-  const v = val(value);
-
-  const myVal = {
-    value: 11,
-    compare: identity,
-    reaction: v.reaction.bind(v),
-    subscribe: v.subscribe.bind(v),
-    unsubscribe: v.unsubscribe.bind(v),
-    set(value) {
-      console.log("set", value);
-      this.value = value;
-    },
-  };
-
-  markVal(myVal);
-
-  return myVal;
-};
-
-const myVal = createMyVal(11);
-myVal.set(22); // printed "set 22"
-
-console.log(isVal(myVal)); // true
 ```

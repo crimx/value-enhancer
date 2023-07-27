@@ -16,9 +16,31 @@
     "data flow"
   ],
   "sideEffects": false,
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    },
+    "./collection": {
+      "types": "./dist/collections.d.ts",
+      "require": "./dist/collections.cjs",
+      "import": "./dist/collections.js"
+    }
+  },
+  "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      ".": [
+        "dist/index.d.ts"
+      ],
+      "collection": [
+        "dist/collections.d.ts"
+      ]
+    }
+  },
   "files": [
     "src",
     "dist"
@@ -29,8 +51,8 @@
     "test": "jest",
     "docs": "typedoc --options typedoc.json",
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
-    "build": "cross-env NODE_ENV=production tsup-node src/index.ts",
-    "build:min": "cross-env NODE_ENV=production MINIFY=true tsup-node src/index.ts && node scripts/gzip.mjs",
+    "build": "cross-env NODE_ENV=production tsup-node",
+    "build:min": "cross-env NODE_ENV=production MINIFY=true tsup-node && node scripts/gzip.mjs",
     "build:dev": "cross-env NODE_ENV=development tsup-node src/index.ts",
     "release": "standard-version"
   },

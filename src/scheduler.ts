@@ -1,10 +1,10 @@
-import type { SubscribersImpl } from "./subscribers";
+import type { Subscribers } from "./subscribers";
 import { SubscriberMode } from "./subscribers";
 
 export type Task<TValue = any> = (value: TValue) => void;
 
 const nextTick = /*#__PURE__*/ Promise.resolve();
-const subsSet = new Set<SubscribersImpl>();
+const subsSet = new Set<Subscribers>();
 let pending: Promise<void> | false;
 
 const flush = () => {
@@ -15,10 +15,9 @@ const flush = () => {
   subsSet.clear();
 };
 
-export const schedule = <TValue>(subs: SubscribersImpl<TValue>): void => {
+export const schedule = <TValue>(subs: Subscribers<TValue>): void => {
   subsSet.add(subs);
   pending = pending || nextTick.then(flush);
 };
 
-export const cancelTask = (subs: SubscribersImpl): boolean =>
-  subsSet.delete(subs);
+export const cancelTask = (subs: Subscribers): boolean => subsSet.delete(subs);

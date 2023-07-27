@@ -10,21 +10,6 @@ export enum SubscriberMode {
 }
 
 /**
- * Manage subscribers for a val.
- */
-export interface Subscribers {
-  /**
-   * Whether subscribers should be notified after next value check.
-   */
-  dirty: boolean;
-  /**
-   * Notify Subscribers Manager that the value may have changed.
-   * A task will be scheduled to check the value.
-   */
-  notify(): void;
-}
-
-/**
  * A function that is called when a val get its first subscriber.
  * The returned disposer will be called when the last subscriber unsubscribed from the val.
  */
@@ -33,15 +18,15 @@ export type ValOnStart = (subs: Subscribers) => void | ValDisposer | undefined;
 /**
  * Manage subscribers for a val.
  */
-export class SubscribersImpl<TValue = any> implements Subscribers {
+export class Subscribers<TValue = any> implements Subscribers {
   public constructor(getValue: () => TValue, start?: ValOnStart | null) {
     this._getValue_ = getValue;
     this._start_ = start;
   }
 
-  public dirty = false;
+  public dirty_ = false;
 
-  public notify(): void {
+  public notify_(): void {
     this._notReadySubscribers_.clear();
     if (this.subscribers_.size > 0) {
       this.exec_(SubscriberMode.Computed);
@@ -50,7 +35,7 @@ export class SubscribersImpl<TValue = any> implements Subscribers {
         schedule(this);
       }
     } else {
-      this.dirty = false;
+      this.dirty_ = false;
     }
   }
 
@@ -99,18 +84,18 @@ export class SubscribersImpl<TValue = any> implements Subscribers {
       let value: TValue | undefined;
       if (mode === SubscriberMode.Computed) {
         if (this[SubscriberMode.Async] + this[SubscriberMode.Eager] <= 0) {
-          this.dirty = false;
+          this.dirty_ = false;
         }
       } else {
         value = this._getValue_();
-        if (!this.dirty) {
+        if (!this.dirty_) {
           return;
         }
         if (
           mode === SubscriberMode.Async ||
           /* mode === SubscriberMode.Eager && */ this[SubscriberMode.Async] <= 0
         ) {
-          this.dirty = false;
+          this.dirty_ = false;
         }
       }
       for (const [sub, subMode] of this.subscribers_) {
