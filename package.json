@@ -16,17 +16,17 @@
     "data flow"
   ],
   "sideEffects": false,
-  "main": "./dist/index.cjs",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.js"
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
     },
     "./collection": {
       "types": "./dist/collections.d.ts",
-      "require": "./dist/collections.cjs",
-      "import": "./dist/collections.js"
+      "require": "./dist/collections.js",
+      "import": "./dist/collections.mjs"
     }
   },
   "types": "dist/index.d.ts",
