@@ -32,11 +32,8 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      ".": [
-        "dist/index.d.ts"
-      ],
-      "collection": [
-        "dist/collections.d.ts"
+      "*": [
+        "dist/*"
       ]
     }
   },
