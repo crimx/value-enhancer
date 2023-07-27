@@ -16,7 +16,6 @@
     "data flow"
   ],
   "sideEffects": false,
-  "type": "module",
   "main": "./dist/index.cjs",
   "exports": {
     ".": {
