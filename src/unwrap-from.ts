@@ -15,7 +15,8 @@ class UnwrapFromImpl<
     const initialCompare = config?.compare;
 
     let currentValue = INIT_VALUE as TValue;
-    let dirtyLevel = 0;
+    let dirty = false;
+    let notified = false;
 
     let innerMaybeVal: TValOrValue | undefined;
     let innerVal: ReadonlyVal<TValue> | undefined | null;
@@ -29,17 +30,16 @@ class UnwrapFromImpl<
     };
 
     const get = () => {
-      if (currentValue === INIT_VALUE) {
+      if (currentValue === INIT_VALUE || this._subs.subscribers_.size <= 0) {
         currentValue = computeValue();
-        this._subs.dirty = true;
-      } else if (dirtyLevel || this._subs.subscribers_.size <= 0) {
+      } else if (dirty) {
         const value = computeValue();
         if (!this.compare(value, currentValue)) {
           this._subs.dirty = true;
           currentValue = value;
         }
       }
-      dirtyLevel = 0;
+      dirty = notified = false;
       return currentValue;
     };
 
@@ -56,20 +56,17 @@ class UnwrapFromImpl<
     };
 
     const notify = () => {
-      if (dirtyLevel < 2) {
-        dirtyLevel = 2;
+      dirty = true;
+      if (!notified) {
+        notified = true;
         this._subs.notify();
       }
     };
 
     super(get, config, () => {
       updateInnerVal();
-
-      if (currentValue === INIT_VALUE) {
-        currentValue = innerVal ? innerVal.value : (innerMaybeVal as TValue);
-      } else {
-        dirtyLevel = dirtyLevel || 1;
-      }
+      currentValue = innerVal ? innerVal.value : (innerMaybeVal as TValue);
+      dirty = notified = false;
 
       const outerDisposer = listen(() => {
         updateInnerVal();

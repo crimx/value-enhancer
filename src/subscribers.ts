@@ -42,9 +42,7 @@ export class SubscribersImpl<TValue = any> implements Subscribers {
   public dirty = false;
 
   public notify(): void {
-    if (this._notReadySubscribers_.size > 0) {
-      this._notReadySubscribers_.clear();
-    }
+    this._notReadySubscribers_.clear();
     if (this.subscribers_.size > 0) {
       this.exec_(SubscriberMode.Computed);
       this.exec_(SubscriberMode.Eager);
@@ -58,6 +56,7 @@ export class SubscribersImpl<TValue = any> implements Subscribers {
 
   public add_(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
     if (this._start_ && this.subscribers_.size <= 0) {
+      // Subscribe added, clear notified state
       this._startDisposer_ = this._start_(this);
     }
 
@@ -109,7 +108,7 @@ export class SubscribersImpl<TValue = any> implements Subscribers {
         }
         if (
           mode === SubscriberMode.Async ||
-          /* mode === SubscriberMode.Computed */ this[SubscriberMode.Async] <= 0
+          /* mode === SubscriberMode.Eager && */ this[SubscriberMode.Async] <= 0
         ) {
           this.dirty = false;
         }

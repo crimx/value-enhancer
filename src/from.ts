@@ -9,36 +9,34 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     config?: ValConfig<TValue>
   ) {
     let currentValue = INIT_VALUE as TValue;
-    let dirtyLevel = 0;
+    let dirty = false;
+    let notified = false;
 
     const get = () => {
-      if (currentValue === INIT_VALUE) {
+      if (currentValue === INIT_VALUE || this._subs.subscribers_.size <= 0) {
         currentValue = getValue();
-        this._subs.dirty = true;
-      } else if (dirtyLevel || this._subs.subscribers_.size <= 0) {
+      } else if (dirty) {
         const value = getValue();
         if (!this.compare(value, currentValue)) {
           this._subs.dirty = true;
           currentValue = value;
         }
       }
-      dirtyLevel = 0;
+      dirty = notified = false;
       return currentValue;
     };
 
     const notify = () => {
-      if (dirtyLevel < 2) {
-        dirtyLevel = 2;
+      dirty = true;
+      if (!notified) {
+        notified = true;
         this._subs.notify();
       }
     };
 
     super(get, config, () => {
-      if (currentValue === INIT_VALUE) {
-        currentValue = getValue();
-      } else {
-        dirtyLevel = dirtyLevel || 1;
-      }
+      currentValue = getValue();
+      dirty = notified = false;
       return listen(notify);
     });
   }

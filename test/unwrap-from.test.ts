@@ -103,6 +103,51 @@ describe("unwrapFrom", () => {
     val$.unsubscribe();
   });
 
+  it("should not trigger reaction if value not changed", async () => {
+    const sub = jest.fn();
+
+    let currentValue: ReadonlyVal<string> | string = "c";
+    let onChange: (() => void) | undefined;
+    const set = (value: typeof currentValue) => {
+      currentValue = value;
+      onChange?.();
+    };
+
+    const val$ = unwrapFrom(
+      () => currentValue,
+      notify => {
+        onChange = notify;
+        return () => {
+          onChange = undefined;
+        };
+      }
+    );
+
+    expect(val$.value).toBe("c");
+
+    // triggers compare
+    set("f");
+    expect(val$.value).toBe("f");
+
+    // set it back to c
+    set(val("c"));
+    expect(val$.value).toBe("c");
+
+    val$.reaction(sub);
+
+    expect(sub).not.toHaveBeenCalled();
+    await Promise.resolve();
+    expect(sub).not.toHaveBeenCalled();
+
+    set("c");
+
+    expect(sub).not.toHaveBeenCalled();
+    await Promise.resolve();
+    expect(sub).not.toHaveBeenCalled();
+
+    val$.unsubscribe();
+  });
+
   it("should perform custom compare", async () => {
     const sub = jest.fn();
     const startSpy = jest.fn();

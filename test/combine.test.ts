@@ -257,8 +257,8 @@ describe("combine", () => {
     const spy5 = jest.fn();
     val4.reaction(spy5);
 
-    expect(spy2).toBeCalledTimes(2);
-    expect(spy3).toBeCalledTimes(1);
+    expect(spy2).toBeCalledTimes(3);
+    expect(spy3).toBeCalledTimes(2);
     expect(spy4).toBeCalledTimes(1);
 
     spy2.mockClear();
@@ -316,7 +316,7 @@ describe("combine", () => {
     const spySub = jest.fn();
     even.subscribe(spySub);
 
-    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).toBeCalledTimes(2);
     expect(spyOdd).lastCalledWith({ v: 2 });
     expect(spyEven).toBeCalledTimes(1);
     expect(spyEven).lastCalledWith({ odd: false });
@@ -396,7 +396,7 @@ describe("combine", () => {
     const spySub = jest.fn();
     even.subscribe(spySub, true);
 
-    expect(spyOdd).toBeCalledTimes(1);
+    expect(spyOdd).toBeCalledTimes(2);
     expect(spyOdd).lastCalledWith({ v: 2 });
     expect(spyEven).toBeCalledTimes(1);
     expect(spyEven).lastCalledWith({ odd: false });

@@ -62,6 +62,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     invoke(subscriber, this.value);
+    this._subs.dirty = false;
     return disposer;
   }
 
