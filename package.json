@@ -23,7 +23,7 @@
       "require": "./dist/index.js",
       "import": "./dist/index.mjs"
     },
-    "./collection": {
+    "./collections": {
       "types": "./dist/collections.d.ts",
       "require": "./dist/collections.js",
       "import": "./dist/collections.mjs"
@@ -32,8 +32,8 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/*"
+      "collections": [
+        "dist/collections.d.ts"
       ]
     }
   },
