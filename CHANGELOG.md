@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/crimx/value-enhancer/compare/v2.4.4...v3.0.0) (2023-07-27)
+
+
+### Features
+
+* add from and unwrapFrom ([796d345](https://github.com/crimx/value-enhancer/commit/796d345dff8f3eedd96fda2cb1e46a59a5d82d40))
+* add reactive collections ([54c6fa3](https://github.com/crimx/value-enhancer/commit/54c6fa3cfbdabe28fa7f6d5729d7992f5f731e77))
+
+
+### Bug Fixes
+
+* add unwrap value typing ([6df5b09](https://github.com/crimx/value-enhancer/commit/6df5b097ba1d74a2a1c536ee121f58d10053a2b3))
+* fix reaction triggered on unchanged value ([0328e33](https://github.com/crimx/value-enhancer/commit/0328e332984f32d3c18decee1c49d505198e5781))
+
 ### [2.4.4](https://github.com/crimx/value-enhancer/compare/v2.4.3...v2.4.4) (2023-05-17)
 
 ### [2.4.3](https://github.com/crimx/value-enhancer/compare/v2.4.2...v2.4.3) (2023-03-27)
