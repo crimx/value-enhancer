@@ -50,7 +50,7 @@ export class ReactiveList<TValue>
    * Get the internal array. Use it as a read-only array.
    * Should not modify the array in place directly. Use methods on the list instead.
    */
-  public array(): ReadonlyArray<TValue> {
+  public get array(): ReadonlyArray<TValue> {
     return this._data_;
   }
 
