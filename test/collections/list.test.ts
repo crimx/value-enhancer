@@ -5,14 +5,14 @@ describe("ReactiveList", () => {
   describe("constructor", () => {
     it("should create an empty list if no argument is passed", () => {
       const emptyList = new ReactiveList();
-      expect(emptyList.array()).toEqual([]);
+      expect(emptyList.array).toEqual([]);
     });
   });
 
   describe("array", () => {
     it("should create a list with the same elements as the array-like object passed as argument", () => {
       const list = new ReactiveList([1, 2, 3]);
-      expect(list.array()).toEqual([1, 2, 3]);
+      expect(list.array).toEqual([1, 2, 3]);
     });
   });
 
@@ -28,7 +28,7 @@ describe("ReactiveList", () => {
     it("should set the length of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.length = 2;
-      expect(list.array()).toEqual([1, 2]);
+      expect(list.array).toEqual([1, 2]);
     });
   });
 
@@ -121,13 +121,13 @@ describe("ReactiveList", () => {
     it("should add an element to the end of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.push(4);
-      expect(list.array()).toEqual([1, 2, 3, 4]);
+      expect(list.array).toEqual([1, 2, 3, 4]);
     });
 
     it("should add multiple elements to the end of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.push(4, 5);
-      expect(list.array()).toEqual([1, 2, 3, 4, 5]);
+      expect(list.array).toEqual([1, 2, 3, 4, 5]);
     });
 
     it("should notify on push", () => {
@@ -166,7 +166,7 @@ describe("ReactiveList", () => {
     it("should remove the last element of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.pop();
-      expect(list.array()).toEqual([1, 2]);
+      expect(list.array).toEqual([1, 2]);
     });
 
     it("should return the removed element", () => {
@@ -210,13 +210,13 @@ describe("ReactiveList", () => {
     it("should add an element to the beginning of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.pushHead(0);
-      expect(list.array()).toEqual([0, 1, 2, 3]);
+      expect(list.array).toEqual([0, 1, 2, 3]);
     });
 
     it("should add multiple elements to the beginning of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.pushHead(-1, 0);
-      expect(list.array()).toEqual([-1, 0, 1, 2, 3]);
+      expect(list.array).toEqual([-1, 0, 1, 2, 3]);
     });
 
     it("should notify on pushHead", () => {
@@ -255,7 +255,7 @@ describe("ReactiveList", () => {
     it("should remove the first element of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.popHead();
-      expect(list.array()).toEqual([2, 3]);
+      expect(list.array).toEqual([2, 3]);
     });
 
     it("should return the removed element", () => {
@@ -299,13 +299,13 @@ describe("ReactiveList", () => {
     it("should set the element at the specified index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.set(1, 4);
-      expect(list.array()).toEqual([1, 4, 3]);
+      expect(list.array).toEqual([1, 4, 3]);
     });
 
     it("should ignore negative index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.set(-1, 4);
-      expect(list.array()).toEqual([1, 2, 3]);
+      expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should notify on set", () => {
@@ -340,19 +340,19 @@ describe("ReactiveList", () => {
     it("should insert an element at the specified index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.insert(1, 4);
-      expect(list.array()).toEqual([1, 4, 2, 3]);
+      expect(list.array).toEqual([1, 4, 2, 3]);
     });
 
     it("should insert multiple elements at the specified index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.insert(1, 4, 5);
-      expect(list.array()).toEqual([1, 4, 5, 2, 3]);
+      expect(list.array).toEqual([1, 4, 5, 2, 3]);
     });
 
     it("should ignore negative index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.insert(-2, 4, 5);
-      expect(list.array()).toEqual([1, 2, 3]);
+      expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should notify on insert", () => {
@@ -387,19 +387,19 @@ describe("ReactiveList", () => {
     it("should delete one element at the specified index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.delete(1);
-      expect(list.array()).toEqual([1, 3]);
+      expect(list.array).toEqual([1, 3]);
     });
 
     it("should delete the rest elements from the specified index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.delete(1, list.length - 1);
-      expect(list.array()).toEqual([1]);
+      expect(list.array).toEqual([1]);
     });
 
     it("should ignore negative index", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.delete(-1);
-      expect(list.array()).toEqual([1, 2, 3]);
+      expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should notify on delete", () => {
@@ -468,7 +468,7 @@ describe("ReactiveList", () => {
     it("should clear the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.clear();
-      expect(list.array()).toEqual([]);
+      expect(list.array).toEqual([]);
     });
 
     it("should notify on clear", () => {
@@ -499,7 +499,7 @@ describe("ReactiveList", () => {
     it("should replace the list with the specified elements", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.replace([4, 5, 6]);
-      expect(list.array()).toEqual([4, 5, 6]);
+      expect(list.array).toEqual([4, 5, 6]);
     });
 
     it("should notify on replace", () => {
@@ -519,7 +519,7 @@ describe("ReactiveList", () => {
     it("should reverse the list", () => {
       const list = new ReactiveList([1, 2, 3]);
       list.reverse();
-      expect(list.array()).toEqual([3, 2, 1]);
+      expect(list.array).toEqual([3, 2, 1]);
     });
 
     it("should notify on reverse", () => {
@@ -561,13 +561,13 @@ describe("ReactiveList", () => {
     it("should sort the list", () => {
       const list = new ReactiveList([3, 1, 2]);
       list.sort();
-      expect(list.array()).toEqual([1, 2, 3]);
+      expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should sort the list with a custom compare function", () => {
       const list = new ReactiveList([3, 1, 2]);
       list.sort((a, b) => b - a);
-      expect(list.array()).toEqual([3, 2, 1]);
+      expect(list.array).toEqual([3, 2, 1]);
     });
 
     it("should notify on sort", () => {
@@ -608,21 +608,21 @@ describe("ReactiveList", () => {
   describe("toString", () => {
     it("should return a string representation of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
-      expect(list.toString()).toBe(list.array().toString());
+      expect(list.toString()).toBe(list.array.toString());
     });
   });
 
   describe("toLocaleString", () => {
     it("should return a locale string representation of the list", () => {
       const list = new ReactiveList([1, 2, 3]);
-      expect(list.toLocaleString()).toBe(list.array().toLocaleString());
+      expect(list.toLocaleString()).toBe(list.array.toLocaleString());
     });
   });
 
   describe("toJSON", () => {
     it("should return the internal array", () => {
       const list = new ReactiveList([1, 2, 3]);
-      expect(list.toJSON()).toBe(list.array());
+      expect(list.toJSON()).toBe(list.array);
     });
   });
 });
