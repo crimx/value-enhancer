@@ -9,7 +9,7 @@
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/value-enhancer/main)](https://coveralls.io/github/crimx/value-enhancer?branch=main)
 
 [![full-size](https://img.shields.io/bundlephobia/minzip/value-enhancer)](https://bundlejs.com/?q=value-enhancer)
-[![core-size](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fdeno.bundlejs.com%2F%3Fq%3Dvalue-enhancer%26treeshake%3D%255B%257B%2520val%2520%257D%255D&query=%24.size.size&label=core%20size)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
+[![core-size](https://img.shields.io/bundlejs/size/value-enhancer?exports=val&label=core%20size)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
 [![tree-shakable](https://img.shields.io/badge/%20tree-shakable-success)](https://bundlejs.com/?q=value-enhancer)
 [![no-dependencies](https://img.shields.io/badge/dependencies-none-success)](https://bundlejs.com/?q=value-enhancer)
 [![side-effect-free](https://img.shields.io/badge/%20side--effect-free-success)](https://bundlejs.com/?q=value-enhancer)
