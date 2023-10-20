@@ -1,6 +1,6 @@
 {
   "name": "value-enhancer",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "private": false,
   "description": "A tiny library to enhance value with reactive wrapper.",
   "license": "MIT",
