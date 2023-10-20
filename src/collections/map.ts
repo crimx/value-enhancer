@@ -81,11 +81,17 @@ export class ReactiveMap<TKey, TValue>
    * Replace all entries in the Map.
    */
   public replace(entries: Iterable<readonly [TKey, TValue]>): this {
+    const cached = new Map(this);
     super.clear();
+    let isDirty = false;
     for (const [key, value] of entries) {
+      isDirty = isDirty || !cached.has(key) || cached.get(key) !== value;
       super.set(key, value);
+      cached.delete(key);
     }
-    this.notify();
+    if (isDirty || cached.size > 0) {
+      this.notify();
+    }
     return this;
   }
 }

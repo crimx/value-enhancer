@@ -138,6 +138,34 @@ describe("ReactiveMap", () => {
 
       unwatch();
     });
+
+    it("should not notify if not changed", () => {
+      const reactiveMap = new ReactiveMap<string, number>([["baz", 3]]);
+      const mockNotify = jest.fn();
+      const unwatch = reactiveMap.watch(mockNotify);
+
+      reactiveMap.replace([["baz", 3]]);
+      expect(mockNotify).toHaveBeenCalledTimes(0);
+
+      unwatch();
+    });
+
+    it("should not notify if some keys are removed", () => {
+      const reactiveMap = new ReactiveMap<string, number>([
+        ["baz", 3],
+        ["foo", 4],
+      ]);
+      const mockNotify = jest.fn();
+      const unwatch = reactiveMap.watch(mockNotify);
+
+      expect(reactiveMap.get("foo")).toBe(4);
+
+      reactiveMap.replace([["baz", 3]]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(reactiveMap.get("foo")).toBeUndefined();
+
+      unwatch();
+    });
   });
 
   describe("unwatch", () => {
