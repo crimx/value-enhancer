@@ -141,6 +141,43 @@ describe("ReactiveSet", () => {
 
       unwatch();
     });
+
+    it("should not notify if not changed", () => {
+      const reactiveSet = new ReactiveSet([1]);
+      const mockNotify = jest.fn();
+      const unwatch = reactiveSet.watch(mockNotify);
+
+      reactiveSet.replace([2, 3]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).toHaveBeenCalledWith(undefined);
+
+      unwatch();
+    });
+
+    it("should notify if some keys are removed", () => {
+      const reactiveSet = new ReactiveSet([1, 2, 3]);
+      const mockNotify = jest.fn();
+      const unwatch = reactiveSet.watch(mockNotify);
+
+      expect(reactiveSet.has(3)).toBe(true);
+
+      reactiveSet.replace([1, 2]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(reactiveSet.has(3)).toBe(false);
+
+      unwatch();
+    });
+
+    it("should return deleted entries", () => {
+      const reactiveMap = new ReactiveSet([1, 2, 3]);
+      const mockNotify = jest.fn();
+      const unwatch = reactiveMap.watch(mockNotify);
+
+      const deleted = reactiveMap.replace([3, 4]);
+      expect([...deleted]).toEqual([1, 2]);
+
+      unwatch();
+    });
   });
 
   describe("unwatch", () => {

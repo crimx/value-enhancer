@@ -233,12 +233,20 @@ export class ReactiveList<TValue>
   /**
    * Replace all elements in the list.
    * @param arrayLike An array-like object to replace the elements in the list.
+   * @returns deleted values
    */
-  public replace(arrayLike: ArrayLike<TValue>): this {
+  public replace(arrayLike: ArrayLike<TValue>): TValue[] {
+    const cached = new Set(this);
     this._data_.length = 0;
-    this._data_.push(...Array.from(arrayLike));
-    this.notify();
-    return this;
+    let isDirty = false;
+    for (const value of Array.from(arrayLike)) {
+      isDirty = isDirty || cached.delete(value);
+      this._data_.push(value);
+    }
+    if (isDirty || cached.size > 0) {
+      this.notify();
+    }
+    return [...cached];
   }
 
   /**

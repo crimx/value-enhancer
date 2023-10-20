@@ -86,13 +86,20 @@ export class ReactiveSet<TValue>
 
   /**
    * Replace all entries in the Set.
+   *
+   * @returns Deleted entries.
    */
-  public replace(entries: Iterable<TValue>): this {
+  public replace(entries: Iterable<TValue>): Set<TValue> {
+    const cached = new Set(this);
     super.clear();
+    let isDirty = false;
     for (const value of entries) {
+      isDirty = isDirty || cached.delete(value);
       super.add(value);
     }
-    this.notify();
-    return this;
+    if (isDirty || cached.size > 0) {
+      this.notify();
+    }
+    return cached;
   }
 }

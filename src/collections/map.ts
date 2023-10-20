@@ -79,8 +79,12 @@ export class ReactiveMap<TKey, TValue>
 
   /**
    * Replace all entries in the Map.
+   *
+   * @returns Deleted entries.
    */
-  public replace(entries: Iterable<readonly [TKey, TValue]>): this {
+  public replace(
+    entries: Iterable<readonly [TKey, TValue]>
+  ): Map<TKey, TValue> {
     const cached = new Map(this);
     super.clear();
     let isDirty = false;
@@ -92,6 +96,6 @@ export class ReactiveMap<TKey, TValue>
     if (isDirty || cached.size > 0) {
       this.notify();
     }
-    return this;
+    return cached;
   }
 }

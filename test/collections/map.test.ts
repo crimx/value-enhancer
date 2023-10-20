@@ -150,7 +150,7 @@ describe("ReactiveMap", () => {
       unwatch();
     });
 
-    it("should not notify if some keys are removed", () => {
+    it("should notify if some keys are removed", () => {
       const reactiveMap = new ReactiveMap<string, number>([
         ["baz", 3],
         ["foo", 4],
@@ -163,6 +163,20 @@ describe("ReactiveMap", () => {
       reactiveMap.replace([["baz", 3]]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
       expect(reactiveMap.get("foo")).toBeUndefined();
+
+      unwatch();
+    });
+
+    it("should return deleted entries", () => {
+      const reactiveMap = new ReactiveMap<string, number>([
+        ["baz", 3],
+        ["foo", 4],
+      ]);
+      const mockNotify = jest.fn();
+      const unwatch = reactiveMap.watch(mockNotify);
+
+      const deleted = reactiveMap.replace([["baz", 3]]);
+      expect([...deleted]).toEqual([["foo", 4]]);
 
       unwatch();
     });
