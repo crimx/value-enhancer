@@ -382,6 +382,7 @@ With `groupVals` you can easily create a group of ReadonlyVals and hide the sett
 import {
   type ReadonlyVal,
   type ValSetValue,
+  type UnwrapVal,
   readonlyVal,
   groupVals,
 } from "value-enhancer";
@@ -394,7 +395,7 @@ export interface Foo$ {
 
 export class Foo {
   public readonly $: Foo$;
-  private setVals: { [K in keyof Foo$]: ValSetValue<Foo$[K]> };
+  private setVals: { [K in keyof Foo$]: ValSetValue<UnwrapVal<Foo$[K]>> };
 
   public constructor() {
     const [vals, setVals] = groupVals({
