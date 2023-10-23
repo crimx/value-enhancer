@@ -8,6 +8,14 @@ describe("ReadonlyVal", () => {
       const [val] = readonlyVal(1);
       expect(val.value).toBe(1);
     });
+
+    it("should create an ReadonlyVal of undefined", () => {
+      const [val, setValue] = readonlyVal();
+      expect(val.value).toBeUndefined();
+
+      setValue(undefined);
+      expect(val.value).toBeUndefined();
+    });
   });
 
   describe("value", () => {

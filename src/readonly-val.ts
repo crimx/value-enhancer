@@ -116,19 +116,32 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 /**
  * Creates a readonly val with the given value.
  *
+ * @returns A tuple with the readonly val and a function to set the value.
+ */
+export function readonlyVal<TValue = undefined>(): [
+  ReadonlyVal<TValue | undefined>,
+  ValSetValue<TValue | undefined>
+];
+/**
+ * Creates a readonly val with the given value.
+ *
  * @param value Value for the val
  * @param config Custom config for the val.
  * @returns A tuple with the readonly val and a function to set the value.
  */
-export const readonlyVal = <TValue = any>(
+export function readonlyVal<TValue = any>(
   value: TValue,
   config?: ValConfig<TValue>
-): [ReadonlyVal<TValue>, ValSetValue<TValue>] => {
+): [ReadonlyVal<TValue>, ValSetValue<TValue>];
+export function readonlyVal<TValue = any>(
+  value?: TValue,
+  config?: ValConfig<TValue | undefined>
+): [ReadonlyVal<TValue | undefined>, ValSetValue<TValue | undefined>] {
   let currentValue = value;
 
   let subs: Subscribers;
 
-  const set = (value: TValue): void => {
+  const set = (value: TValue | undefined): void => {
     if (!val.compare(value, currentValue)) {
       currentValue = value;
       if (subs) {
@@ -147,7 +160,7 @@ export const readonlyVal = <TValue = any>(
   );
 
   return [val, set];
-};
+}
 
 /**
  * Takes an object of key-value pairs containing `ReadonlyVal` instances and their corresponding `ValSetValue` functions,
