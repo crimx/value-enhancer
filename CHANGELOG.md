@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/crimx/value-enhancer/compare/v3.0.7...v3.1.0) (2023-10-23)
+
+
+### Features
+
+* **readonlyVal:** add groupVals ([9d18ac9](https://github.com/crimx/value-enhancer/commit/9d18ac998555606bd48a092d55fe5a2916c49d01))
+
 ### [3.0.7](https://github.com/crimx/value-enhancer/compare/v3.0.6...v3.0.7) (2023-10-20)
 
 ### [3.0.6](https://github.com/crimx/value-enhancer/compare/v3.0.5...v3.0.6) (2023-10-20)
