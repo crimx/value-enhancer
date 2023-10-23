@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { readonlyVal } from "../src";
-import { ReadonlyValImpl } from "../src/readonly-val";
+import { ReadonlyValImpl, groupVals } from "../src/readonly-val";
 
 describe("ReadonlyVal", () => {
   describe("value", () => {
@@ -870,6 +870,28 @@ describe("ReadonlyValImpl", () => {
       expect(sub2).toHaveBeenCalledTimes(0);
 
       val.unsubscribe();
+    });
+  });
+
+  describe("groupVals", () => {
+    it("should split readonly vals and setters", () => {
+      const [vals, setVals] = groupVals({
+        a: readonlyVal(1),
+        b: readonlyVal(2),
+        c: readonlyVal(3),
+      });
+
+      expect(vals.a.value).toBe(1);
+      expect(vals.b.value).toBe(2);
+      expect(vals.c.value).toBe(3);
+
+      setVals.a(2);
+      setVals.b(3);
+      setVals.c(4);
+
+      expect(vals.a.value).toBe(2);
+      expect(vals.b.value).toBe(3);
+      expect(vals.c.value).toBe(4);
     });
   });
 });

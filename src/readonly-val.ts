@@ -148,3 +148,63 @@ export const readonlyVal = <TValue = any>(
 
   return [val, set];
 };
+
+/**
+ * Takes an object of key-value pairs containing `ReadonlyVal` instances and their corresponding `ValSetValue` functions,
+ * and returns a tuple containing an array of the `ReadonlyVal` instances and a function to set their values.
+ *
+ * @example
+ * ```ts
+ * const [vals, setVals] = groupVals({
+ *  a: readonlyVal(1),
+ *  b: readonlyVal(2),
+ *  c: readonlyVal(3),
+ * });
+ *
+ * vals.a.value; // 1
+ *
+ * setVals.a(2);
+ * ```
+ *
+ * This is useful for classes that have multiple `ReadonlyVal` instances as properties.
+ *
+ * ```ts
+ * export interface Foo$ {
+ *   a: ReadonlyVal<number>;
+ *   b: ReadonlyVal<number>;
+ *   c: ReadonlyVal<number>;
+ * }
+ *
+ * export class Foo {
+ *  public $: Foo$;
+ *  private setVals: { [K in keyof Foo$]: ValSetValue<Foo$[K]> };
+ *
+ *  public constructor() {
+ *   const [vals, setVals] = groupVals({
+ *     a: readonlyVal(1),
+ *     b: readonlyVal(2),
+ *     c: readonlyVal(3),
+ *   });
+ *
+ *   this.$ = vals;
+ *   this.setVals = setVals;
+ * }
+ * ```
+ */
+export const groupVals = <
+  TValPairs extends Record<string, [ReadonlyVal<any>, ValSetValue<any>]>
+>(
+  valPairs: TValPairs
+): [
+  { [K in keyof TValPairs]: TValPairs[K][0] },
+  { [K in keyof TValPairs]: TValPairs[K][1] }
+] => {
+  const vals = {} as { [K in keyof TValPairs]: TValPairs[K][0] };
+  const setters = {} as { [K in keyof TValPairs]: TValPairs[K][1] };
+  for (const key of Object.keys(valPairs)) {
+    const [val, set] = valPairs[key];
+    vals[key as keyof TValPairs] = val;
+    setters[key as keyof TValPairs] = set;
+  }
+  return [vals, setters];
+};
