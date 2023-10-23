@@ -374,6 +374,51 @@ const count$ = val(3, { eager: true });
 const derived$ = derive(count$, count => count * 3, { eager: true });
 ```
 
+## Use in Class
+
+With `groupVals` you can easily create a group of ReadonlyVals and hide the setters.
+
+```ts
+import {
+  type ReadonlyVal,
+  type ValSetValue,
+  readonlyVal,
+  groupVals,
+} from "value-enhancer";
+
+export interface Foo$ {
+  a: ReadonlyVal<number>;
+  b: ReadonlyVal<number>;
+  c: ReadonlyVal<string>;
+}
+
+export class Foo {
+  public readonly $: Foo$;
+  private setVals: { [K in keyof Foo$]: ValSetValue<Foo$[K]> };
+
+  public constructor() {
+    const [vals, setVals] = groupVals({
+      a: readonlyVal(1),
+      b: readonlyVal(2),
+      c: readonlyVal("3"),
+    });
+    this.$ = vals;
+    this.setVals = setVals;
+  }
+
+  public myMethod() {
+    this.setVals.a(2);
+    this.setVals.c("4");
+  }
+}
+
+const foo = new Foo();
+console.log(foo.$.a.value); // 1
+
+foo.myMethod();
+console.log(foo.$.a.value); // 2
+```
+
 ## Reactive Collections
 
 The Reactive Collections are a group of classes that expand on the built-in JavaScript collections, allowing changes to the collections to be observed. See [docs](https://value-enhancer.js.org/modules/collections.html) for API details.
