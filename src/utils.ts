@@ -3,7 +3,7 @@ import type { ReadonlyVal, ValInputsValueTuple } from "./typings";
 /** Returns the value passed in. */
 export const identity = <TValue>(value: TValue): TValue => value;
 
-export const defaultCompare = Object.is;
+export const defaultEqual = Object.is;
 
 const getValue = <TValue>(val: ReadonlyVal<TValue>): TValue => val.value;
 

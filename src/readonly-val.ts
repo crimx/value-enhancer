@@ -8,7 +8,7 @@ import type {
 } from "./typings";
 
 import { SubscriberMode, Subscribers } from "./subscribers";
-import { defaultCompare, invoke } from "./utils";
+import { defaultEqual, invoke } from "./utils";
 
 /**
  * Bare minimum implementation of a readonly val.
@@ -29,11 +29,11 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    */
   public constructor(
     get: () => TValue,
-    { compare = defaultCompare, eager }: ValConfig<TValue> = {},
+    { equal, compare, eager }: ValConfig<TValue> = {},
     start?: ValOnStart
   ) {
     this.get = get;
-    this.compare = compare;
+    this.compare = this.equal = equal || compare || defaultEqual;
     this._eager_ = eager;
     this._subs_ = new Subscribers<TValue>(get, start);
   }
@@ -44,6 +44,12 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public get: (this: void) => TValue;
 
+  public equal: (this: void, newValue: TValue, oldValue: TValue) => boolean;
+
+  /**
+   * @ignore
+   * @deprecated Use `equal` instead.
+   */
   public compare: (this: void, newValue: TValue, oldValue: TValue) => boolean;
 
   public reaction(
@@ -142,7 +148,7 @@ export function readonlyVal<TValue = any>(
   let subs: Subscribers;
 
   const set = (value: TValue | undefined): void => {
-    if (!val.compare(value, currentValue)) {
+    if (!val.equal(value, currentValue)) {
       currentValue = value;
       if (subs) {
         subs.dirty_ = true;

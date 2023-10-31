@@ -105,7 +105,7 @@ describe("from", () => {
 
     expect(val$.value).toBe("c");
 
-    // triggers compare
+    // triggers equal
     set("f");
     expect(val$.value).toBe("f");
 
@@ -128,7 +128,7 @@ describe("from", () => {
     val$.unsubscribe();
   });
 
-  it("should perform custom compare", async () => {
+  it("should perform custom equal", async () => {
     const sub = jest.fn();
     const startSpy = jest.fn();
 
@@ -149,7 +149,7 @@ describe("from", () => {
         };
       },
       {
-        compare: (a, b) => a.content === b.content,
+        equal: (a, b) => a.content === b.content,
       }
     );
 
@@ -205,7 +205,7 @@ describe("from", () => {
         };
       },
       {
-        compare: (a, b) => a.content === b.content,
+        equal: (a, b) => a.content === b.content,
       }
     );
 
@@ -265,7 +265,7 @@ describe("from", () => {
         };
       },
       {
-        compare: (a, b) => a.content === b.content,
+        equal: (a, b) => a.content === b.content,
       }
     );
 

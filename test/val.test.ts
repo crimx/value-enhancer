@@ -104,14 +104,14 @@ describe("Val", () => {
       v.unsubscribe();
     });
 
-    it("should perform custom compare", async () => {
+    it("should perform custom equal", async () => {
       const spy = jest.fn();
       const value1 = { value: 1 };
       const valueClone = { value: 1 };
-      const compare = (a: { value: number }, b: { value: number }) =>
+      const equal = (a: { value: number }, b: { value: number }) =>
         a.value === b.value;
 
-      const v = val(value1, { compare });
+      const v = val(value1, { equal });
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -291,14 +291,14 @@ describe("Val", () => {
       v.unsubscribe();
     });
 
-    it("should perform custom compare", async () => {
+    it("should perform custom equal", async () => {
       const spy = jest.fn();
       const value1 = { value: 1 };
       const value1Clone = { value: 1 };
-      const compare = (a: { value: number }, b: { value: number }) =>
+      const equal = (a: { value: number }, b: { value: number }) =>
         a.value === b.value;
 
-      const v = val(value1, { compare });
+      const v = val(value1, { equal });
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 

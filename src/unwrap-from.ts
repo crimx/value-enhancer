@@ -1,7 +1,7 @@
 import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
-import { INIT_VALUE, defaultCompare, isVal } from "./utils";
+import { INIT_VALUE, defaultEqual, isVal } from "./utils";
 
 class UnwrapFromImpl<
   TValOrValue = any,
@@ -12,7 +12,7 @@ class UnwrapFromImpl<
     listen: (handler: () => void) => ValDisposer | void | undefined,
     config?: ValConfig<TValue>
   ) {
-    const initialCompare = config?.compare;
+    const initialEqual = config && (config.equal || config.compare);
 
     let currentValue = INIT_VALUE as TValue;
     let dirty = false;
@@ -34,7 +34,7 @@ class UnwrapFromImpl<
         currentValue = computeValue();
       } else if (dirty) {
         const value = computeValue();
-        if (!this.compare(value, currentValue)) {
+        if (!this.equal(value, currentValue)) {
           this._subs_.dirty_ = true;
           currentValue = value;
         }
@@ -50,8 +50,8 @@ class UnwrapFromImpl<
         innerVal = isVal(maybeVal) ? maybeVal : null;
         innerDisposer?.();
         innerDisposer = innerVal && innerVal.$valCompute(notify);
-        currentCompare =
-          initialCompare || (innerVal ? innerVal.compare : defaultCompare);
+        currentEqual =
+          initialEqual || (innerVal ? innerVal.equal : defaultEqual);
       }
     };
 
@@ -80,9 +80,9 @@ class UnwrapFromImpl<
       };
     });
 
-    let currentCompare = this.compare;
-    this.compare = (newValue: TValue, oldValue: TValue) =>
-      currentCompare(newValue, oldValue);
+    let currentEqual = this.equal;
+    this.equal = (newValue: TValue, oldValue: TValue) =>
+      currentEqual(newValue, oldValue);
   }
 }
 

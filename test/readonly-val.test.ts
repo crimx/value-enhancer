@@ -19,30 +19,28 @@ describe("ReadonlyVal", () => {
   });
 
   describe("value", () => {
-    it("should expose compare method", () => {
+    it("should expose equal method", () => {
       const [val] = readonlyVal(1);
-      expect(val.compare(val.value, 1)).toBe(true);
-      expect(val.compare(val.value, 2)).toBe(false);
+      expect(val.equal(val.value, 1)).toBe(true);
+      expect(val.equal(val.value, 2)).toBe(false);
     });
 
-    it("should expose custom compare method", () => {
-      const [val] = readonlyVal({ a: 2 }, { compare: (a, b) => a.a === b.a });
-      expect(val.compare(val.value, { a: 2 })).toBe(true);
-      expect(val.compare(val.value, { a: 1 })).toBe(false);
+    it("should expose custom equal method", () => {
+      const [val] = readonlyVal({ a: 2 }, { equal: (a, b) => a.a === b.a });
+      expect(val.equal(val.value, { a: 2 })).toBe(true);
+      expect(val.equal(val.value, { a: 1 })).toBe(false);
     });
   });
 
   describe("config", () => {
-    it("should perform custom compare", () => {
+    it("should perform custom equal", () => {
       const spy = jest.fn();
       const value1 = { value: 1 };
       const value1Clone = { value: 1 };
-      const compare = (a: { value: number }, b: { value: number }) =>
+      const equal = (a: { value: number }, b: { value: number }) =>
         a.value === b.value;
 
-      const [val, set] = readonlyVal(value1, {
-        compare,
-      });
+      const [val, set] = readonlyVal(value1, { equal });
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -217,16 +215,14 @@ describe("ReadonlyVal", () => {
       val.unsubscribe();
     });
 
-    it("should perform custom compare", async () => {
+    it("should perform custom equal", async () => {
       const spy = jest.fn();
       const value1 = { value: 1 };
       const valueClone = { value: 1 };
-      const compare = (a: { value: number }, b: { value: number }) =>
+      const equal = (a: { value: number }, b: { value: number }) =>
         a.value === b.value;
 
-      const [val, set] = readonlyVal(value1, {
-        compare,
-      });
+      const [val, set] = readonlyVal(value1, { equal });
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 

@@ -103,6 +103,61 @@ describe("unwrapFrom", () => {
     val$.unsubscribe();
   });
 
+  it("should trigger subscription synchronously by default if eager is true", async () => {
+    const sub = jest.fn();
+    const startSpy = jest.fn();
+
+    let currentValue: ReadonlyVal<number> | number = val(1);
+    let onChange: (() => void) | undefined;
+    const set = (value: typeof currentValue) => {
+      currentValue = value;
+      onChange?.();
+    };
+
+    const val$ = unwrapFrom(
+      () => currentValue,
+      notify => {
+        startSpy();
+        onChange = notify;
+        return () => {
+          onChange = undefined;
+        };
+      },
+      { eager: true }
+    );
+
+    expect(startSpy).toBeCalledTimes(0);
+
+    val$.subscribe(sub);
+
+    expect(startSpy).toBeCalledTimes(1);
+    expect(sub).toHaveBeenCalledTimes(1);
+    expect(sub).lastCalledWith(1);
+
+    sub.mockClear();
+    startSpy.mockClear();
+
+    set(val(1));
+
+    expect(sub).toHaveBeenCalledTimes(0);
+
+    set(2);
+
+    expect(sub).toHaveBeenCalledTimes(1);
+    expect(sub).lastCalledWith(2);
+
+    sub.mockClear();
+
+    set(val(3));
+
+    expect(sub).toHaveBeenCalledTimes(1);
+    expect(sub).lastCalledWith(3);
+
+    expect(startSpy).toBeCalledTimes(0);
+
+    val$.unsubscribe();
+  });
+
   it("should not trigger reaction if value not changed", async () => {
     const sub = jest.fn();
 
@@ -125,7 +180,7 @@ describe("unwrapFrom", () => {
 
     expect(val$.value).toBe("c");
 
-    // triggers compare
+    // triggers equal check
     set("f");
     expect(val$.value).toBe("f");
 
@@ -148,7 +203,7 @@ describe("unwrapFrom", () => {
     val$.unsubscribe();
   });
 
-  it("should perform custom compare", async () => {
+  it("should perform custom equal", async () => {
     const sub = jest.fn();
     const startSpy = jest.fn();
 
@@ -169,7 +224,7 @@ describe("unwrapFrom", () => {
         };
       },
       {
-        compare: (a, b) => a.content === b.content,
+        equal: (a, b) => a.content === b.content,
       }
     );
 
@@ -225,7 +280,7 @@ describe("unwrapFrom", () => {
         };
       },
       {
-        compare: (a, b) => a.content === b.content,
+        equal: (a, b) => a.content === b.content,
       }
     );
 
@@ -285,7 +340,7 @@ describe("unwrapFrom", () => {
         };
       },
       {
-        compare: (a, b) => a.content === b.content,
+        equal: (a, b) => a.content === b.content,
       }
     );
 

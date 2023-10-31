@@ -154,14 +154,14 @@ describe("derive", () => {
     derived.unsubscribe();
   });
 
-  it("should perform custom compare", async () => {
+  it("should perform custom equal", async () => {
     const val1 = val({ code: 2 });
     const derived = derive(
       val1,
       value => {
         return { content: String(value.code) };
       },
-      { compare: (a, b) => a.content === b.content }
+      { equal: (a, b) => a.content === b.content }
     );
 
     const sub = jest.fn();
@@ -225,7 +225,7 @@ describe("derive", () => {
         spyOdd(value);
         return { odd: Boolean(value.v % 2) };
       },
-      { compare: (a, b) => a.odd === b.odd }
+      { equal: (a, b) => a.odd === b.odd }
     );
 
     const spyEven = jest.fn();
@@ -235,7 +235,7 @@ describe("derive", () => {
         spyEven(value);
         return { even: !value.odd };
       },
-      { compare: (a, b) => a.even === b.even }
+      { equal: (a, b) => a.even === b.even }
     );
 
     expect(spyOdd).toBeCalledTimes(0);
@@ -305,7 +305,7 @@ describe("derive", () => {
         spyOdd(value);
         return { odd: Boolean(value.v % 2) };
       },
-      { compare: (a, b) => a.odd === b.odd }
+      { equal: (a, b) => a.odd === b.odd }
     );
 
     const spyEven = jest.fn();
@@ -315,7 +315,7 @@ describe("derive", () => {
         spyEven(value);
         return { even: !value.odd };
       },
-      { compare: (a, b) => a.even === b.even }
+      { equal: (a, b) => a.even === b.even }
     );
 
     expect(spyOdd).toBeCalledTimes(0);

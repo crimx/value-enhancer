@@ -339,9 +339,9 @@ const isDarkMode$ = from(
 
 `unwrapFrom` creates a Val from any value source like `from` but also unwrap the value if the value is a Val. `unwrap` is implemented using `unwrapFrom`.
 
-## Custom Compare
+## Custom Equal
 
-By default, `Object.is` equality check is used to determine whether a value has changed. You can customize the equality check by passing a `compare` function.
+By default, `Object.is` equality check is used to determine whether a value has changed. You can customize the equality check by passing a `equal` function.
 
 ```js
 import { val } from "value-enhancer";
@@ -350,8 +350,8 @@ const isSameXYPosition = (p1, p2) => p1.x === p2.x && p1.y === p2.y;
 const isSameXYZPosition = (p1, p2) =>
   p1.x === p2.x && p1.y === p2.y && p1.z === p2.z;
 
-const xyzPosition$ = val({ x: 0, y: 0, z: 0 }, { compare: isSameXYZPosition });
-const xyPosition$ = derive(xyPosition, { compare: isSameXYPosition });
+const xyzPosition$ = val({ x: 0, y: 0, z: 0 }, { equal: isSameXYZPosition });
+const xyPosition$ = derive(xyPosition, { equal: isSameXYPosition });
 
 xyPosition$.set({ x: 0, y: 0, z: 0 }); // nothing happened
 ```

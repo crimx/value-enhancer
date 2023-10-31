@@ -5,6 +5,7 @@ export type {
   ValCompare,
   ValConfig,
   ValDisposer,
+  ValEqual,
   ValSetValue,
   ValSubscriber,
 } from "./typings";

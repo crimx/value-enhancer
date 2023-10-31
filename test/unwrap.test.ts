@@ -164,11 +164,11 @@ describe("unwrap", () => {
     unwrapped$.unsubscribe();
   });
 
-  it("should perform custom compare", async () => {
+  it("should perform custom equal", async () => {
     const val1 = val({ code: 2 });
     const val2 = val(val1);
     const unwrapped = unwrap(val2, identity, {
-      compare: (a, b) => a.code === b.code,
+      equal: (a, b) => a.code === b.code,
     });
 
     const sub = jest.fn();
@@ -270,7 +270,7 @@ describe("unwrap", () => {
 
   it("should unwrap combined val", async () => {
     const vals = [val(1), val(2), val(3)];
-    const signal = val(null, { compare: () => false });
+    const signal = val(null, { equal: () => false });
     const countSpy = jest.fn();
     const unwrapped = unwrap(signal, () => {
       countSpy();

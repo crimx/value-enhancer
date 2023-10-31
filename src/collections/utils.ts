@@ -34,7 +34,7 @@ export const fromCollection = <TKey = any, TValue = any>(
     () => collection.get(key),
     notify =>
       collection.watch(k => {
-        if (!k || k === key) {
+        if (k === key || k == null) {
           notify();
         }
       })
@@ -77,7 +77,7 @@ export const unwrapFromCollection = <TKey = any, TValue = any>(
     () => collection.get(key),
     notify =>
       collection.watch(k => {
-        if (!k || k === key) {
+        if (k === key || k == null) {
           notify();
         }
       })

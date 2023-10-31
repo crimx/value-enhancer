@@ -180,7 +180,7 @@ describe("combine", () => {
     combined.unsubscribe();
   });
 
-  it("should perform custom compare", async () => {
+  it("should perform custom equal", async () => {
     const val1 = val(1);
     const val2 = val({ code: 2 });
     const val3 = val<boolean>(false);
@@ -190,7 +190,7 @@ describe("combine", () => {
       ([val1, val2, val3, val4]) => {
         return { val1, val2, val3, val4 };
       },
-      { compare: (a, b) => a.val2.code === b.val2.code }
+      { equal: (a, b) => a.val2.code === b.val2.code }
     );
 
     const spy = jest.fn();
@@ -292,7 +292,7 @@ describe("combine", () => {
         spyOdd(value);
         return { odd: Boolean(value.v % 2) };
       },
-      { compare: (a, b) => a.odd === b.odd }
+      { equal: (a, b) => a.odd === b.odd }
     );
 
     const spyEven = jest.fn();
@@ -302,7 +302,7 @@ describe("combine", () => {
         spyEven(value);
         return { even: !value.odd };
       },
-      { compare: (a, b) => a.even === b.even }
+      { equal: (a, b) => a.even === b.even }
     );
 
     expect(spyOdd).toBeCalledTimes(0);
@@ -372,7 +372,7 @@ describe("combine", () => {
         spyOdd(value);
         return { odd: Boolean(value.v % 2) };
       },
-      { compare: (a, b) => a.odd === b.odd }
+      { equal: (a, b) => a.odd === b.odd }
     );
 
     const spyEven = jest.fn();
@@ -382,7 +382,7 @@ describe("combine", () => {
         spyEven(value);
         return { even: !value.odd };
       },
-      { compare: (a, b) => a.even === b.even }
+      { equal: (a, b) => a.even === b.even }
     );
 
     expect(spyOdd).toBeCalledTimes(0);
