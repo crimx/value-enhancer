@@ -35,9 +35,11 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     };
 
     super(get, config, () => {
+      // attach listener first so that upstream value is resolved
+      const disposer = listen(notify);
       currentValue = getValue();
       dirty = notified = false;
-      return listen(notify);
+      return disposer;
     });
   }
 }

@@ -64,14 +64,15 @@ class UnwrapFromImpl<
     };
 
     super(get, config, () => {
-      updateInnerVal();
-      currentValue = innerVal ? innerVal.value : (innerMaybeVal as TValue);
-      dirty = notified = false;
-
+      // attach listener first so that upstream value is resolved
       const outerDisposer = listen(() => {
         updateInnerVal();
         notify();
       });
+
+      updateInnerVal();
+      currentValue = innerVal ? innerVal.value : (innerMaybeVal as TValue);
+      dirty = notified = false;
 
       return () => {
         innerDisposer?.();

@@ -249,7 +249,7 @@ describe("derive", () => {
     const spySub = jest.fn();
     even.subscribe(spySub);
 
-    expect(spyOdd).toBeCalledTimes(2);
+    expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 2 });
     expect(spyEven).toBeCalledTimes(1);
     expect(spyEven).lastCalledWith({ odd: false });
@@ -329,7 +329,7 @@ describe("derive", () => {
     const spySub = jest.fn();
     even.subscribe(spySub, true);
 
-    expect(spyOdd).toBeCalledTimes(2);
+    expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 2 });
     expect(spyEven).toBeCalledTimes(1);
     expect(spyEven).lastCalledWith({ odd: false });
@@ -430,7 +430,7 @@ describe("derive", () => {
     expect(spy3).toBeCalledTimes(1);
     expect(spy3).lastCalledWith(4);
 
-    expect(spy).toBeCalledTimes(2);
+    expect(spy).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(1);
     expect(spy).lastCalledWith(2);
     expect(spy2).lastCalledWith(3);
@@ -487,7 +487,7 @@ describe("derive", () => {
     expect(spy3).toBeCalledTimes(1);
     expect(spy3).lastCalledWith(4);
 
-    expect(spy).toBeCalledTimes(2);
+    expect(spy).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(1);
     expect(spy).lastCalledWith(2);
     expect(spy2).lastCalledWith(3);
