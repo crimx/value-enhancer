@@ -3,7 +3,7 @@ export interface ReadonlyVal<TValue = any> {
   readonly value: TValue;
   /** Get current value of the val */
   get(this: void): TValue;
-  /** Compare two values. Default `===`. */
+  /** Compare two values. Default `Object.is`. */
   compare(this: void, newValue: TValue, oldValue: TValue): boolean;
   /**
    * Subscribe to value changes without immediate emission.
@@ -60,7 +60,7 @@ export type ValDisposer = () => void;
  */
 export interface ValConfig<TValue = any> {
   /**
-   * Compare two values. Default `===`.
+   * Compare two values. Default `Object.is`.
    */
   compare?: ValCompare<TValue>;
   /**

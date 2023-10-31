@@ -251,7 +251,7 @@ const disposeReaction = count$.reaction(count => {
   console.log(`reaction: ${count}`);
 }); // (nothing printed)
 
-// `===` equality check by default
+// `Object.is` equality check by default
 count$.set(3); // nothing happened
 
 // subscription triggered asynchronously by default
@@ -341,7 +341,7 @@ const isDarkMode$ = from(
 
 ## Custom Compare
 
-By default, `===` equality check is used to determine whether a value has changed. You can customize the equality check by passing a `compare` function.
+By default, `Object.is` equality check is used to determine whether a value has changed. You can customize the equality check by passing a `compare` function.
 
 ```js
 import { val } from "value-enhancer";
