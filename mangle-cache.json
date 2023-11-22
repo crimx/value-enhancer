@@ -1,18 +1,3 @@
 {
-  "_subs_": "_s",
-  "_eager_": "_e",
-
-  "_getValue_": "_g",
-
-  "_data_": "_a",
-  "_watchers_": "_w",
-
-  "size_": "z",
-  "notify_": "n",
-  "add_": "a",
-  "remove_": "r",
-  "clear_": "c",
-  "exec_": "e",
-  "dirty_": "d",
-  "subscribers_": "b"
+  "_watchers_": "_ws"
 }

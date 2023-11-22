@@ -41,7 +41,7 @@ npm add value-enhancer
 - Safe and fast lazy computation.  
   It solves multi-level derivation issue (like in Svelte Stores) with smart lazy value evaluation.
 - Explicit.  
-  Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy implementations.
+  Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy/Signal implementations.
 - Simple DX.  
   Designed with ergonomics in mind. No hidden rules for getting or setting values. What you see is what you get.
 - Bundle size and Performance.  

@@ -9,7 +9,7 @@ let pending: Promise<void> | false;
 
 const flush = () => {
   for (const subs of subsSet) {
-    subs.exec_(SubscriberMode.Async);
+    subs.exec(SubscriberMode.Async);
   }
   pending = false;
   subsSet.clear();

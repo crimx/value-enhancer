@@ -20,109 +20,106 @@ export type ValOnStart = (subs: Subscribers) => void | ValDisposer | undefined;
  */
 export class Subscribers<TValue = any> implements Subscribers {
   public constructor(getValue: () => TValue, start?: ValOnStart | null) {
-    this._getValue_ = getValue;
-    this._start_ = start;
+    this.#getValue = getValue;
+    this.#start = start;
   }
 
-  public dirty_ = false;
+  public dirty = false;
 
-  public notify_(): void {
-    this._notReadySubscribers_.clear();
-    if (this.subscribers_.size > 0) {
-      this.exec_(SubscriberMode.Computed);
-      this.exec_(SubscriberMode.Eager);
+  public notify(): void {
+    this.#notReadySubscribers.clear();
+    if (this.subs.size > 0) {
+      this.exec(SubscriberMode.Computed);
+      this.exec(SubscriberMode.Eager);
       if (this[SubscriberMode.Async] > 0) {
         schedule(this);
       }
     } else {
-      this.dirty_ = false;
+      this.dirty = false;
     }
   }
 
-  public add_(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
-    if (this._start_ && this.subscribers_.size <= 0) {
+  public add(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
+    if (this.#start && this.subs.size <= 0) {
       // Subscribe added, clear notified state
-      this._startDisposer_ = this._start_(this);
+      this.#startDisposer = this.#start(this);
     }
 
-    const currentMode = this.subscribers_.get(subscriber);
+    const currentMode = this.subs.get(subscriber);
     if (currentMode) {
       this[currentMode]--;
     }
-    this._notReadySubscribers_.add(subscriber);
-    this.subscribers_.set(subscriber, mode);
+    this.#notReadySubscribers.add(subscriber);
+    this.subs.set(subscriber, mode);
     this[mode]++;
 
-    return (): void => this.remove_(subscriber);
+    return (): void => this.remove(subscriber);
   }
 
-  public remove_(subscriber: ValSubscriber): void {
-    this._notReadySubscribers_.delete(subscriber);
-    const mode = this.subscribers_.get(subscriber);
+  public remove(subscriber: ValSubscriber): void {
+    this.#notReadySubscribers.delete(subscriber);
+    const mode = this.subs.get(subscriber);
     if (mode) {
-      this.subscribers_.delete(subscriber);
+      this.subs.delete(subscriber);
       this[mode]--;
-      if (this.subscribers_.size <= 0) {
-        this._stop_();
+      if (this.subs.size <= 0) {
+        this.#stop();
       }
     }
   }
 
-  public clear_(): void {
-    this.subscribers_.clear();
-    this._notReadySubscribers_.clear();
+  public clear(): void {
+    this.subs.clear();
+    this.#notReadySubscribers.clear();
     this[SubscriberMode.Async] =
       this[SubscriberMode.Eager] =
       this[SubscriberMode.Computed] =
         0;
     cancelTask(this);
-    this._stop_();
+    this.#stop();
   }
 
-  public exec_(mode: SubscriberMode): void {
+  public exec(mode: SubscriberMode): void {
     if (this[mode] > 0) {
       let value: TValue | undefined;
       if (mode === SubscriberMode.Computed) {
         if (this[SubscriberMode.Async] + this[SubscriberMode.Eager] <= 0) {
-          this.dirty_ = false;
+          this.dirty = false;
         }
       } else {
-        value = this._getValue_();
-        if (!this.dirty_) {
+        value = this.#getValue();
+        if (!this.dirty) {
           return;
         }
         if (
           mode === SubscriberMode.Async ||
           /* mode === SubscriberMode.Eager && */ this[SubscriberMode.Async] <= 0
         ) {
-          this.dirty_ = false;
+          this.dirty = false;
         }
       }
-      for (const [sub, subMode] of this.subscribers_) {
-        if (subMode === mode && !this._notReadySubscribers_.has(sub)) {
+      for (const [sub, subMode] of this.subs) {
+        if (subMode === mode && !this.#notReadySubscribers.has(sub)) {
           invoke(sub, value as TValue);
         }
       }
     }
   }
 
-  public readonly subscribers_ = new Map<
-    ValSubscriber<TValue>,
-    SubscriberMode
-  >();
+  public readonly subs = new Map<ValSubscriber<TValue>, SubscriberMode>();
 
-  private _stop_(): void {
-    this._startDisposer_ && (this._startDisposer_ = this._startDisposer_());
+  #stop(): void {
+    this.#startDisposer && (this.#startDisposer = this.#startDisposer());
   }
 
-  private _getValue_: () => TValue;
+  #getValue: () => TValue;
 
   private [SubscriberMode.Async] = 0;
   private [SubscriberMode.Eager] = 0;
   private [SubscriberMode.Computed] = 0;
 
-  private readonly _notReadySubscribers_ = new Set<ValSubscriber<TValue>>();
+  readonly #notReadySubscribers = new Set<ValSubscriber<TValue>>();
 
-  private _start_?: ValOnStart | null;
-  private _startDisposer_?: ValDisposer | void | null;
+  #start?: ValOnStart | null;
+  #startDisposer?: ValDisposer | void | null;
 }

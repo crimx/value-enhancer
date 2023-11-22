@@ -10,9 +10,9 @@ class ValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
 
     this.set = (value: TValue) => {
       if (!this.equal(value, currentValue)) {
-        this._subs_.dirty_ = true;
+        this._subs.dirty = true;
         currentValue = value;
-        this._subs_.notify_();
+        this._subs.notify();
       }
     };
   }

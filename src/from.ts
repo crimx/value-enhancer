@@ -13,12 +13,12 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     let notified = false;
 
     const get = () => {
-      if (currentValue === INIT_VALUE || this._subs_.subscribers_.size <= 0) {
+      if (currentValue === INIT_VALUE || this._subs.subs.size <= 0) {
         currentValue = getValue();
       } else if (dirty) {
         const value = getValue();
         if (!this.equal(value, currentValue)) {
-          this._subs_.dirty_ = true;
+          this._subs.dirty = true;
           currentValue = value;
         }
       }
@@ -30,7 +30,7 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
       dirty = true;
       if (!notified) {
         notified = true;
-        this._subs_.notify_();
+        this._subs.notify();
       }
     };
 

@@ -23,25 +23,25 @@ import type { ReactiveCollection } from "./typings";
 export class ReactiveList<TValue>
   implements ReactiveCollection<number, TValue>
 {
-  private _data_: TValue[];
+  #data: TValue[];
 
   public constructor(arrayLike?: ArrayLike<TValue>) {
-    this._data_ = arrayLike ? Array.from(arrayLike) : [];
+    this.#data = arrayLike ? Array.from(arrayLike) : [];
   }
 
-  private _watchers_ = new Set<(key?: number) => void>();
+  #watchers = new Set<(key?: number) => void>();
 
   public watch(watcher: (key?: number) => void): () => void {
-    this._watchers_.add(watcher);
+    this.#watchers.add(watcher);
     return () => this.unwatch(watcher);
   }
 
   public unwatch(watcher: (...args: any[]) => any): void {
-    this._watchers_.delete(watcher);
+    this.#watchers.delete(watcher);
   }
 
   public notify(key?: number): void {
-    for (const sub of this._watchers_) {
+    for (const sub of this.#watchers) {
       invoke(sub, key);
     }
   }
@@ -51,22 +51,22 @@ export class ReactiveList<TValue>
    * Should not modify the array in place directly. Use methods on the list instead.
    */
   public get array(): ReadonlyArray<TValue> {
-    return this._data_;
+    return this.#data;
   }
 
   /**
    * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
    */
   public get length(): number {
-    return this._data_.length;
+    return this.#data.length;
   }
 
   public set length(len: number) {
-    this._data_.length = len;
+    this.#data.length = len;
   }
 
   public [Symbol.iterator](): IterableIterator<TValue> {
-    return this._data_[Symbol.iterator]();
+    return this.#data[Symbol.iterator]();
   }
 
   /**
@@ -74,7 +74,7 @@ export class ReactiveList<TValue>
    * Returns an iterable of key, value pairs for every entry in the list.
    */
   public entries(): IterableIterator<[number, TValue]> {
-    return this._data_.entries();
+    return this.#data.entries();
   }
 
   /**
@@ -82,7 +82,7 @@ export class ReactiveList<TValue>
    * Returns an iterable of values in the list.
    */
   public values(): IterableIterator<TValue> {
-    return this._data_.values();
+    return this.#data.values();
   }
 
   /**
@@ -90,7 +90,7 @@ export class ReactiveList<TValue>
    * Returns an iterable of keys in the list.
    */
   public keys(): IterableIterator<number> {
-    return this._data_.keys();
+    return this.#data.keys();
   }
 
   /**
@@ -101,7 +101,7 @@ export class ReactiveList<TValue>
    */
   public get(index: number): TValue | undefined {
     if (index >= 0) {
-      return this._data_[index];
+      return this.#data[index];
     }
   }
 
@@ -109,8 +109,8 @@ export class ReactiveList<TValue>
    * @returns The first element of the list.
    */
   public first(): TValue | undefined {
-    if (this._data_.length) {
-      return this._data_[0];
+    if (this.#data.length) {
+      return this.#data[0];
     }
   }
 
@@ -118,8 +118,8 @@ export class ReactiveList<TValue>
    * @returns The last element of the list.
    */
   public last(): TValue | undefined {
-    if (this._data_.length) {
-      return this._data_[this.length - 1];
+    if (this.#data.length) {
+      return this.#data[this.length - 1];
     }
   }
 
@@ -129,9 +129,9 @@ export class ReactiveList<TValue>
    * @param items New elements to add to the list.
    */
   public push(...items: TValue[]): void {
-    this._data_.push(...items);
+    this.#data.push(...items);
     if (items.length == 1) {
-      this.notify(this._data_.length - 1);
+      this.notify(this.#data.length - 1);
     } else if (items.length > 1) {
       this.notify();
     }
@@ -143,9 +143,9 @@ export class ReactiveList<TValue>
    * If the list is empty, undefined is returned and the list is not modified.
    */
   public pop(): TValue | undefined {
-    if (this._data_.length > 0) {
-      const result = this._data_.pop();
-      this.notify(this._data_.length);
+    if (this.#data.length > 0) {
+      const result = this.#data.pop();
+      this.notify(this.#data.length);
       return result;
     }
   }
@@ -156,7 +156,7 @@ export class ReactiveList<TValue>
    * @see Array#unshift
    */
   public pushHead(...items: TValue[]): void {
-    this._data_.unshift(...items);
+    this.#data.unshift(...items);
     if (items.length > 0) {
       this.notify();
     }
@@ -168,8 +168,8 @@ export class ReactiveList<TValue>
    * @see Array#shift
    */
   public popHead(): TValue | undefined {
-    if (this._data_.length > 0) {
-      const result = this._data_.shift();
+    if (this.#data.length > 0) {
+      const result = this.#data.shift();
       this.notify();
       return result;
     }
@@ -183,7 +183,7 @@ export class ReactiveList<TValue>
    */
   public set(index: number, item: TValue): void {
     if (index >= 0) {
-      this._data_[index] = item;
+      this.#data[index] = item;
       this.notify(index);
     }
   }
@@ -196,7 +196,7 @@ export class ReactiveList<TValue>
    */
   public insert(index: number, ...items: TValue[]): void {
     if (index >= 0 && items.length > 0) {
-      this._data_.splice(index, 0, ...items);
+      this.#data.splice(index, 0, ...items);
       this.notify();
     }
   }
@@ -210,7 +210,7 @@ export class ReactiveList<TValue>
    */
   public delete(index: number, count = 1): void {
     if (index >= 0 && count >= 1) {
-      const result = this._data_.splice(index, count);
+      const result = this.#data.splice(index, count);
       if (result.length === 1) {
         this.notify(index);
       } else if (result.length > 1) {
@@ -224,7 +224,7 @@ export class ReactiveList<TValue>
    */
   public clear(): this {
     if (this.length) {
-      this._data_.length = 0;
+      this.#data.length = 0;
       this.notify();
     }
     return this;
@@ -237,11 +237,11 @@ export class ReactiveList<TValue>
    */
   public replace(arrayLike: ArrayLike<TValue>): TValue[] {
     const cached = new Set(this);
-    this._data_.length = 0;
+    this.#data.length = 0;
     let isDirty = false;
     for (const value of Array.from(arrayLike)) {
       isDirty = isDirty || cached.delete(value);
-      this._data_.push(value);
+      this.#data.push(value);
     }
     if (isDirty || cached.size > 0) {
       this.notify();
@@ -254,8 +254,8 @@ export class ReactiveList<TValue>
    * Reverses the elements in the list in place.
    */
   public reverse(): this {
-    if (this._data_.length > 1) {
-      this._data_.reverse();
+    if (this.#data.length > 1) {
+      this.#data.reverse();
       this.notify();
     }
     return this;
@@ -272,8 +272,8 @@ export class ReactiveList<TValue>
    * ```
    */
   public sort(compareFn?: (a: TValue, b: TValue) => number): this {
-    if (this._data_.length > 1) {
-      this._data_.sort(compareFn);
+    if (this.#data.length > 1) {
+      this.#data.sort(compareFn);
       this.notify();
     }
     return this;
@@ -284,7 +284,7 @@ export class ReactiveList<TValue>
    * Returns a string representation of the list.
    */
   public toString(): string {
-    return this._data_.toString();
+    return this.#data.toString();
   }
 
   /**
@@ -292,10 +292,10 @@ export class ReactiveList<TValue>
    * Returns a string representation of the list. The elements are converted to string using their toLocaleString methods.
    */
   public toLocaleString(): string {
-    return this._data_.toLocaleString();
+    return this.#data.toLocaleString();
   }
 
   public toJSON(): unknown {
-    return this._data_;
+    return this.#data;
   }
 }

@@ -17,9 +17,9 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   /**
    * Manage subscribers for a val.
    */
-  protected _subs_: Subscribers<TValue>;
+  protected _subs: Subscribers<TValue>;
 
-  private _eager_?: boolean;
+  #eager?: boolean;
 
   /**
    * @param get A pure function that returns the current value of the val.
@@ -34,8 +34,8 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   ) {
     this.get = get;
     this.compare = this.equal = equal || compare || defaultEqual;
-    this._eager_ = eager;
-    this._subs_ = new Subscribers<TValue>(get, start);
+    this.#eager = eager;
+    this._subs = new Subscribers<TValue>(get, start);
   }
 
   public get value(): TValue {
@@ -54,9 +54,9 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
-    eager = this._eager_
+    eager = this.#eager
   ): ValDisposer {
-    return this._subs_.add_(
+    return this._subs.add(
       subscriber,
       eager ? SubscriberMode.Eager : SubscriberMode.Async
     );
@@ -64,28 +64,28 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public subscribe(
     subscriber: ValSubscriber<TValue>,
-    eager = this._eager_
+    eager = this.#eager
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     invoke(subscriber, this.value);
-    this._subs_.dirty_ = false;
+    this._subs.dirty = false;
     return disposer;
   }
 
   public $valCompute(subscriber: ValSubscriber<void>): ValDisposer {
-    return this._subs_.add_(subscriber, SubscriberMode.Computed);
+    return this._subs.add(subscriber, SubscriberMode.Computed);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {
     if (subscriber) {
-      this._subs_.remove_(subscriber);
+      this._subs.remove(subscriber);
     } else {
-      this._subs_.clear_();
+      this._subs.clear();
     }
   }
 
   public dispose(): void {
-    this._subs_.clear_();
+    this._subs.clear();
   }
 
   /**
@@ -151,8 +151,8 @@ export function readonlyVal<TValue = any>(
     if (!val.equal(value, currentValue)) {
       currentValue = value;
       if (subs) {
-        subs.dirty_ = true;
-        subs.notify_();
+        subs.dirty = true;
+        subs.notify();
       }
     }
   };
