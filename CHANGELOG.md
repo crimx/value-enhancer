@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.4](https://github.com/crimx/value-enhancer/compare/v3.1.3...v3.1.4) (2023-11-23)
+
+
+### Bug Fixes
+
+* should trigger if values are emitted during subscription ([0737d4f](https://github.com/crimx/value-enhancer/commit/0737d4f441c50a346f7676c9476690c7ee09a574))
+
 ### [3.1.3](https://github.com/crimx/value-enhancer/compare/v3.1.2...v3.1.3) (2023-11-22)
 
 ### [3.1.2](https://github.com/crimx/value-enhancer/compare/v3.1.1...v3.1.2) (2023-10-31)
