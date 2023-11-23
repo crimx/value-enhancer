@@ -487,4 +487,34 @@ describe("combine", () => {
     expect(spy).toBeCalledTimes(1);
     expect(spy).lastCalledWith(true);
   });
+
+  it("should trigger combine when emit values during subscribe", async () => {
+    const val1 = val(1);
+    const val2 = val(2);
+
+    const combined = combine([val1, val2]);
+
+    const spy = jest.fn();
+    combined.subscribe(() => {
+      val1.set(999);
+      spy();
+    });
+
+    expect(spy).toBeCalledTimes(1);
+
+    await Promise.resolve();
+    expect(spy).toBeCalledTimes(2);
+
+    val1.set(2);
+    val2.set(3);
+
+    await Promise.resolve();
+    expect(spy).toBeCalledTimes(3);
+
+    val1.set(3);
+    val2.set(4);
+
+    await Promise.resolve();
+    expect(spy).toBeCalledTimes(4);
+  });
 });

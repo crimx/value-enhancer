@@ -4,20 +4,26 @@ import { SubscriberMode } from "./subscribers";
 export type Task<TValue = any> = (value: TValue) => void;
 
 const nextTick = /*#__PURE__*/ Promise.resolve();
-const subsSet = new Set<Subscribers>();
+const pendingSubs = [new Set<Subscribers>(), new Set<Subscribers>()];
+let pendingSubsIndex = 0;
 let pending: Promise<void> | false;
 
 const flush = () => {
-  for (const subs of subsSet) {
+  const curPendingSubs = pendingSubs[pendingSubsIndex];
+  pendingSubsIndex = 1 - pendingSubsIndex;
+
+  pending = false;
+
+  for (const subs of curPendingSubs) {
     subs.exec(SubscriberMode.Async);
   }
-  pending = false;
-  subsSet.clear();
+  curPendingSubs.clear();
 };
 
 export const schedule = <TValue>(subs: Subscribers<TValue>): void => {
-  subsSet.add(subs);
+  pendingSubs[pendingSubsIndex].add(subs);
   pending = pending || nextTick.then(flush);
 };
 
-export const cancelTask = (subs: Subscribers): boolean => subsSet.delete(subs);
+export const cancelTask = (subs: Subscribers): boolean =>
+  pendingSubs[pendingSubsIndex].delete(subs);
