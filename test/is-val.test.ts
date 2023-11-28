@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals";
-import { combine, derive, identity, isVal, unwrap, val } from "../src";
+import { combine, derive, flatten, identity, isVal, val } from "../src";
 
 describe("combine", () => {
   it("should check Val", () => {
@@ -17,8 +17,8 @@ describe("combine", () => {
     expect(isVal(val$)).toBe(true);
   });
 
-  it("should check UnwrappedVal", () => {
-    const val$ = unwrap(val(val(1)));
+  it("should check FlattenedVal", () => {
+    const val$ = flatten(val(val(1)));
     expect(isVal(val$)).toBe(true);
   });
 

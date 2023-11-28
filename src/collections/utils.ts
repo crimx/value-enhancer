@@ -1,8 +1,8 @@
-import type { ReadonlyVal, UnwrapVal } from "../typings";
+import type { FlattenVal, ReadonlyVal } from "../typings";
 import type { ReactiveCollection } from "./typings";
 
+import { flattenFrom } from "../flatten-from";
 import { from } from "../from";
-import { unwrapFrom } from "../unwrap-from";
 
 /**
  * Create a readonly val from a reactive collection watching a specific key.
@@ -42,7 +42,7 @@ export const fromCollection = <TKey = any, TValue = any>(
 
 /**
  * Create a readonly val from a reactive collection watching a specific key.
- * Auto-unwrap the value of the item if it is a Val.
+ * Auto-flatten the value of the item if it is a Val.
  *
  * @param collection The reactive collection
  * @param key The key to watch
@@ -50,13 +50,13 @@ export const fromCollection = <TKey = any, TValue = any>(
  *
  * @example
  * ```ts
- * import { ReactiveMap, unwrapFromCollection } from "value-enhancer/collections"
+ * import { ReactiveMap, flattenFromCollection } from "value-enhancer/collections"
  * import { val } from "value-enhancer";
  *
  * const map = new ReactiveMap();
  * const v = val("someValue")
  *
- * const item$ = unwrapFromCollection(map, "someKey"); // watch the item at "someKey"
+ * const item$ = flattenFromCollection(map, "someKey"); // watch the item at "someKey"
  *
  * console.log(item$.value); // undefined
  *
@@ -69,11 +69,11 @@ export const fromCollection = <TKey = any, TValue = any>(
  * console.log(item$.value); // "someValue2"
  * ```
  */
-export const unwrapFromCollection = <TKey = any, TValue = any>(
+export const flattenFromCollection = <TKey = any, TValue = any>(
   collection: ReactiveCollection<TKey, TValue>,
   key: TKey
-): ReadonlyVal<UnwrapVal<TValue> | undefined> =>
-  unwrapFrom(
+): ReadonlyVal<FlattenVal<TValue> | undefined> =>
+  flattenFrom(
     () => collection.get(key),
     notify =>
       collection.watch(k => {

@@ -1,11 +1,16 @@
-import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
+import type {
+  FlattenVal,
+  ReadonlyVal,
+  ValConfig,
+  ValDisposer,
+} from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
 import { INIT_VALUE, defaultEqual, isVal } from "./utils";
 
-class UnwrapFromImpl<
+class FlattenFromImpl<
   TValOrValue = any,
-  TValue = UnwrapVal<TValOrValue>
+  TValue = FlattenVal<TValOrValue>
 > extends ReadonlyValImpl<TValue> {
   public constructor(
     getValue: () => TValOrValue,
@@ -88,18 +93,25 @@ class UnwrapFromImpl<
 
 /**
  * Creates a readonly val from a getter function and a listener function.
- * If the value is a val, it will be auto-unwrapped.
+ * If the value is a val, it will be auto-flattened.
  *
  * @param getValue A function that returns the current value.
- *        If the value is a val, it will be auto-unwrapped.
+ *        If the value is a val, it will be auto-flattened.
  * @param listen A function that takes a notify function and returns a disposer.
  *        The notify function should be called when the value changes.
  * @param config custom config for the val.
  * @returns A readonly val with value of inner val.
  */
-export const unwrapFrom = <TValOrValue = any>(
+export const flattenFrom = <TValOrValue = any>(
   getValue: () => TValOrValue,
   listen: (notify: () => void) => ValDisposer | void | undefined,
-  config?: ValConfig<UnwrapVal<TValOrValue>>
-): ReadonlyVal<UnwrapVal<TValOrValue>> =>
-  new UnwrapFromImpl(getValue, listen, config);
+  config?: ValConfig<FlattenVal<TValOrValue>>
+): ReadonlyVal<FlattenVal<TValOrValue>> =>
+  new FlattenFromImpl(getValue, listen, config);
+
+/**
+ * @ignore
+ * @deprecated
+ * Renamed to `flattenFrom`.
+ */
+export const unwrapFrom = flattenFrom;

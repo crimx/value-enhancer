@@ -299,16 +299,16 @@ const combined$ = combine(
 console.log(combined$.value); // 8
 ```
 
-## Unwrap Val
+## Flatten Val
 
-`unwrap` the inner Val from a Val of Val. This is useful for subscribing to a dynamic Val that is inside another Val.
+`flatten` the inner Val from a Val of Val. This is useful for subscribing to a dynamic Val that is inside another Val.
 
 ```js
-import { val, unwrap } from "value-enhancer";
+import { val, flatten } from "value-enhancer";
 
 const itemList$ = val([val(1), val(2), val(3)]);
 
-const firstItem$ = unwrap(itemList$, itemList => itemList[0]);
+const firstItem$ = flatten(itemList$, itemList => itemList[0]);
 
 console.log(firstItem$.value); // 1
 
@@ -335,9 +335,9 @@ const isDarkMode$ = from(
 );
 ```
 
-## UnwrapFrom
+## FlattenFrom
 
-`unwrapFrom` creates a Val from any value source like `from` but also unwrap the value if the value is a Val. `unwrap` is implemented using `unwrapFrom`.
+`flattenFrom` creates a Val from any value source like `from` but also flatten the value if the value is a Val. `flatten` is implemented using `flattenFrom`.
 
 ## Custom Equal
 
@@ -382,7 +382,7 @@ With `groupVals` you can easily create a group of ReadonlyVals and hide the sett
 import {
   type ReadonlyVal,
   type ValSetValue,
-  type UnwrapVal,
+  type FlattenVal,
   readonlyVal,
   groupVals,
 } from "value-enhancer";
@@ -395,7 +395,7 @@ export interface Foo$ {
 
 export class Foo {
   public readonly $: Foo$;
-  private setVals: { [K in keyof Foo$]: ValSetValue<UnwrapVal<Foo$[K]>> };
+  private setVals: { [K in keyof Foo$]: ValSetValue<FlattenVal<Foo$[K]>> };
 
   public constructor() {
     const [vals, setVals] = groupVals({
@@ -439,13 +439,13 @@ console.log(item$.value); // "d"
 ```
 
 ```ts
-import { ReactiveMap, unwrapFromCollection } from "value-enhancer/collections";
+import { ReactiveMap, flattenFromCollection } from "value-enhancer/collections";
 import { val } from "value-enhancer";
 
 const map = new ReactiveMap();
 const v = val("someValue");
 
-const item$ = unwrapFromCollection(map, "someKey"); // watch the item at "someKey"
+const item$ = flattenFromCollection(map, "someKey"); // watch the item at "someKey"
 
 console.log(item$.value); // undefined
 

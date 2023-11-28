@@ -89,7 +89,7 @@ export interface ValConfig<TValue = any> {
   eager?: boolean;
 }
 
-export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
+export type FlattenVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
 
 /** @internal */
 export type ValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =

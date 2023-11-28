@@ -1,15 +1,15 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import type { ReadonlyVal } from "../src";
-import { unwrapFrom, val } from "../src";
+import { flattenFrom, val } from "../src";
 
 const noop = () => void 0;
 
-describe("unwrapFrom", () => {
-  it("should unwrap inner val", () => {
+describe("flattenFrom", () => {
+  it("should flatten inner val", () => {
     const startSpy = jest.fn(noop);
     let currentVal = val(1);
 
-    const val$ = unwrapFrom(() => currentVal, startSpy);
+    const val$ = flattenFrom(() => currentVal, startSpy);
 
     expect(startSpy).toBeCalledTimes(0);
     expect(val$.value).toBe(1);
@@ -22,11 +22,11 @@ describe("unwrapFrom", () => {
     expect(startSpy).toBeCalledTimes(0);
   });
 
-  it("should unwrap inner normal value", () => {
+  it("should flatten inner normal value", () => {
     const startSpy = jest.fn(noop);
     let currentValue: ReadonlyVal<number> | number = 1;
 
-    const val$ = unwrapFrom(() => currentValue, startSpy);
+    const val$ = flattenFrom(() => currentValue, startSpy);
 
     expect(startSpy).toBeCalledTimes(0);
     expect(val$.value).toBe(1);
@@ -52,7 +52,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(
+    const val$ = flattenFrom(
       () => currentValue,
       notify => {
         startSpy();
@@ -114,7 +114,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(
+    const val$ = flattenFrom(
       () => currentValue,
       notify => {
         startSpy();
@@ -168,7 +168,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(
+    const val$ = flattenFrom(
       () => currentValue,
       notify => {
         onChange = notify;
@@ -214,7 +214,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(
+    const val$ = flattenFrom(
       () => currentValue,
       notify => {
         startSpy();
@@ -270,7 +270,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(
+    const val$ = flattenFrom(
       () => currentValue,
       notify => {
         startSpy();
@@ -330,7 +330,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(
+    const val$ = flattenFrom(
       () => currentValue,
       notify => {
         startSpy();
@@ -376,7 +376,7 @@ describe("unwrapFrom", () => {
     const disposeSpy = jest.fn();
     const startSpy = jest.fn(() => disposeSpy);
 
-    const val$ = unwrapFrom(() => val(1), startSpy);
+    const val$ = flattenFrom(() => val(1), startSpy);
 
     expect(startSpy).toBeCalledTimes(0);
 
@@ -462,7 +462,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(getValueSpy, notify => {
+    const val$ = flattenFrom(getValueSpy, notify => {
       startSpy();
       onChange = notify;
       return () => {
@@ -528,7 +528,7 @@ describe("unwrapFrom", () => {
       onChange?.();
     };
 
-    const val$ = unwrapFrom(getValueSpy, notify => {
+    const val$ = flattenFrom(getValueSpy, notify => {
       startSpy();
       onChange = notify;
       return () => {

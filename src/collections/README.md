@@ -8,6 +8,6 @@ import {
   ReactiveSet,
   ReactiveList,
   fromCollection,
-  unwrapFromCollection,
+  flattenFromCollection,
 } from "value-enhancer/collections";
 ```

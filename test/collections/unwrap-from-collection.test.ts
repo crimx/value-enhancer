@@ -5,15 +5,15 @@ import {
   ReactiveList,
   ReactiveMap,
   ReactiveSet,
-  unwrapFromCollection,
+  flattenFromCollection,
 } from "../../src/collections";
 
-describe("unwrapFromCollection", () => {
+describe("flattenFromCollection", () => {
   it("should create a Val subscribing to a key from a ReactiveMap", async () => {
     const reactiveMap = new ReactiveMap<string, ReadonlyVal<string> | string>([
       ["key", "value1"],
     ]);
-    const item$ = unwrapFromCollection(reactiveMap, "key");
+    const item$ = flattenFromCollection(reactiveMap, "key");
 
     expect(item$.value).toBe("value1");
 
@@ -58,7 +58,7 @@ describe("unwrapFromCollection", () => {
 
   it("should create a Val subscribing to a key from a ReactiveSet", async () => {
     const reactiveSet = new ReactiveSet([1, 2, 3]);
-    const has$ = unwrapFromCollection(reactiveSet, 2);
+    const has$ = flattenFromCollection(reactiveSet, 2);
 
     expect(has$.value).toBe(true);
 
@@ -93,7 +93,7 @@ describe("unwrapFromCollection", () => {
 
   it("should create a Val subscribing to a key from a ReactiveList", async () => {
     const reactiveList = new ReactiveList(["a", "b", val("c")]);
-    const item$ = unwrapFromCollection(reactiveList, 2);
+    const item$ = flattenFromCollection(reactiveList, 2);
 
     expect(item$.value).toBe("c");
 

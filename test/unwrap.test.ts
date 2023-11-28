@@ -1,64 +1,64 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { combine, derive, identity, unwrap, val } from "../src";
+import { combine, derive, flatten, identity, val } from "../src";
 
-describe("unwrap", () => {
-  it("should unwrap value", () => {
+describe("flatten", () => {
+  it("should flatten value", () => {
     const inner$ = val(1);
     const outer$ = val(inner$);
-    const unwrapped$ = unwrap(outer$);
+    const flattened$ = flatten(outer$);
 
     expect(inner$.value).toBe(1);
-    expect(unwrapped$.value).toBe(1);
+    expect(flattened$.value).toBe(1);
 
     inner$.set(2);
 
     expect(inner$.value).toBe(2);
-    expect(unwrapped$.value).toBe(2);
+    expect(flattened$.value).toBe(2);
 
     outer$.set(val(3));
 
     expect(inner$.value).toBe(2);
-    expect(unwrapped$.value).toBe(3);
+    expect(flattened$.value).toBe(3);
   });
 
-  it("should unwrap value from custom path", () => {
+  it("should flatten value from custom path", () => {
     const inner$ = val(1);
     const outer$ = val({ inner: inner$ });
-    const unwrapped$ = unwrap(outer$, ({ inner }) => inner);
+    const flattened$ = flatten(outer$, ({ inner }) => inner);
 
     expect(inner$.value).toBe(1);
-    expect(unwrapped$.value).toBe(1);
+    expect(flattened$.value).toBe(1);
 
     inner$.set(2);
 
     expect(inner$.value).toBe(2);
-    expect(unwrapped$.value).toBe(2);
+    expect(flattened$.value).toBe(2);
 
     outer$.set({ inner: val(3) });
 
     expect(inner$.value).toBe(2);
-    expect(unwrapped$.value).toBe(3);
+    expect(flattened$.value).toBe(3);
   });
 
-  it("should unwrap normal value", () => {
+  it("should flatten normal value", () => {
     const inner$ = val(1);
     const outer$ = val({ inner: inner$ });
-    const unwrapped$ = unwrap(outer$, ({ inner }) =>
+    const flattened$ = flatten(outer$, ({ inner }) =>
       inner.value % 2 === 0 ? inner : null
     );
 
     expect(inner$.value).toBe(1);
-    expect(unwrapped$.value).toBe(null);
+    expect(flattened$.value).toBe(null);
 
     inner$.set(2);
 
     expect(inner$.value).toBe(2);
-    expect(unwrapped$.value).toBe(2);
+    expect(flattened$.value).toBe(2);
 
     outer$.set({ inner: val(3) });
 
     expect(inner$.value).toBe(2);
-    expect(unwrapped$.value).toBe(null);
+    expect(flattened$.value).toBe(null);
   });
 
   it("should subscribe", async () => {
@@ -68,9 +68,9 @@ describe("unwrap", () => {
     const val3 = val(val2);
     const val4 = val(val3);
 
-    const unwrapped = unwrap(unwrap(unwrap(val4)));
+    const flattened = flatten(flatten(flatten(val4)));
 
-    unwrapped.subscribe(spy);
+    flattened.subscribe(spy);
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).lastCalledWith(1);
@@ -118,18 +118,18 @@ describe("unwrap", () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).lastCalledWith(9);
 
-    unwrapped.unsubscribe();
+    flattened.unsubscribe();
   });
 
   it("should subscribe if first emitted value is normal value", async () => {
     const spy = jest.fn();
     const inner$ = val("inner");
     const outer$ = val(1);
-    const unwrapped$ = unwrap(outer$, outer =>
+    const flattened$ = flatten(outer$, outer =>
       outer % 2 === 0 ? inner$ : null
     );
 
-    unwrapped$.subscribe(spy);
+    flattened$.subscribe(spy);
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).lastCalledWith(null);
@@ -161,18 +161,18 @@ describe("unwrap", () => {
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).lastCalledWith("inner");
 
-    unwrapped$.unsubscribe();
+    flattened$.unsubscribe();
   });
 
   it("should perform custom equal", async () => {
     const val1 = val({ code: 2 });
     const val2 = val(val1);
-    const unwrapped = unwrap(val2, identity, {
+    const flattened = flatten(val2, identity, {
       equal: (a, b) => a.code === b.code,
     });
 
     const sub = jest.fn();
-    unwrapped.subscribe(sub);
+    flattened.subscribe(sub);
 
     expect(sub).toBeCalledTimes(1);
     expect(sub).lastCalledWith({ code: 2 });
@@ -203,36 +203,36 @@ describe("unwrap", () => {
     expect(sub).lastCalledWith({ code: 3 });
     expect(sub1).lastCalledWith({ code: 3 });
 
-    unwrapped.unsubscribe();
+    flattened.unsubscribe();
   });
 
   it("should update value if changed before first subscription", () => {
     const val1 = val(1);
     const val2 = val(val1);
-    const unwrapped = unwrap(val2);
+    const flattened = flatten(val2);
 
-    expect(unwrapped.value).toBe(1);
+    expect(flattened.value).toBe(1);
 
     val1.set(2);
 
     const spy = jest.fn();
-    unwrapped.subscribe(spy);
+    flattened.subscribe(spy);
 
     expect(spy).lastCalledWith(2);
-    expect(unwrapped.value).toEqual(2);
+    expect(flattened.value).toEqual(2);
 
-    unwrapped.unsubscribe();
+    flattened.unsubscribe();
   });
 
   it("should reaction derived value if changed before first subscription", async () => {
     const val1 = val(1);
     const val2 = val(val1);
-    const unwrapped = unwrap(val2);
+    const flattened = flatten(val2);
 
-    expect(unwrapped.value).toBe(1);
+    expect(flattened.value).toBe(1);
 
     const spy = jest.fn();
-    unwrapped.reaction(spy);
+    flattened.reaction(spy);
 
     val1.set(2);
 
@@ -241,26 +241,26 @@ describe("unwrap", () => {
     await Promise.resolve();
 
     expect(spy).lastCalledWith(2);
-    expect(unwrapped.value).toEqual(2);
+    expect(flattened.value).toEqual(2);
 
-    unwrapped.unsubscribe();
+    flattened.unsubscribe();
   });
 
   it("should trigger subscribers after dirty value is cleared", async () => {
     const val1 = val(1);
     const val2 = derive(val1, v => val(v + 1));
     const val3 = derive(val2, v => val(v));
-    const unwrapped = unwrap(unwrap(val3));
+    const flattened = flatten(flatten(val3));
 
     const spy = jest.fn();
-    unwrapped.reaction(spy);
+    flattened.reaction(spy);
 
     spy.mockClear();
 
     val1.set(2);
-    expect(unwrapped.value).toBe(3);
+    expect(flattened.value).toBe(3);
     val1.set(4);
-    expect(unwrapped.value).toBe(5);
+    expect(flattened.value).toBe(5);
 
     await Promise.resolve();
 
@@ -268,11 +268,11 @@ describe("unwrap", () => {
     expect(spy).lastCalledWith(5);
   });
 
-  it("should unwrap combined val", async () => {
+  it("should flatten combined val", async () => {
     const vals = [val(1), val(2), val(3)];
     const signal = val(null, { equal: () => false });
     const countSpy = jest.fn();
-    const unwrapped = unwrap(signal, () => {
+    const flattened = flatten(signal, () => {
       countSpy();
       return combine([...vals]);
     });
@@ -280,7 +280,7 @@ describe("unwrap", () => {
     expect(countSpy).toHaveBeenCalledTimes(0);
 
     const spy = jest.fn();
-    unwrapped.subscribe(spy, true);
+    flattened.subscribe(spy, true);
     expect(spy).toHaveBeenCalledTimes(1);
     expect(countSpy).toHaveBeenCalledTimes(1);
 
