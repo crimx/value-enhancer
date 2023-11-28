@@ -1,7 +1,7 @@
 import type { ReadonlyVal, ValConfig } from "./typings";
 
 import { from } from "./from";
-import { identity } from "./utils";
+import { INIT_VALUE, defaultEqual, identity } from "./utils";
 
 export type DerivedValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue
@@ -35,8 +35,14 @@ export function derive<TSrcValue = any, TValue = any>(
   > = identity as DerivedValTransform<TSrcValue, TValue>,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> {
+  let cachedValue: TValue;
+  let cachedSrcValue: TSrcValue = INIT_VALUE;
+
   return from(
-    () => transform(val.value),
+    () =>
+      defaultEqual(val.value, cachedSrcValue)
+        ? cachedValue
+        : (cachedValue = transform((cachedSrcValue = val.value))),
     notify => val.$valCompute(notify),
     config
   );

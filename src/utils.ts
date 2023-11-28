@@ -5,6 +5,21 @@ export const identity = <TValue>(value: TValue): TValue => value;
 
 export const defaultEqual = Object.is;
 
+export const arrayEqual = <T extends readonly any[]>(
+  newValue: T,
+  oldValue: T
+): boolean => {
+  if (newValue.length !== oldValue.length) {
+    return false;
+  }
+  for (let i = newValue.length - 1; i >= 0; i--) {
+    if (!defaultEqual(newValue[i], oldValue[i])) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const getValue = <TValue>(val: ReadonlyVal<TValue>): TValue => val.value;
 
 export const getValues = <TValInputs extends readonly ReadonlyVal[]>(

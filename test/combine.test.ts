@@ -24,6 +24,44 @@ describe("combine", () => {
     expect(spy).toBeCalledTimes(1);
   });
 
+  it("should not trigger transform if upstream not changed", () => {
+    const spy = jest.fn(([value1, value2]) => value1 + value2);
+    const val1 = val(1);
+    const val2 = val(1);
+    const combined = combine([val1, val2], spy);
+
+    expect(spy).toBeCalledTimes(0);
+
+    expect(val1.value).toBe(1);
+    expect(val2.value).toBe(1);
+    expect(combined.value).toBe(2);
+    expect(spy).toBeCalledTimes(1);
+
+    expect(val1.value).toBe(1);
+    expect(val2.value).toBe(1);
+    expect(combined.value).toBe(2);
+    expect(spy).toBeCalledTimes(1);
+
+    val1.set(1);
+
+    expect(val1.value).toBe(1);
+    expect(val2.value).toBe(1);
+    expect(combined.value).toBe(2);
+    expect(spy).toBeCalledTimes(1);
+
+    expect(val1.value).toBe(1);
+    expect(val2.value).toBe(1);
+    expect(combined.value).toBe(2);
+    expect(spy).toBeCalledTimes(1);
+
+    val1.set(2);
+
+    expect(val1.value).toBe(2);
+    expect(val2.value).toBe(1);
+    expect(combined.value).toEqual(3);
+    expect(spy).toBeCalledTimes(2);
+  });
+
   it("should get value without subscribe", () => {
     const val1 = val(1);
     const val2 = val(1);
@@ -337,8 +375,7 @@ describe("combine", () => {
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 4 });
-    expect(spyEven).toBeCalledTimes(1);
-    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
     spyOdd.mockClear();
@@ -411,8 +448,7 @@ describe("combine", () => {
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 4 });
-    expect(spyEven).toBeCalledTimes(1);
-    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
     spyOdd.mockClear();

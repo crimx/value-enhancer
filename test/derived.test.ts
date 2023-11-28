@@ -18,6 +18,38 @@ describe("derive", () => {
     expect(spy).toBeCalledTimes(1);
   });
 
+  it("should not trigger transform if upstream not changed", () => {
+    const spy = jest.fn(value => value);
+    const val1 = val(1);
+    const derived = derive(val1, spy);
+
+    expect(spy).toBeCalledTimes(0);
+
+    expect(val1.value).toBe(1);
+    expect(derived.value).toBe(1);
+    expect(spy).toBeCalledTimes(1);
+
+    expect(val1.value).toBe(1);
+    expect(derived.value).toBe(1);
+    expect(spy).toBeCalledTimes(1);
+
+    val1.set(1);
+
+    expect(val1.value).toBe(1);
+    expect(derived.value).toBe(1);
+    expect(spy).toBeCalledTimes(1);
+
+    expect(val1.value).toBe(1);
+    expect(derived.value).toBe(1);
+    expect(spy).toBeCalledTimes(1);
+
+    val1.set(2);
+
+    expect(val1.value).toBe(2);
+    expect(derived.value).toEqual(2);
+    expect(spy).toBeCalledTimes(2);
+  });
+
   it("should subscribe", async () => {
     const spy1 = jest.fn();
     const spy2 = jest.fn();
@@ -270,8 +302,7 @@ describe("derive", () => {
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 4 });
-    expect(spyEven).toBeCalledTimes(1);
-    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
     spyOdd.mockClear();
@@ -344,8 +375,7 @@ describe("derive", () => {
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 4 });
-    expect(spyEven).toBeCalledTimes(1);
-    expect(spyEven).lastCalledWith({ odd: false });
+    expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
     spyOdd.mockClear();
