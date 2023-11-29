@@ -5,15 +5,17 @@ export const identity = <TValue>(value: TValue): TValue => value;
 
 export const defaultEqual = Object.is;
 
-export const arrayEqual = <T extends readonly any[]>(
-  newValue: T,
-  oldValue: T
+export const valInputsEqual = <
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
+>(
+  valInputs: readonly [...TValInputs],
+  cachedSrcValues: [...ValInputsValueTuple<TValInputs>]
 ): boolean => {
-  if (newValue.length !== oldValue.length) {
+  if (valInputs.length !== cachedSrcValues.length) {
     return false;
   }
-  for (let i = newValue.length - 1; i >= 0; i--) {
-    if (!defaultEqual(newValue[i], oldValue[i])) {
+  for (let i = valInputs.length - 1; i >= 0; i--) {
+    if (!valInputs[i].equal(valInputs[i].value, cachedSrcValues[i])) {
       return false;
     }
   }

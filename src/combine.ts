@@ -1,7 +1,13 @@
 import type { ReadonlyVal, ValConfig, ValInputsValueTuple } from "./typings";
 
 import { from } from "./from";
-import { INIT_VALUE, arrayEqual, getValues, identity, invoke } from "./utils";
+import {
+  INIT_VALUE,
+  getValues,
+  identity,
+  invoke,
+  valInputsEqual,
+} from "./utils";
 
 export type CombineValTransform<
   TCombinedValue = any,
@@ -51,12 +57,10 @@ export function combine<
   let cachedSrcValues: [...ValInputsValueTuple<TValInputs>] = INIT_VALUE;
 
   return from(
-    () => {
-      const srcValues = getValues(valInputs);
-      return arrayEqual(srcValues, cachedSrcValues)
+    () =>
+      valInputsEqual(valInputs, cachedSrcValues)
         ? cachedValue
-        : (cachedValue = transform((cachedSrcValues = srcValues)));
-    },
+        : (cachedValue = transform((cachedSrcValues = getValues(valInputs)))),
     notify => {
       const disposers = valInputs.map(val => val.$valCompute(notify));
       return () => disposers.forEach(invoke);
