@@ -210,20 +210,18 @@ export function readonlyVal<TValue = any>(
  * }
  * ```
  */
-export const groupVals = <
-  TValPairs extends Record<string, [ReadonlyVal<any>, ValSetValue<any>]>
->(
-  valPairs: TValPairs
-): [
-  { [K in keyof TValPairs]: TValPairs[K][0] },
-  { [K in keyof TValPairs]: TValPairs[K][1] }
+export const groupVals = <TValues extends {}>(valPairs: {
+  [K in keyof TValues]: [ReadonlyVal<TValues[K]>, ValSetValue<TValues[K]>];
+}): [
+  { [K in keyof TValues]: ReadonlyVal<TValues[K]> },
+  { [K in keyof TValues]: ValSetValue<TValues[K]> }
 ] => {
-  const vals = {} as { [K in keyof TValPairs]: TValPairs[K][0] };
-  const setters = {} as { [K in keyof TValPairs]: TValPairs[K][1] };
-  for (const key of Object.keys(valPairs)) {
+  const vals = {} as { [K in keyof TValues]: ReadonlyVal<TValues[K]> };
+  const setters = {} as { [K in keyof TValues]: ValSetValue<TValues[K]> };
+  for (const key of Object.keys(valPairs) as (keyof TValues)[]) {
     const [val, set] = valPairs[key];
-    vals[key as keyof TValPairs] = val;
-    setters[key as keyof TValPairs] = set;
+    vals[key] = val;
+    setters[key] = set;
   }
   return [vals, setters];
 };
