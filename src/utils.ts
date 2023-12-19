@@ -11,6 +11,7 @@ export const valInputsEqual = <
   valInputs: readonly [...TValInputs],
   cachedSrcValues: [...ValInputsValueTuple<TValInputs>]
 ): boolean => {
+  /* istanbul ignore next: safeguard */
   if (valInputs.length !== cachedSrcValues.length) {
     return false;
   }

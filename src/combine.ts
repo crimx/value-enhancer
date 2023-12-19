@@ -58,6 +58,7 @@ export function combine<
 
   return from(
     () =>
+      cachedSrcValues !== INIT_VALUE &&
       valInputsEqual(valInputs, cachedSrcValues)
         ? cachedValue
         : (cachedValue = transform((cachedSrcValues = getValues(valInputs)))),
