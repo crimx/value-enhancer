@@ -17,7 +17,7 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
         currentValue = getValue();
       } else if (dirty) {
         const value = getValue();
-        if (!this.equal(value, currentValue)) {
+        if (!this.$equal?.(value, currentValue)) {
           this._subs.dirty = true;
           currentValue = value;
         }

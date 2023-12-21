@@ -40,9 +40,9 @@ export function derive<TSrcValue = any, TValue = any>(
 
   return from(
     () =>
-      cachedSrcValue !== INIT_VALUE && val.equal(val.value, cachedSrcValue)
-        ? cachedValue
-        : (cachedValue = transform((cachedSrcValue = val.value))),
+      cachedSrcValue === INIT_VALUE || !val.$equal?.(val.value, cachedSrcValue)
+        ? (cachedValue = transform((cachedSrcValue = val.value)))
+        : cachedValue,
     notify => val.$valCompute(notify),
     config
   );

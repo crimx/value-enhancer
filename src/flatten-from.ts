@@ -17,7 +17,7 @@ class FlattenFromImpl<
     listen: (handler: () => void) => ValDisposer | void | undefined,
     config?: ValConfig<TValue>
   ) {
-    const initialEqual = config && config.equal;
+    const initialEqual = config?.equal;
 
     let currentValue = INIT_VALUE as TValue;
     let dirty = false;
@@ -39,7 +39,7 @@ class FlattenFromImpl<
         currentValue = computeValue();
       } else if (dirty) {
         const value = computeValue();
-        if (!this.equal(value, currentValue)) {
+        if (!this.$equal?.(value, currentValue)) {
           this._subs.dirty = true;
           currentValue = value;
         }
@@ -55,8 +55,13 @@ class FlattenFromImpl<
         innerVal = isVal(maybeVal) ? maybeVal : null;
         innerDisposer?.();
         innerDisposer = innerVal && innerVal.$valCompute(notify);
-        currentEqual =
-          initialEqual || (innerVal ? innerVal.equal : defaultEqual);
+        this.$equal =
+          initialEqual ||
+          (initialEqual === null
+            ? void 0
+            : innerVal
+            ? innerVal.$equal
+            : defaultEqual);
       }
     };
 
@@ -84,10 +89,6 @@ class FlattenFromImpl<
         outerDisposer?.();
       };
     });
-
-    let currentEqual = this.equal;
-    this.equal = (newValue: TValue, oldValue: TValue) =>
-      currentEqual(newValue, oldValue);
   }
 }
 

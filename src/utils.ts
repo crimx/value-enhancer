@@ -16,7 +16,7 @@ export const valInputsEqual = <
     return false;
   }
   for (let i = valInputs.length - 1; i >= 0; i--) {
-    if (!valInputs[i].equal(valInputs[i].value, cachedSrcValues[i])) {
+    if (!valInputs[i].$equal?.(valInputs[i].value, cachedSrcValues[i])) {
       return false;
     }
   }

@@ -29,11 +29,13 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    */
   public constructor(
     get: () => TValue,
-    { equal, eager }: ValConfig<TValue> = {},
+    { equal = defaultEqual, eager }: ValConfig<TValue> = {},
     start?: ValOnStart
   ) {
     this.get = get;
-    this.equal = equal || defaultEqual;
+    if (equal) {
+      this.$equal = equal;
+    }
     this.#eager = eager;
     this._subs = new Subscribers<TValue>(get, start);
   }
@@ -44,7 +46,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public get: (this: void) => TValue;
 
-  public equal: (this: void, newValue: TValue, oldValue: TValue) => boolean;
+  public $equal?: (this: void, newValue: TValue, oldValue: TValue) => boolean;
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
@@ -142,7 +144,7 @@ export function readonlyVal<TValue = any>(
   let subs: Subscribers;
 
   const set = (value: TValue | undefined): void => {
-    if (!val.equal(value, currentValue)) {
+    if (!val.$equal?.(value, currentValue)) {
       currentValue = value;
       if (subs) {
         subs.dirty = true;
