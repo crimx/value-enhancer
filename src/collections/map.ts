@@ -24,7 +24,7 @@ import { SET$ } from "./utils";
 export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   public constructor(entries?: readonly (readonly [TKey, TValue])[] | null) {
     super(entries);
-    const [val, setVal] = readonlyVal(this, { equal: null });
+    const [val, setVal] = readonlyVal(this, { equal: false });
     this.$ = val;
     this[SET$] = setVal;
   }

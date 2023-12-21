@@ -61,9 +61,9 @@ export type ValDisposer = () => void;
 export interface ValConfig<TValue = any> {
   /**
    * Compare two values. Default `Object.is`.
-   * `null` to disable equality check.
+   * `false` to disable equality check.
    */
-  equal?: ValEqual<TValue> | null;
+  equal?: ValEqual<TValue> | false;
   /**
    * Set the default behavior of subscription and reaction.
    * Emission triggers synchronously if `true`. Default `false`.

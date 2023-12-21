@@ -59,12 +59,12 @@ describe("ReadonlyVal", () => {
       val.unsubscribe();
     });
 
-    it("should disable equality check if equal is null", async () => {
+    it("should disable equality check if equal is false", async () => {
       const spy = jest.fn();
       const value1 = {};
       const value2 = {};
 
-      const [val, set] = readonlyVal(value1, { equal: null });
+      const [val, set] = readonlyVal(value1, { equal: false });
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 

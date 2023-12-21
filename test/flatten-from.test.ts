@@ -260,7 +260,7 @@ describe("flattenFrom", () => {
     val$.unsubscribe();
   });
 
-  it("should disable equality check if equal is null", async () => {
+  it("should disable equality check if equal is false", async () => {
     const sub = jest.fn();
     const startSpy = jest.fn();
 
@@ -280,7 +280,7 @@ describe("flattenFrom", () => {
         };
       },
       {
-        equal: null,
+        equal: false,
       }
     );
 

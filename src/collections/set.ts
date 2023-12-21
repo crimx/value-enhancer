@@ -25,7 +25,7 @@ export class ReactiveSet<TValue> extends Set<TValue> {
   public constructor(entries?: readonly TValue[] | null) {
     super(entries);
 
-    const [val, setVal] = readonlyVal(this, { equal: null });
+    const [val, setVal] = readonlyVal(this, { equal: false });
     this.$ = val;
     this[SET$] = setVal;
   }

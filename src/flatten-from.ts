@@ -57,7 +57,7 @@ class FlattenFromImpl<
         innerDisposer = innerVal && innerVal.$valCompute(notify);
         this.$equal =
           initialEqual ||
-          (initialEqual === null
+          (initialEqual === false
             ? void 0
             : innerVal
             ? innerVal.$equal

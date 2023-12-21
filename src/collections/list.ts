@@ -25,7 +25,7 @@ export class ReactiveList<TValue> {
 
   public constructor(arrayLike?: ArrayLike<TValue>) {
     this.#data = arrayLike ? Array.from(arrayLike) : [];
-    const [val, setVal] = readonlyVal(this, { equal: null });
+    const [val, setVal] = readonlyVal(this, { equal: false });
     this.$ = val;
     this.#set$ = setVal;
   }
