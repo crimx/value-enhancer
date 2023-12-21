@@ -2,7 +2,6 @@ export type {
   FlattenVal,
   ReadonlyVal,
   Val,
-  ValCompare,
   ValConfig,
   ValDisposer,
   ValEqual,
@@ -10,12 +9,12 @@ export type {
   ValSubscriber,
 } from "./typings";
 
-export { identity, isVal, markVal } from "./utils";
+export { identity, isVal } from "./utils";
 
 export { combine, type CombineValTransform } from "./combine";
 export { derive, type DerivedValTransform } from "./derive";
-export { flatten, unwrap } from "./flatten";
-export { flattenFrom, unwrapFrom } from "./flatten-from";
+export { flatten } from "./flatten";
+export { flattenFrom } from "./flatten-from";
 export { from } from "./from";
 export { groupVals, readonlyVal } from "./readonly-val";
 export { val } from "./val";

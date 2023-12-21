@@ -4,12 +4,7 @@ export interface ReadonlyVal<TValue = any> {
   /** Get current value of the val */
   get(this: void): TValue;
   /** Compare two values. Default `Object.is`. */
-  equal(this: void, newValue: TValue, oldValue: TValue): boolean;
-  /**
-   * @ignore
-   * @deprecated Use `equal` instead.
-   */
-  compare(this: void, newValue: TValue, oldValue: TValue): boolean;
+  equal: (this: void, newValue: TValue, oldValue: TValue) => boolean;
   /**
    * Subscribe to value changes without immediate emission.
    * @param subscriber
@@ -56,15 +51,6 @@ export type ValEqual<TValue = any> = (
   oldValue: TValue
 ) => boolean;
 
-/**
- * @ignore
- * @deprecated Use Equal instead.
- */
-export type ValCompare<TValue = any> = (
-  newValue: TValue,
-  oldValue: TValue
-) => boolean;
-
 export type ValSubscriber<TValue = any> = (newValue: TValue) => void;
 
 export type ValDisposer = () => void;
@@ -77,11 +63,6 @@ export interface ValConfig<TValue = any> {
    * Compare two values. Default `Object.is`.
    */
   equal?: ValEqual<TValue>;
-  /**
-   * @ignore
-   * @deprecated Use `equal` instead.
-   */
-  compare?: ValEqual<TValue>;
   /**
    * Set the default behavior of subscription and reaction.
    * Emission triggers synchronously if `true`. Default `false`.

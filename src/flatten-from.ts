@@ -17,7 +17,7 @@ class FlattenFromImpl<
     listen: (handler: () => void) => ValDisposer | void | undefined,
     config?: ValConfig<TValue>
   ) {
-    const initialEqual = config && (config.equal || config.compare);
+    const initialEqual = config && config.equal;
 
     let currentValue = INIT_VALUE as TValue;
     let dirty = false;
@@ -108,10 +108,3 @@ export const flattenFrom = <TValOrValue = any>(
   config?: ValConfig<FlattenVal<TValOrValue>>
 ): ReadonlyVal<FlattenVal<TValOrValue>> =>
   new FlattenFromImpl(getValue, listen, config);
-
-/**
- * @ignore
- * @deprecated
- * Renamed to `flattenFrom`.
- */
-export const unwrapFrom = flattenFrom;

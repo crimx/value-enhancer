@@ -57,10 +57,3 @@ export function flatten<TSrcValue = any, TValOrValue = any>(
     config
   );
 }
-
-/**
- * @ignore
- * @deprecated
- * Renamed to `flatten`.
- */
-export const unwrap = flatten;

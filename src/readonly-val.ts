@@ -29,11 +29,11 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    */
   public constructor(
     get: () => TValue,
-    { equal, compare, eager }: ValConfig<TValue> = {},
+    { equal, eager }: ValConfig<TValue> = {},
     start?: ValOnStart
   ) {
     this.get = get;
-    this.compare = this.equal = equal || compare || defaultEqual;
+    this.equal = equal || defaultEqual;
     this.#eager = eager;
     this._subs = new Subscribers<TValue>(get, start);
   }
@@ -45,12 +45,6 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   public get: (this: void) => TValue;
 
   public equal: (this: void, newValue: TValue, oldValue: TValue) => boolean;
-
-  /**
-   * @ignore
-   * @deprecated Use `equal` instead.
-   */
-  public compare: (this: void, newValue: TValue, oldValue: TValue) => boolean;
 
   public reaction(
     subscriber: ValSubscriber<TValue>,

@@ -50,9 +50,3 @@ export const INIT_VALUE: any = {};
  */
 export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
   !!(val as ReadonlyVal | undefined)?.$valCompute;
-
-/**
- * @ignore
- * @deprecated No longer needed. `isVal` works without `markVal` now.
- */
-export const markVal: <T extends ReadonlyVal>(val: T) => T = identity;
