@@ -4,21 +4,22 @@ import { SET$ } from "./utils";
 
 /**
  * A reactive map inherited from `Map`.
- * Changes to the map will be notified to subscribers of `watch`.
+ * Changes to the map will be notified to subscribers of `$`.
  *
  * @example
  * ```ts
- * import { ReactiveMap, derive } from "value-enhancer/collections"
+ * import { val, flatten } from "value-enhancer";
+ * import { ReactiveMap } from "value-enhancer/collections";
  *
  * const map = new ReactiveMap();
- *
- * const item$ = fromCollection(map, "someKey"); // watch the item at "someKey"
+ * const v = val("someValue");
+ * const item$ = flatten(map.$, map => map.get("someKey")); // watch the item at "someKey"
  *
  * console.log(item$.value); // undefined
- *
- * map.set("someKey", "someValue");
- *
+ * map.set("someKey", v);
  * console.log(item$.value); // "someValue"
+ * v.set("someValue2");
+ * console.log(item$.value); // "someValue2"
  * ```
  */
 export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {

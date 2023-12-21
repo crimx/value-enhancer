@@ -4,20 +4,18 @@ import { SET$ } from "./utils";
 
 /**
  * A reactive set inherited from `Set`.
- * Changes to the set will be notified to subscribers of `watch`.
+ * Changes to the set will be notified to subscribers of `$`.
  *
  * @example
  * ```ts
- * import { ReactiveSet, fromCollection } from "value-enhancer/collections"
+ * import { derive } from "value-enhancer";
+ * import { ReactiveSet } from "value-enhancer/collections"
  *
  * const set = new ReactiveSet();
- *
- * const item$ = fromCollection(map, "someValue"); // watch the existence of "someValue"
+ * const item$ = derive(set.$, set => set.has("someValue")); // watch the existence of "someValue"
  *
  * console.log(item$.value); // false
- *
- * map.add("someValue");
- *
+ * set.add("someValue");
  * console.log(item$.value); // true
  * ```
  */

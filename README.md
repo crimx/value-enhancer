@@ -425,11 +425,12 @@ console.log(foo.$.a.value); // 2
 The Reactive Collections are a group of classes that expand on the built-in JavaScript collections, allowing changes to the collections to be observed. See [docs](https://value-enhancer.js.org/modules/collections.html) for API details.
 
 ```ts
-import { ReactiveList, fromCollection } from "value-enhancer/collections";
+import { derive } from "value-enhancer";
+import { ReactiveList } from "value-enhancer/collections";
 
 const list = new ReactiveList(["a", "b", "c"]);
 
-const item$ = fromCollection(list, 2); // watch the item at index 2
+const item$ = derive(list.$, list => list.get(2)); // watch the item at index 2
 
 console.log(item$.value); // "c"
 
@@ -439,13 +440,13 @@ console.log(item$.value); // "d"
 ```
 
 ```ts
-import { ReactiveMap, flattenFromCollection } from "value-enhancer/collections";
-import { val } from "value-enhancer";
+import { val, flatten } from "value-enhancer";
+import { ReactiveMap } from "value-enhancer/collections";
 
 const map = new ReactiveMap();
 const v = val("someValue");
 
-const item$ = flattenFromCollection(map, "someKey"); // watch the item at "someKey"
+const item$ = flatten(map.$, map => map.get("someKey")); // watch the item at "someKey"
 
 console.log(item$.value); // undefined
 

@@ -3,20 +3,18 @@ import type { ReadonlyVal, ValSetValue } from "../typings";
 
 /**
  * A reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get/set elements.
- * Changes to the map will be notified to subscribers of `watch`.
+ * Changes to the map will be notified to subscribers of `$`.
  *
  * @example
  * ```ts
- * import { ReactiveList, fromCollection } from "value-enhancer/collections"
+ * import { derive } from "value-enhancer";
+ * import { ReactiveList } from "value-enhancer/collections";
  *
  * const list = new ReactiveList(["a", "b", "c"]);
- *
- * const item$ = fromCollection(list, 2); // watch the item at index 2
+ * const item$ = derive(list.$, list => list.get(2)); // watch the item at index 2
  *
  * console.log(item$.value); // "c"
- *
  * list.set(2, "d");
- *
  * console.log(item$.value); // "d"
  * ```
  */
