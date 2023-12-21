@@ -21,30 +21,30 @@ describe("ReactiveMap", () => {
     it("should notify on set", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.set("foo", 1);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith("foo");
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on set if setting same value", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.set("foo", 1);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith("foo");
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
 
       mockNotify.mockClear();
 
       reactiveMap.set("foo", 1);
       expect(mockNotify).toHaveBeenCalledTimes(0);
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -60,24 +60,24 @@ describe("ReactiveMap", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       reactiveMap.set("foo", 1);
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.delete("foo");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith("foo");
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on delete if the element does not exist.", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.delete("foo");
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -95,24 +95,24 @@ describe("ReactiveMap", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       reactiveMap.set("foo", 1);
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.clear();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(undefined);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on delete if the map is empty.", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.clear();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -130,24 +130,24 @@ describe("ReactiveMap", () => {
     it("should notify on replace", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.replace([["baz", 3]]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(undefined);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if not changed", () => {
       const reactiveMap = new ReactiveMap<string, number>([["baz", 3]]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.replace([["baz", 3]]);
       expect(mockNotify).toHaveBeenCalledTimes(0);
 
-      unwatch();
+      dispose();
     });
 
     it("should notify if some keys are removed", () => {
@@ -156,7 +156,7 @@ describe("ReactiveMap", () => {
         ["foo", 4],
       ]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       expect(reactiveMap.get("foo")).toBe(4);
 
@@ -164,7 +164,7 @@ describe("ReactiveMap", () => {
       expect(mockNotify).toHaveBeenCalledTimes(1);
       expect(reactiveMap.get("foo")).toBeUndefined();
 
-      unwatch();
+      dispose();
     });
 
     it("should return deleted entries", () => {
@@ -173,32 +173,32 @@ describe("ReactiveMap", () => {
         ["foo", 4],
       ]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       const deleted = reactiveMap.replace([["baz", 3]]);
       expect([...deleted]).toEqual([["foo", 4]]);
 
-      unwatch();
+      dispose();
     });
   });
 
-  describe("unwatch", () => {
-    it("should unwatch a watcher", () => {
+  describe("dispose", () => {
+    it("should dispose a watcher", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify = jest.fn();
 
-      reactiveMap.watch(mockNotify);
-      reactiveMap.unwatch(mockNotify);
+      reactiveMap.$.reaction(mockNotify, true);
+      reactiveMap.$.unsubscribe(mockNotify);
 
       reactiveMap.set("foo", 1);
       expect(mockNotify).not.toHaveBeenCalled();
     });
 
-    it("should unwatch a watcher via disposer function", () => {
+    it("should dispose a watcher via disposer function", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
-      unwatch();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+      dispose();
       reactiveMap.set("foo", 1);
       expect(mockNotify).not.toHaveBeenCalled();
     });
@@ -209,8 +209,8 @@ describe("ReactiveMap", () => {
       const reactiveMap = new ReactiveMap<string, number>();
       const mockNotify1 = jest.fn();
       const mockNotify2 = jest.fn();
-      reactiveMap.watch(mockNotify1);
-      reactiveMap.watch(mockNotify2);
+      reactiveMap.$.reaction(mockNotify1, true);
+      reactiveMap.$.reaction(mockNotify2, true);
       reactiveMap.dispose();
       reactiveMap.set("foo", 1);
       expect(mockNotify1).not.toHaveBeenCalled();

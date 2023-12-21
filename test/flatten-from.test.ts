@@ -260,6 +260,63 @@ describe("flattenFrom", () => {
     val$.unsubscribe();
   });
 
+  it("should disable equality check if equal is null", async () => {
+    const sub = jest.fn();
+    const startSpy = jest.fn();
+
+    const source$ = val({ content: 1 });
+    let onChange: (() => void) | undefined;
+    const notify = () => {
+      onChange?.();
+    };
+
+    const val$ = flattenFrom(
+      () => source$,
+      notify => {
+        startSpy();
+        onChange = notify;
+        return () => {
+          onChange = undefined;
+        };
+      },
+      {
+        equal: null,
+      }
+    );
+
+    expect(startSpy).toBeCalledTimes(0);
+
+    val$.subscribe(sub);
+
+    expect(startSpy).toBeCalledTimes(1);
+    expect(sub).toBeCalledTimes(1);
+    expect(sub).lastCalledWith(source$.value);
+
+    sub.mockClear();
+    startSpy.mockClear();
+
+    notify();
+    expect(sub).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(sub).toBeCalledTimes(1);
+    expect(sub).lastCalledWith(source$.value);
+
+    sub.mockClear();
+
+    notify();
+    expect(sub).toBeCalledTimes(0);
+
+    await Promise.resolve();
+
+    expect(sub).toBeCalledTimes(1);
+    expect(sub).lastCalledWith(source$.value);
+    expect(startSpy).toBeCalledTimes(0);
+
+    val$.unsubscribe();
+  });
+
   it("should not trigger async subscribers if not changed", async () => {
     const startSpy = jest.fn();
 

@@ -7,7 +7,5 @@ import {
   ReactiveMap,
   ReactiveSet,
   ReactiveList,
-  fromCollection,
-  flattenFromCollection,
 } from "value-enhancer/collections";
 ```

@@ -1,6 +1,6 @@
-import type { ReactiveCollection } from "./typings";
-
-import { invoke } from "../utils";
+import { readonlyVal } from "../readonly-val";
+import type { ReadonlyVal, ValSetValue } from "../typings";
+import { SET$ } from "./utils";
 
 /**
  * A reactive set inherited from `Set`.
@@ -21,45 +21,23 @@ import { invoke } from "../utils";
  * console.log(item$.value); // true
  * ```
  */
-export class ReactiveSet<TValue>
-  extends Set<TValue>
-  implements ReactiveCollection<TValue, boolean>
-{
+export class ReactiveSet<TValue> extends Set<TValue> {
   public constructor(entries?: readonly TValue[] | null) {
     super(entries);
 
-    this.get = this.has;
+    const [val, setVal] = readonlyVal(this, { equal: null });
+    this.$ = val;
+    this[SET$] = setVal;
   }
 
-  private _watchers_ = new Set<(value?: TValue) => void>();
+  public readonly $: ReadonlyVal<this>;
 
-  public watch(watcher: (value?: TValue) => void): () => void {
-    this._watchers_.add(watcher);
-    return () => this.unwatch(watcher);
-  }
-
-  public unwatch(watcher: (...args: any[]) => any): void {
-    this._watchers_.delete(watcher);
-  }
-
-  public notify(value?: TValue): void {
-    // watchers may not exist during super constructor call
-    if (this._watchers_) {
-      for (const sub of this._watchers_) {
-        invoke(sub, value);
-      }
-    }
-  }
-
-  /**
-   * @alias Set#has
-   */
-  public get: (value: TValue) => boolean;
+  private [SET$]?: ValSetValue<this>;
 
   public override delete(key: TValue): boolean {
     const deleted = super.delete(key);
     if (deleted) {
-      this.notify(key);
+      this[SET$]?.(this);
     }
     return deleted;
   }
@@ -67,7 +45,7 @@ export class ReactiveSet<TValue>
   public override clear(): void {
     if (this.size > 0) {
       super.clear();
-      this.notify();
+      this[SET$]?.(this);
     }
   }
 
@@ -75,13 +53,13 @@ export class ReactiveSet<TValue>
     const isDirty = !this.has(value);
     super.add(value);
     if (isDirty) {
-      this.notify(value);
+      this[SET$]?.(this);
     }
     return this;
   }
 
   public dispose(): void {
-    this._watchers_.clear();
+    this.$.dispose();
   }
 
   /**
@@ -98,7 +76,7 @@ export class ReactiveSet<TValue>
       super.add(value);
     }
     if (isDirty || cached.size > 0) {
-      this.notify();
+      this[SET$]?.(this);
     }
     return cached;
   }

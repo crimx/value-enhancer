@@ -133,32 +133,32 @@ describe("ReactiveList", () => {
     it("should notify on push", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.push("d");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(3);
+      expect(mockNotify).lastCalledWith(list);
 
       list.push("e");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(4);
+      expect(mockNotify).lastCalledWith(list);
 
       list.push("f", "g");
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on push if pushing empty item", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.push();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -177,32 +177,32 @@ describe("ReactiveList", () => {
     it("should notify on pop", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.pop();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(2);
+      expect(mockNotify).lastCalledWith(list);
 
       list.pop();
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(1);
+      expect(mockNotify).lastCalledWith(list);
 
       list.pop();
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(0);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on pop if the list is empty.", () => {
       const list = new ReactiveList();
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.pop();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -222,32 +222,32 @@ describe("ReactiveList", () => {
     it("should notify on pushHead", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.pushHead("z");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
       list.pushHead("y");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
       list.pushHead("x", "w");
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on pushHead if pushing empty item", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.pushHead();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -266,32 +266,32 @@ describe("ReactiveList", () => {
     it("should notify on popHead", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.popHead();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
       list.popHead();
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
       list.popHead();
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on popHead if the list is empty.", () => {
       const list = new ReactiveList();
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.popHead();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -311,28 +311,28 @@ describe("ReactiveList", () => {
     it("should notify on set", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.set(1, "x");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(1);
+      expect(mockNotify).lastCalledWith(list);
 
       list.set(0, "y");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(0);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on set for negative index", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.set(-2, "x");
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -358,28 +358,28 @@ describe("ReactiveList", () => {
     it("should notify on insert", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.insert(1, "x");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
       list.insert(0, "y");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on insert for negative index", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.insert(-3, "x");
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -405,34 +405,34 @@ describe("ReactiveList", () => {
     it("should notify on delete", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.delete(1);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(1);
+      expect(mockNotify).lastCalledWith(list);
 
       list.delete(0);
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(0);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on delete for negative index", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.delete(-2);
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if delete count is 0", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.delete(0, 0);
       expect(mockNotify).not.toHaveBeenCalled();
@@ -443,13 +443,13 @@ describe("ReactiveList", () => {
       list.delete(10, 0);
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if list is empty", () => {
       const list = new ReactiveList([]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.delete(0, 10);
       expect(mockNotify).not.toHaveBeenCalled();
@@ -460,7 +460,7 @@ describe("ReactiveList", () => {
       list.delete(10, 10);
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -474,24 +474,24 @@ describe("ReactiveList", () => {
     it("should notify on clear", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.clear();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if list is empty", () => {
       const list = new ReactiveList([]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.clear();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -505,31 +505,31 @@ describe("ReactiveList", () => {
     it("should notify on replace", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.replace(["x", "y", "z"]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if not changed", () => {
-      const reactiveSet = new ReactiveList([1]);
+      const list = new ReactiveList([1]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
-      reactiveSet.replace([2, 3]);
+      list.replace([2, 3]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should notify if some keys are removed", () => {
       const reactiveSet = new ReactiveList([1, 2, 3]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       expect([...reactiveSet]).toEqual([1, 2, 3]);
 
@@ -537,18 +537,18 @@ describe("ReactiveList", () => {
       expect(mockNotify).toHaveBeenCalledTimes(1);
       expect([...reactiveSet]).toEqual([1, 2]);
 
-      unwatch();
+      dispose();
     });
 
     it("should return deleted entries", () => {
       const reactiveMap = new ReactiveList([1, 2, 3]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       const deleted = reactiveMap.replace([3, 4]);
       expect([...deleted]).toEqual([1, 2]);
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -562,35 +562,35 @@ describe("ReactiveList", () => {
     it("should notify on reverse", () => {
       const list = new ReactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.reverse();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if list is empty", () => {
       const list = new ReactiveList([]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.reverse();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if list has only one element", () => {
       const list = new ReactiveList(["a"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.reverse();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -610,35 +610,35 @@ describe("ReactiveList", () => {
     it("should notify on sort", () => {
       const list = new ReactiveList(["c", "b", "a"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.sort();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(undefined);
+      expect(mockNotify).lastCalledWith(list);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if list is empty", () => {
       const list = new ReactiveList([]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.sort();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if list has only one element", () => {
       const list = new ReactiveList(["a"]);
       const mockNotify = jest.fn();
-      const unwatch = list.watch(mockNotify);
+      const dispose = list.$.reaction(mockNotify, true);
 
       list.sort();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -660,6 +660,20 @@ describe("ReactiveList", () => {
     it("should return the internal array", () => {
       const list = new ReactiveList([1, 2, 3]);
       expect(list.toJSON()).toBe(list.array);
+    });
+  });
+
+  describe("dispose", () => {
+    it("should dispose all watchers", () => {
+      const list = new ReactiveList<number>();
+      const mockNotify1 = jest.fn();
+      const mockNotify2 = jest.fn();
+      list.$.reaction(mockNotify1, true);
+      list.$.reaction(mockNotify2, true);
+      list.dispose();
+      list.push(1);
+      expect(mockNotify1).not.toHaveBeenCalled();
+      expect(mockNotify2).not.toHaveBeenCalled();
     });
   });
 });

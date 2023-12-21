@@ -1,6 +1,6 @@
-import type { ReactiveCollection } from "./typings";
-
-import { invoke } from "../utils";
+import { readonlyVal } from "../readonly-val";
+import type { ReadonlyVal, ValSetValue } from "../typings";
+import { SET$ } from "./utils";
 
 /**
  * A reactive map inherited from `Map`.
@@ -8,7 +8,7 @@ import { invoke } from "../utils";
  *
  * @example
  * ```ts
- * import { ReactiveMap, fromCollection } from "value-enhancer/collections"
+ * import { ReactiveMap, derive } from "value-enhancer/collections"
  *
  * const map = new ReactiveMap();
  *
@@ -21,38 +21,22 @@ import { invoke } from "../utils";
  * console.log(item$.value); // "someValue"
  * ```
  */
-export class ReactiveMap<TKey, TValue>
-  extends Map<TKey, TValue>
-  implements ReactiveCollection<TKey, TValue>
-{
+export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   public constructor(entries?: readonly (readonly [TKey, TValue])[] | null) {
     super(entries);
+    const [val, setVal] = readonlyVal(this, { equal: null });
+    this.$ = val;
+    this[SET$] = setVal;
   }
 
-  private _watchers_ = new Set<(key?: TKey) => void>();
+  public readonly $: ReadonlyVal<this>;
 
-  public watch(watcher: (key?: TKey) => void): () => void {
-    this._watchers_.add(watcher);
-    return () => this.unwatch(watcher);
-  }
-
-  public unwatch(watcher: (...args: any[]) => any): void {
-    this._watchers_.delete(watcher);
-  }
-
-  public notify(key?: TKey): void {
-    // watchers may not exist during super constructor call
-    if (this._watchers_) {
-      for (const sub of this._watchers_) {
-        invoke(sub, key);
-      }
-    }
-  }
+  private [SET$]?: ValSetValue<this>;
 
   public override delete(key: TKey): boolean {
     const deleted = super.delete(key);
     if (deleted) {
-      this.notify(key);
+      this[SET$]?.(this);
     }
     return deleted;
   }
@@ -60,7 +44,7 @@ export class ReactiveMap<TKey, TValue>
   public override clear(): void {
     if (this.size > 0) {
       super.clear();
-      this.notify();
+      this[SET$]?.(this);
     }
   }
 
@@ -68,13 +52,9 @@ export class ReactiveMap<TKey, TValue>
     const isDirty = !this.has(key) || this.get(key) !== value;
     super.set(key, value);
     if (isDirty) {
-      this.notify(key);
+      this[SET$]?.(this);
     }
     return this;
-  }
-
-  public dispose(): void {
-    this._watchers_.clear();
   }
 
   /**
@@ -94,8 +74,12 @@ export class ReactiveMap<TKey, TValue>
       cached.delete(key);
     }
     if (isDirty || cached.size > 0) {
-      this.notify();
+      this[SET$]?.(this);
     }
     return cached;
+  }
+
+  public dispose(): void {
+    this.$.dispose();
   }
 }

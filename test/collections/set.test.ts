@@ -2,10 +2,10 @@ import { describe, expect, it, jest } from "@jest/globals";
 import { ReactiveSet } from "../../src/collections";
 
 describe("ReactiveSet", () => {
-  describe("get", () => {
+  describe("has", () => {
     it("should return true if the value exists", () => {
       const reactiveSet = new ReactiveSet<number>();
-      expect(reactiveSet.get(1)).toBe(false);
+      expect(reactiveSet.has(1)).toBe(false);
       reactiveSet.add(1);
       expect(reactiveSet.has(1)).toBe(true);
     });
@@ -23,24 +23,24 @@ describe("ReactiveSet", () => {
       const reactiveSet = new ReactiveSet<number>();
       reactiveSet.add(1);
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.delete(1);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on delete if the element does not exist.", () => {
       const reactiveSet = new ReactiveSet<number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.delete(1);
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -58,24 +58,24 @@ describe("ReactiveSet", () => {
       const reactiveSet = new ReactiveSet<number>();
       reactiveSet.add(1);
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.clear();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(undefined);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on clear if the set is empty", () => {
       const reactiveSet = new ReactiveSet<number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.clear();
       expect(mockNotify).not.toHaveBeenCalled();
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -89,30 +89,30 @@ describe("ReactiveSet", () => {
     it("should notify on add", () => {
       const reactiveSet = new ReactiveSet<number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.add(1);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify on add if adding same value", () => {
       const reactiveSet = new ReactiveSet<number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.add(1);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
 
       mockNotify.mockClear();
 
       reactiveSet.add(1);
       expect(mockNotify).toHaveBeenCalledTimes(0);
 
-      unwatch();
+      dispose();
     });
   });
 
@@ -133,31 +133,31 @@ describe("ReactiveSet", () => {
       const reactiveSet = new ReactiveSet<number>();
       reactiveSet.add(1);
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.replace([2, 3]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(undefined);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
 
-      unwatch();
+      dispose();
     });
 
     it("should not notify if not changed", () => {
       const reactiveSet = new ReactiveSet([1]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       reactiveSet.replace([2, 3]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(undefined);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
 
-      unwatch();
+      dispose();
     });
 
     it("should notify if some keys are removed", () => {
       const reactiveSet = new ReactiveSet([1, 2, 3]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
 
       expect(reactiveSet.has(3)).toBe(true);
 
@@ -165,38 +165,38 @@ describe("ReactiveSet", () => {
       expect(mockNotify).toHaveBeenCalledTimes(1);
       expect(reactiveSet.has(3)).toBe(false);
 
-      unwatch();
+      dispose();
     });
 
     it("should return deleted entries", () => {
       const reactiveMap = new ReactiveSet([1, 2, 3]);
       const mockNotify = jest.fn();
-      const unwatch = reactiveMap.watch(mockNotify);
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       const deleted = reactiveMap.replace([3, 4]);
       expect([...deleted]).toEqual([1, 2]);
 
-      unwatch();
+      dispose();
     });
   });
 
-  describe("unwatch", () => {
-    it("should unwatch a watcher", () => {
+  describe("dispose", () => {
+    it("should dispose a watcher", () => {
       const reactiveSet = new ReactiveSet<number>();
       const mockNotify = jest.fn();
 
-      reactiveSet.watch(mockNotify);
-      reactiveSet.unwatch(mockNotify);
+      reactiveSet.$.reaction(mockNotify, true);
+      reactiveSet.$.unsubscribe(mockNotify);
 
       reactiveSet.add(1);
       expect(mockNotify).not.toHaveBeenCalled();
     });
 
-    it("should unwatch a watcher via disposer function", () => {
+    it("should dispose a watcher via disposer function", () => {
       const reactiveSet = new ReactiveSet<number>();
       const mockNotify = jest.fn();
-      const unwatch = reactiveSet.watch(mockNotify);
-      unwatch();
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
+      dispose();
       reactiveSet.add(1);
       expect(mockNotify).not.toHaveBeenCalled();
     });
@@ -207,8 +207,8 @@ describe("ReactiveSet", () => {
       const reactiveSet = new ReactiveSet<number>();
       const mockNotify1 = jest.fn();
       const mockNotify2 = jest.fn();
-      reactiveSet.watch(mockNotify1);
-      reactiveSet.watch(mockNotify2);
+      reactiveSet.$.reaction(mockNotify1, true);
+      reactiveSet.$.reaction(mockNotify2, true);
       reactiveSet.dispose();
       reactiveSet.add(1);
       expect(mockNotify1).not.toHaveBeenCalled();
