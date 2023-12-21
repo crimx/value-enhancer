@@ -1,4 +1,4 @@
-<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ReactiveList | value-enhancer - v3.1.5</title><meta name="description" content="Documentation for value-enhancer"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ReactiveList | value-enhancer - v3.1.6</title><meta name="description" content="Documentation for value-enhancer"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><link rel="stylesheet" href="../assets/custom.css"/><script defer src="../assets/main.js"></script><script async src="../assets/search.js" id="tsd-search-script"></script></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
 <div class="tsd-toolbar-contents container">
 <div class="table-cell" id="tsd-search" data-base="..">
 <div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
@@ -6,7 +6,7 @@
 <div id="tsd-toolbar-links"></div></div>
 <ul class="results">
 <li class="state loading">Preparing search index...</li>
-<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">value-enhancer - v3.1.5</a></div>
+<li class="state failure">The search index is not available</li></ul><a href="../index.html" class="title">value-enhancer - v3.1.6</a></div>
 <div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
 <div class="container container-main">
 <div class="col-content">
@@ -18,10 +18,10 @@
 <h1>Class ReactiveList&lt;TValue&gt;</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>A reactive list. Similar to an Array except bracket-notation(e.g. <code>arr[0]</code>) is not allowed to get/set elements.
-Changes to the map will be notified to subscribers of <code>watch</code>.</p>
+Changes to the map will be notified to subscribers of <code>$</code>.</p>
 </div>
 <div class="tsd-comment tsd-typography">
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-2">import</span><span class="hl-0"> { </span><span class="hl-3">ReactiveList</span><span class="hl-0">, </span><span class="hl-3">fromCollection</span><span class="hl-0"> } </span><span class="hl-2">from</span><span class="hl-0"> </span><span class="hl-1">&quot;value-enhancer/collections&quot;</span><br/><br/><span class="hl-4">const</span><span class="hl-0"> </span><span class="hl-5">list</span><span class="hl-0"> = </span><span class="hl-4">new</span><span class="hl-0"> </span><span class="hl-6">ReactiveList</span><span class="hl-0">([</span><span class="hl-1">&quot;a&quot;</span><span class="hl-0">, </span><span class="hl-1">&quot;b&quot;</span><span class="hl-0">, </span><span class="hl-1">&quot;c&quot;</span><span class="hl-0">]);</span><br/><br/><span class="hl-4">const</span><span class="hl-0"> </span><span class="hl-5">item$</span><span class="hl-0"> = </span><span class="hl-6">fromCollection</span><span class="hl-0">(</span><span class="hl-3">list</span><span class="hl-0">, </span><span class="hl-7">2</span><span class="hl-0">); </span><span class="hl-8">// watch the item at index 2</span><br/><br/><span class="hl-3">console</span><span class="hl-0">.</span><span class="hl-6">log</span><span class="hl-0">(</span><span class="hl-3">item$</span><span class="hl-0">.</span><span class="hl-3">value</span><span class="hl-0">); </span><span class="hl-8">// &quot;c&quot;</span><br/><br/><span class="hl-3">list</span><span class="hl-0">.</span><span class="hl-6">set</span><span class="hl-0">(</span><span class="hl-7">2</span><span class="hl-0">, </span><span class="hl-1">&quot;d&quot;</span><span class="hl-0">);</span><br/><br/><span class="hl-3">console</span><span class="hl-0">.</span><span class="hl-6">log</span><span class="hl-0">(</span><span class="hl-3">item$</span><span class="hl-0">.</span><span class="hl-3">value</span><span class="hl-0">); </span><span class="hl-8">// &quot;d&quot;</span>
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-2">import</span><span class="hl-0"> { </span><span class="hl-3">derive</span><span class="hl-0"> } </span><span class="hl-2">from</span><span class="hl-0"> </span><span class="hl-1">&quot;value-enhancer&quot;</span><span class="hl-0">;</span><br/><span class="hl-2">import</span><span class="hl-0"> { </span><span class="hl-3">ReactiveList</span><span class="hl-0"> } </span><span class="hl-2">from</span><span class="hl-0"> </span><span class="hl-1">&quot;value-enhancer/collections&quot;</span><span class="hl-0">;</span><br/><br/><span class="hl-4">const</span><span class="hl-0"> </span><span class="hl-5">list</span><span class="hl-0"> = </span><span class="hl-4">new</span><span class="hl-0"> </span><span class="hl-6">ReactiveList</span><span class="hl-0">([</span><span class="hl-1">&quot;a&quot;</span><span class="hl-0">, </span><span class="hl-1">&quot;b&quot;</span><span class="hl-0">, </span><span class="hl-1">&quot;c&quot;</span><span class="hl-0">]);</span><br/><span class="hl-4">const</span><span class="hl-0"> </span><span class="hl-5">item$</span><span class="hl-0"> = </span><span class="hl-6">derive</span><span class="hl-0">(</span><span class="hl-3">list</span><span class="hl-0">.</span><span class="hl-3">$</span><span class="hl-0">, </span><span class="hl-3">list</span><span class="hl-0"> </span><span class="hl-4">=&gt;</span><span class="hl-0"> </span><span class="hl-3">list</span><span class="hl-0">.</span><span class="hl-6">get</span><span class="hl-0">(</span><span class="hl-7">2</span><span class="hl-0">)); </span><span class="hl-8">// watch the item at index 2</span><br/><br/><span class="hl-3">console</span><span class="hl-0">.</span><span class="hl-6">log</span><span class="hl-0">(</span><span class="hl-3">item$</span><span class="hl-0">.</span><span class="hl-3">value</span><span class="hl-0">); </span><span class="hl-8">// &quot;c&quot;</span><br/><span class="hl-3">list</span><span class="hl-0">.</span><span class="hl-6">set</span><span class="hl-0">(</span><span class="hl-7">2</span><span class="hl-0">, </span><span class="hl-1">&quot;d&quot;</span><span class="hl-0">);</span><br/><span class="hl-3">console</span><span class="hl-0">.</span><span class="hl-6">log</span><span class="hl-0">(</span><span class="hl-3">item$</span><span class="hl-0">.</span><span class="hl-3">value</span><span class="hl-0">); </span><span class="hl-8">// &quot;d&quot;</span>
 </code><button>Copy</button></pre>
 </div></section> 
 <section class="tsd-panel">
@@ -34,7 +34,7 @@ Changes to the map will be notified to subscribers of <code>watch</code>.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">ReactiveList</span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L23">src/collections/list.ts:23</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L21">src/collections/list.ts:21</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -97,14 +97,14 @@ Changes to the map will be notified to subscribers of <code>watch</code>.</p>
 <h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">arrayLike</span>: <span class="tsd-signature-type ">ArrayLike</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="collections.ReactiveList.html" class="tsd-signature-type tsd-kind-class">ReactiveList</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L26">src/collections/list.ts:26</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L24">src/collections/list.ts:24</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member"><a id="_" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>$</span><a href="#_" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">$</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/index.ReadonlyVal.html" class="tsd-signature-type tsd-kind-interface">ReadonlyVal</a><span class="tsd-signature-symbol">&lt;</span><a href="collections.ReactiveList.html" class="tsd-signature-type tsd-kind-class">ReactiveList</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">&gt;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L33">src/collections/list.ts:33</a></li></ul></aside></section></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L31">src/collections/list.ts:31</a></li></ul></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Accessors</h2>
 <section class="tsd-panel tsd-member"><a id="array" class="tsd-anchor"></a>
@@ -118,7 +118,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">[]</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L41">src/collections/list.ts:41</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L39">src/collections/list.ts:39</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="length" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>length</span><a href="#length" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -129,7 +129,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L48">src/collections/list.ts:48</a></li></ul></aside></li>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L46">src/collections/list.ts:46</a></li></ul></aside></li>
 <li class="tsd-signature" id="length.length-2"><span class="tsd-signature-symbol">set</span> length<span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">len</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
@@ -139,7 +139,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 <h5><span class="tsd-kind-parameter">len</span>: <span class="tsd-signature-type">number</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L52">src/collections/list.ts:52</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L50">src/collections/list.ts:50</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
 <section class="tsd-panel tsd-member"><a id="_iterator_" class="tsd-anchor"></a>
@@ -149,7 +149,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">IterableIterator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L56">src/collections/list.ts:56</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L54">src/collections/list.ts:54</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="clear" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>clear</span><a href="#clear" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -160,7 +160,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 <h4 class="tsd-returns-title">Returns <a href="collections.ReactiveList.html" class="tsd-signature-type tsd-kind-class">ReactiveList</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L209">src/collections/list.ts:209</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L207">src/collections/list.ts:207</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="delete" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>delete</span><a href="#delete" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -186,7 +186,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L197">src/collections/list.ts:197</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L195">src/collections/list.ts:195</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="dispose" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>dispose</span><a href="#dispose" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -194,7 +194,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L286">src/collections/list.ts:286</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L284">src/collections/list.ts:284</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="entries" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>entries</span><a href="#entries" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -206,7 +206,7 @@ Should not modify the array in place directly. Use methods on the list instead.<
 Returns an iterable of key, value pairs for every entry in the list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L64">src/collections/list.ts:64</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L62">src/collections/list.ts:62</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="first" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>first</span><a href="#first" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -216,7 +216,7 @@ Returns an iterable of key, value pairs for every entry in the list.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L99">src/collections/list.ts:99</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L97">src/collections/list.ts:97</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="get" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get</span><a href="#get" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -237,7 +237,7 @@ Returns the item located at the specified index.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L90">src/collections/list.ts:90</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L88">src/collections/list.ts:88</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="insert" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>insert</span><a href="#insert" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -262,7 +262,7 @@ Returns the item located at the specified index.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L183">src/collections/list.ts:183</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L181">src/collections/list.ts:181</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="keys" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>keys</span><a href="#keys" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -274,7 +274,7 @@ Returns the item located at the specified index.</p>
 Returns an iterable of keys in the list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L80">src/collections/list.ts:80</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L78">src/collections/list.ts:78</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="last" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>last</span><a href="#last" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -284,7 +284,7 @@ Returns an iterable of keys in the list.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L108">src/collections/list.ts:108</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L106">src/collections/list.ts:106</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="pop" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>pop</span><a href="#pop" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -297,7 +297,7 @@ Removes the last element from the list and returns it.
 If the list is empty, undefined is returned and the list is not modified.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L131">src/collections/list.ts:131</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L129">src/collections/list.ts:129</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="popHead" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>pop<wbr/>Head</span><a href="#popHead" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -311,7 +311,7 @@ If the list is empty, undefined is returned and the list is not modified.</p>
 <h4>See</h4><p>Array#shift</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L156">src/collections/list.ts:156</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L154">src/collections/list.ts:154</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="push" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>push</span><a href="#push" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -331,7 +331,7 @@ If the list is empty, undefined is returned and the list is not modified.</p>
 Appends new elements to the end of the list, and returns the new length of the list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L119">src/collections/list.ts:119</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L117">src/collections/list.ts:117</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="pushHead" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>push<wbr/>Head</span><a href="#pushHead" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -352,7 +352,7 @@ Appends new elements to the end of the list, and returns the new length of the l
 <h4>See</h4><p>Array#unshift</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L144">src/collections/list.ts:144</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L142">src/collections/list.ts:142</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="replace" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>replace</span><a href="#replace" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -372,7 +372,7 @@ Appends new elements to the end of the list, and returns the new length of the l
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L222">src/collections/list.ts:222</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L220">src/collections/list.ts:220</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="reverse" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>reverse</span><a href="#reverse" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -384,7 +384,7 @@ Appends new elements to the end of the list, and returns the new length of the l
 Reverses the elements in the list in place.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L240">src/collections/list.ts:240</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L238">src/collections/list.ts:238</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="set" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>set</span><a href="#set" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -409,7 +409,7 @@ Reverses the elements in the list in place.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L170">src/collections/list.ts:170</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L168">src/collections/list.ts:168</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="sort" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>sort</span><a href="#sort" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -446,7 +446,7 @@ value otherwise. If omitted, the elements are sorted in ascending, ASCII charact
 Sorts the list in place.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L258">src/collections/list.ts:258</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L256">src/collections/list.ts:256</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="toJSON" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>toJSON</span><a href="#toJSON" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -454,7 +454,7 @@ Sorts the list in place.</p>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L282">src/collections/list.ts:282</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L280">src/collections/list.ts:280</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="toLocaleString" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>to<wbr/>Locale<wbr/>String</span><a href="#toLocaleString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -466,7 +466,7 @@ Sorts the list in place.</p>
 Returns a string representation of the list. The elements are converted to string using their toLocaleString methods.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L278">src/collections/list.ts:278</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L276">src/collections/list.ts:276</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="toString" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>to<wbr/>String</span><a href="#toString" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -478,7 +478,7 @@ Returns a string representation of the list. The elements are converted to strin
 Returns a string representation of the list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L270">src/collections/list.ts:270</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L268">src/collections/list.ts:268</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="values" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>values</span><a href="#values" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -490,7 +490,7 @@ Returns a string representation of the list.</p>
 Returns an iterable of values in the list.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2d3ab22/src/collections/list.ts#L72">src/collections/list.ts:72</a></li></ul></aside></li></ul></section></section></div>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/a344336/src/collections/list.ts#L70">src/collections/list.ts:70</a></li></ul></aside></li></ul></section></section></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -530,7 +530,7 @@ Returns an iterable of values in the list.</p>
 <li><a href="#toString" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>to<wbr/>String</span></a></li>
 <li><a href="#values" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>values</span></a></li></ul></div></details></div>
 <div class="site-menu">
-<nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>value-<wbr/>enhancer -<wbr/> v3.1.5</span></a>
+<nav class="tsd-navigation"><a href="../index.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>value-<wbr/>enhancer -<wbr/> v3.1.6</span></a>
 <ul class="tsd-small-nested-navigation">
 <li>
 <details class="tsd-index-accordion" open data-key="collections"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><use href="#icon-chevronDown"></use></svg><a href="../modules/collections.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4"></use></svg><span>collections</span></a></summary>
