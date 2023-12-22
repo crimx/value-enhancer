@@ -65,7 +65,7 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
    */
   public replace(
     entries: Iterable<readonly [TKey, TValue]>
-  ): Map<TKey, TValue> {
+  ): Iterable<readonly [TKey, TValue]> {
     const cached = new Map(this);
     super.clear();
     let isDirty = false;
@@ -77,7 +77,7 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     if (isDirty || cached.size > 0) {
       this[SET$]?.(this);
     }
-    return cached;
+    return cached.entries();
   }
 
   public dispose(): void {

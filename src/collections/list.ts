@@ -213,22 +213,22 @@ export class ReactiveList<TValue> {
   }
 
   /**
-   * Replace all elements in the list.
-   * @param arrayLike An array-like object to replace the elements in the list.
-   * @returns deleted values
+   * Replace all items in the list.
+   *
+   * @returns deleted items
    */
-  public replace(arrayLike: ArrayLike<TValue>): TValue[] {
+  public replace(items: Iterable<TValue>): Iterable<TValue> {
     const cached = new Set(this);
     this.#data.length = 0;
     let isDirty = false;
-    for (const value of Array.from(arrayLike)) {
-      isDirty = isDirty || cached.delete(value);
-      this.#data.push(value);
+    for (const item of items) {
+      isDirty = isDirty || cached.delete(item);
+      this.#data.push(item);
     }
     if (isDirty || cached.size > 0) {
       this.#set$(this);
     }
-    return [...cached];
+    return cached.values();
   }
 
   /**

@@ -61,22 +61,22 @@ export class ReactiveSet<TValue> extends Set<TValue> {
   }
 
   /**
-   * Replace all entries in the Set.
+   * Replace all items in the Set.
    *
-   * @returns Deleted entries.
+   * @returns Deleted items.
    */
-  public replace(entries: Iterable<TValue>): Set<TValue> {
+  public replace(items: Iterable<TValue>): Iterable<TValue> {
     const cached = new Set(this);
     super.clear();
     let isDirty = false;
-    for (const value of entries) {
-      isDirty = isDirty || cached.delete(value);
-      super.add(value);
+    for (const item of items) {
+      isDirty = isDirty || cached.delete(item);
+      super.add(item);
     }
     if (isDirty || cached.size > 0) {
       this[SET$]?.(this);
     }
-    return cached;
+    return cached.values();
   }
 }
 
