@@ -3,7 +3,7 @@ import type { ReadonlyVal, ValSetValue } from "../typings";
 
 /**
  * A reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get/set elements.
- * Changes to the map will be notified to subscribers of `$`.
+ * Changes to the list will be notified to subscribers of `list.$`.
  *
  * @example
  * ```ts
@@ -285,3 +285,22 @@ export class ReactiveList<TValue> {
     this.$.dispose();
   }
 }
+
+/**
+ * A readonly reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get elements.
+ * Changes to the list will be notified to subscribers of `list.$`.
+ */
+export type ReadonlyReactiveList<TValue> = Omit<
+  ReactiveList<TValue>,
+  | "push"
+  | "pop"
+  | "pushHead"
+  | "popHead"
+  | "set"
+  | "insert"
+  | "delete"
+  | "clear"
+  | "replace"
+  | "reverse"
+  | "sort"
+>;

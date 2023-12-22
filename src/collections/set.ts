@@ -4,7 +4,7 @@ import { SET$ } from "./utils";
 
 /**
  * A reactive set inherited from `Set`.
- * Changes to the set will be notified to subscribers of `$`.
+ * Changes to the set will be notified to subscribers of `set.$`.
  *
  * @example
  * ```ts
@@ -79,3 +79,12 @@ export class ReactiveSet<TValue> extends Set<TValue> {
     return cached;
   }
 }
+
+/**
+ * A readonly reactive set inherited from `Set`.
+ * Changes to the set will be notified to subscribers of `set.$`.
+ */
+export type ReadonlyReactiveSet<TValue> = Omit<
+  ReactiveSet<TValue>,
+  "delete" | "clear" | "add" | "replace"
+>;

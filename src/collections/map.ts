@@ -4,7 +4,7 @@ import { SET$ } from "./utils";
 
 /**
  * A reactive map inherited from `Map`.
- * Changes to the map will be notified to subscribers of `$`.
+ * Changes to the map will be notified to subscribers of `map.$`.
  *
  * @example
  * ```ts
@@ -84,3 +84,12 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     this.$.dispose();
   }
 }
+
+/**
+ * A readonly reactive map inherited from `Map`.
+ * Changes to the map will be notified to subscribers of `map.$`.
+ */
+export type ReadonlyReactiveMap<TKey, TValue> = Omit<
+  ReactiveMap<TKey, TValue>,
+  "delete" | "clear" | "set" | "replace"
+>;

@@ -1,3 +1,3 @@
-export { ReactiveList } from "./list";
-export { ReactiveMap } from "./map";
-export { ReactiveSet } from "./set";
+export { ReactiveList, type ReadonlyReactiveList } from "./list";
+export { ReactiveMap, type ReadonlyReactiveMap } from "./map";
+export { ReactiveSet, type ReadonlyReactiveSet } from "./set";
