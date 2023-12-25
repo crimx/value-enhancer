@@ -1,3 +1,4 @@
+import type { ReadonlyValImpl } from "./readonly-val";
 import type { FlattenVal, ReadonlyVal, ValConfig } from "./typings";
 
 import { flattenFrom } from "./flatten-from";
@@ -46,8 +47,12 @@ export function flatten<TSrcValue = any, TValOrValue = any>(
   get: (value: TSrcValue) => TValOrValue,
   config?: ValConfig<FlattenVal<TValOrValue>>
 ): ReadonlyVal<FlattenVal<TValOrValue>>;
-export function flatten<TSrcValue = any, TValOrValue = any>(
-  val: ReadonlyVal<TSrcValue>,
+export function flatten<
+  TSrcValue = any,
+  TValOrValue = any,
+  TSrcVal extends ReadonlyValImpl = ReadonlyValImpl<TSrcValue>
+>(
+  val: TSrcVal,
   get: (value: TSrcValue) => TValOrValue = identity as any,
   config?: ValConfig<FlattenVal<TValOrValue>>
 ): ReadonlyVal<FlattenVal<TValOrValue>> {

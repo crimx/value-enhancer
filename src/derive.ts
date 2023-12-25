@@ -1,3 +1,4 @@
+import type { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig } from "./typings";
 
 import { from } from "./from";
@@ -27,8 +28,12 @@ export function derive<TSrcValue = any, TValue = any>(
   transform: DerivedValTransform<TSrcValue, TValue>,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue>;
-export function derive<TSrcValue = any, TValue = any>(
-  val: ReadonlyVal<TSrcValue>,
+export function derive<
+  TSrcValue = any,
+  TValue = any,
+  TSrcVal extends ReadonlyValImpl<TSrcValue> = ReadonlyValImpl
+>(
+  val: TSrcVal,
   transform: DerivedValTransform<
     TSrcValue,
     TValue

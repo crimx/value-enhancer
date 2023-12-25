@@ -1,3 +1,4 @@
+import type { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig, ValInputsValueTuple } from "./typings";
 
 import { from } from "./from";
@@ -40,7 +41,7 @@ export function combine<
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue>;
 export function combine<
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
+  TValInputs extends readonly ReadonlyValImpl[] = ReadonlyValImpl[],
   TValue = any
 >(
   valInputs: readonly [...TValInputs],

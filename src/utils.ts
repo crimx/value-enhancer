@@ -1,3 +1,4 @@
+import type { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValInputsValueTuple } from "./typings";
 
 /** Returns the value passed in. */
@@ -6,7 +7,7 @@ export const identity = <TValue>(value: TValue): TValue => value;
 export const defaultEqual = Object.is;
 
 export const valInputsEqual = <
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
+  TValInputs extends readonly ReadonlyValImpl[] = ReadonlyValImpl[]
 >(
   valInputs: readonly [...TValInputs],
   cachedSrcValues: [...ValInputsValueTuple<TValInputs>]
@@ -48,5 +49,7 @@ export const INIT_VALUE: any = {};
  *
  * @returns `true` if `val` is `ReadonlyVal` or `Val`.
  */
-export const isVal = <T>(val: T): val is T extends ReadonlyVal ? T : never =>
-  !!(val as ReadonlyVal | undefined)?.$valCompute;
+export const isVal = <T>(
+  val: T
+): val is T extends ReadonlyValImpl ? T : never =>
+  !!(val as ReadonlyValImpl | undefined)?.$valCompute;

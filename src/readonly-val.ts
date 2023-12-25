@@ -12,6 +12,7 @@ import { defaultEqual, invoke } from "./utils";
 
 /**
  * Bare minimum implementation of a readonly val.
+ * Generally, you should use `readonlyVal` and `ReadonlyVal` instead of this class.
  */
 export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   /**

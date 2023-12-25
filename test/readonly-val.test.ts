@@ -1,3 +1,5 @@
+import type { ReadonlyVal } from "../src";
+
 import { describe, expect, it, jest } from "@jest/globals";
 import { readonlyVal } from "../src";
 import { ReadonlyValImpl, groupVals } from "../src/readonly-val";
@@ -16,19 +18,33 @@ describe("ReadonlyVal", () => {
       setValue(undefined);
       expect(val.value).toBeUndefined();
     });
+
+    it("should accept a `ReadonlyVal<string>` as a valid argument for param `ReadonlyVal<string | undefined>`.", () => {
+      const fn = (v: ReadonlyVal<string | undefined>) => v.value;
+      const [val] = readonlyVal<string>("hello");
+      expect(fn(val)).toBe("hello");
+    });
   });
 
   describe("value", () => {
     it("should expose equal method", () => {
       const [val] = readonlyVal(1);
-      expect(val.$equal?.(val.value, 1)).toBe(true);
-      expect(val.$equal?.(val.value, 2)).toBe(false);
+      expect((val as ReadonlyValImpl<number>).$equal?.(val.value, 1)).toBe(
+        true
+      );
+      expect((val as ReadonlyValImpl<number>).$equal?.(val.value, 2)).toBe(
+        false
+      );
     });
 
     it("should expose custom equal method", () => {
       const [val] = readonlyVal({ a: 2 }, { equal: (a, b) => a.a === b.a });
-      expect(val.$equal?.(val.value, { a: 2 })).toBe(true);
-      expect(val.$equal?.(val.value, { a: 1 })).toBe(false);
+      expect(
+        (val as ReadonlyValImpl<{ a: number }>).$equal?.(val.value, { a: 2 })
+      ).toBe(true);
+      expect(
+        (val as ReadonlyValImpl<{ a: number }>).$equal?.(val.value, { a: 1 })
+      ).toBe(false);
     });
   });
 

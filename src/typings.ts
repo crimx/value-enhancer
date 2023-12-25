@@ -1,10 +1,11 @@
+/**
+ * A ReadonlyVal contains a readonly `value` and does not have a `set` method.
+ */
 export interface ReadonlyVal<TValue = any> {
   /** Current value of the val */
   readonly value: TValue;
   /** Get current value of the val */
   get(this: void): TValue;
-  /** Compare two values. Default `Object.is`. */
-  $equal?: (this: void, newValue: TValue, oldValue: TValue) => boolean;
   /**
    * Subscribe to value changes without immediate emission.
    * @param subscriber
@@ -20,12 +21,6 @@ export interface ReadonlyVal<TValue = any> {
    */
   subscribe(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
   /**
-   * Subscribe to value changes and get invoked before {@link ReadonlyVal#subscribe} and {@link ReadonlyVal#reaction}.
-   * @param subscriber
-   * @returns a disposer function that cancels the subscription
-   */
-  $valCompute(subscriber: ValSubscriber<void>): ValDisposer;
-  /**
    * Remove the given subscriber.
    * Remove all if no subscriber provided.
    * @param subscriber
@@ -37,6 +32,9 @@ export interface ReadonlyVal<TValue = any> {
   dispose(): void;
 }
 
+/**
+ * A Val contains a writable `value` property and a `set` method.
+ */
 export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   /** Current value of the val */
   value: TValue;

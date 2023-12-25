@@ -24,7 +24,7 @@ class FlattenFromImpl<
     let notified = false;
 
     let innerMaybeVal: TValOrValue | undefined;
-    let innerVal: ReadonlyVal<TValue> | undefined | null;
+    let innerVal: ReadonlyValImpl<TValue> | undefined | null;
     let innerDisposer: ValDisposer | undefined | null;
 
     const computeValue = (): TValue => {
