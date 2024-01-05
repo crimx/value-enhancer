@@ -137,15 +137,15 @@ describe("ReactiveList", () => {
 
       list.push("d");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.push("e");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.push("f", "g");
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -181,15 +181,15 @@ describe("ReactiveList", () => {
 
       list.pop();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.pop();
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.pop();
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -226,15 +226,15 @@ describe("ReactiveList", () => {
 
       list.pushHead("z");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.pushHead("y");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.pushHead("x", "w");
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -270,15 +270,15 @@ describe("ReactiveList", () => {
 
       list.popHead();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.popHead();
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.popHead();
       expect(mockNotify).toHaveBeenCalledTimes(3);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -315,11 +315,11 @@ describe("ReactiveList", () => {
 
       list.set(1, "x");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.set(0, "y");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -362,11 +362,11 @@ describe("ReactiveList", () => {
 
       list.insert(1, "x");
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.insert(0, "y");
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -409,11 +409,11 @@ describe("ReactiveList", () => {
 
       list.delete(1);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       list.delete(0);
       expect(mockNotify).toHaveBeenCalledTimes(2);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -478,7 +478,7 @@ describe("ReactiveList", () => {
 
       list.clear();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -509,7 +509,7 @@ describe("ReactiveList", () => {
 
       list.replace(["x", "y", "z"]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -521,7 +521,7 @@ describe("ReactiveList", () => {
 
       list.replace([2, 3]);
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -566,7 +566,7 @@ describe("ReactiveList", () => {
 
       list.reverse();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });
@@ -614,7 +614,7 @@ describe("ReactiveList", () => {
 
       list.sort();
       expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).lastCalledWith(list);
+      expect(mockNotify).lastCalledWith(list.array);
 
       dispose();
     });

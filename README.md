@@ -430,7 +430,7 @@ import { ReactiveList } from "value-enhancer/collections";
 
 const list = new ReactiveList(["a", "b", "c"]);
 
-const item$ = derive(list.$, list => list.get(2)); // watch the item at index 2
+const item$ = derive(list.$, list => list[2]); // watch the item at index 2
 
 console.log(item$.value); // "c"
 

@@ -1,5 +1,5 @@
 import { readonlyVal } from "../readonly-val";
-import type { ReadonlyVal, ValSetValue } from "../typings";
+import type { ReadonlyVal } from "../typings";
 
 /**
  * A reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get/set elements.
@@ -19,40 +19,48 @@ import type { ReadonlyVal, ValSetValue } from "../typings";
  * ```
  */
 export class ReactiveList<TValue> {
-  #data: TValue[];
-
   public constructor(arrayLike?: ArrayLike<TValue>) {
-    this.#data = arrayLike ? Array.from(arrayLike) : [];
-    const [val, setVal] = readonlyVal(this, { equal: false });
-    this.$ = val;
-    this.#set$ = setVal;
+    const [$, set$] = readonlyVal<ReadonlyArray<TValue>>(
+      arrayLike ? Array.from(arrayLike) : [],
+      { equal: false }
+    );
+    this.$ = $;
+    this.#notify = () => set$(this.$.value);
   }
 
-  public $: ReadonlyVal<this>;
+  /**
+   * A readonly val with value of the internal readonly array.
+   *
+   * To update the entire array in place, use `list.replace()`.
+   */
+  public readonly $: ReadonlyVal<ReadonlyArray<TValue>>;
 
-  #set$: ValSetValue<this>;
+  #notify: () => void;
 
   /**
    * Get the internal array. Use it as a read-only array.
    * Should not modify the array in place directly. Use methods on the list instead.
    */
   public get array(): ReadonlyArray<TValue> {
-    return this.#data;
+    return this.$.value;
   }
 
   /**
    * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
    */
   public get length(): number {
-    return this.#data.length;
+    return this.array.length;
   }
 
+  /**
+   * Gets or sets the length of the array. This is a number one higher than the highest index in the array.
+   */
   public set length(len: number) {
-    this.#data.length = len;
+    (this.array as TValue[]).length = len;
   }
 
   public [Symbol.iterator](): IterableIterator<TValue> {
-    return this.#data[Symbol.iterator]();
+    return this.array[Symbol.iterator]();
   }
 
   /**
@@ -60,7 +68,7 @@ export class ReactiveList<TValue> {
    * Returns an iterable of key, value pairs for every entry in the list.
    */
   public entries(): IterableIterator<[number, TValue]> {
-    return this.#data.entries();
+    return this.array.entries();
   }
 
   /**
@@ -68,7 +76,7 @@ export class ReactiveList<TValue> {
    * Returns an iterable of values in the list.
    */
   public values(): IterableIterator<TValue> {
-    return this.#data.values();
+    return this.array.values();
   }
 
   /**
@@ -76,7 +84,7 @@ export class ReactiveList<TValue> {
    * Returns an iterable of keys in the list.
    */
   public keys(): IterableIterator<number> {
-    return this.#data.keys();
+    return this.array.keys();
   }
 
   /**
@@ -87,7 +95,7 @@ export class ReactiveList<TValue> {
    */
   public get(index: number): TValue | undefined {
     if (index >= 0) {
-      return this.#data[index];
+      return this.array[index];
     }
   }
 
@@ -95,8 +103,8 @@ export class ReactiveList<TValue> {
    * @returns The first element of the list.
    */
   public first(): TValue | undefined {
-    if (this.#data.length > 0) {
-      return this.#data[0];
+    if (this.array.length > 0) {
+      return this.array[0];
     }
   }
 
@@ -104,8 +112,8 @@ export class ReactiveList<TValue> {
    * @returns The last element of the list.
    */
   public last(): TValue | undefined {
-    if (this.#data.length > 0) {
-      return this.#data[this.length - 1];
+    if (this.array.length > 0) {
+      return this.array[this.length - 1];
     }
   }
 
@@ -116,8 +124,8 @@ export class ReactiveList<TValue> {
    */
   public push(...items: TValue[]): void {
     if (items.length > 0) {
-      this.#data.push(...items);
-      this.#set$(this);
+      (this.array as TValue[]).push(...items);
+      this.#notify();
     }
   }
 
@@ -127,9 +135,9 @@ export class ReactiveList<TValue> {
    * If the list is empty, undefined is returned and the list is not modified.
    */
   public pop(): TValue | undefined {
-    if (this.#data.length > 0) {
-      const result = this.#data.pop();
-      this.#set$(this);
+    if (this.array.length > 0) {
+      const result = (this.array as TValue[]).pop();
+      this.#notify();
       return result;
     }
   }
@@ -141,8 +149,8 @@ export class ReactiveList<TValue> {
    */
   public pushHead(...items: TValue[]): void {
     if (items.length > 0) {
-      this.#data.unshift(...items);
-      this.#set$(this);
+      (this.array as TValue[]).unshift(...items);
+      this.#notify();
     }
   }
 
@@ -152,9 +160,9 @@ export class ReactiveList<TValue> {
    * @see Array#shift
    */
   public popHead(): TValue | undefined {
-    if (this.#data.length > 0) {
-      const result = this.#data.shift();
-      this.#set$(this);
+    if (this.array.length > 0) {
+      const result = (this.array as TValue[]).shift();
+      this.#notify();
       return result;
     }
   }
@@ -167,8 +175,8 @@ export class ReactiveList<TValue> {
    */
   public set(index: number, item: TValue): void {
     if (index >= 0) {
-      this.#data[index] = item;
-      this.#set$(this);
+      (this.array as TValue[])[index] = item;
+      this.#notify();
     }
   }
 
@@ -180,8 +188,8 @@ export class ReactiveList<TValue> {
    */
   public insert(index: number, ...items: TValue[]): void {
     if (index >= 0 && items.length > 0) {
-      this.#data.splice(index, 0, ...items);
-      this.#set$(this);
+      (this.array as TValue[]).splice(index, 0, ...items);
+      this.#notify();
     }
   }
 
@@ -194,9 +202,9 @@ export class ReactiveList<TValue> {
    */
   public delete(index: number, count = 1): void {
     if (index >= 0 && count >= 1) {
-      const result = this.#data.splice(index, count);
+      const result = (this.array as TValue[]).splice(index, count);
       if (result.length > 0) {
-        this.#set$(this);
+        this.#notify();
       }
     }
   }
@@ -206,8 +214,8 @@ export class ReactiveList<TValue> {
    */
   public clear(): this {
     if (this.length > 0) {
-      this.#data.length = 0;
-      this.#set$(this);
+      (this.array as TValue[]).length = 0;
+      this.#notify();
     }
     return this;
   }
@@ -219,14 +227,14 @@ export class ReactiveList<TValue> {
    */
   public replace(items: Iterable<TValue>): Iterable<TValue> {
     const cached = new Set(this);
-    this.#data.length = 0;
+    (this.array as TValue[]).length = 0;
     let isDirty = false;
     for (const item of items) {
       isDirty = isDirty || cached.delete(item);
-      this.#data.push(item);
+      (this.array as TValue[]).push(item);
     }
     if (isDirty || cached.size > 0) {
-      this.#set$(this);
+      this.#notify();
     }
     return cached.values();
   }
@@ -236,9 +244,9 @@ export class ReactiveList<TValue> {
    * Reverses the elements in the list in place.
    */
   public reverse(): this {
-    if (this.#data.length > 1) {
-      this.#data.reverse();
-      this.#set$(this);
+    if (this.array.length > 1) {
+      (this.array as TValue[]).reverse();
+      this.#notify();
     }
     return this;
   }
@@ -254,9 +262,9 @@ export class ReactiveList<TValue> {
    * ```
    */
   public sort(compareFn?: (a: TValue, b: TValue) => number): this {
-    if (this.#data.length > 1) {
-      this.#data.sort(compareFn);
-      this.#set$(this);
+    if (this.array.length > 1) {
+      (this.array as TValue[]).sort(compareFn);
+      this.#notify();
     }
     return this;
   }
@@ -266,7 +274,7 @@ export class ReactiveList<TValue> {
    * Returns a string representation of the list.
    */
   public toString(): string {
-    return this.#data.toString();
+    return this.array.toString();
   }
 
   /**
@@ -274,11 +282,11 @@ export class ReactiveList<TValue> {
    * Returns a string representation of the list. The elements are converted to string using their toLocaleString methods.
    */
   public toLocaleString(): string {
-    return this.#data.toLocaleString();
+    return this.array.toLocaleString();
   }
 
   public toJSON(): unknown {
-    return this.#data;
+    return this.array;
   }
 
   public dispose(): void {
@@ -292,6 +300,8 @@ export class ReactiveList<TValue> {
  */
 export type ReadonlyReactiveList<TValue> = Omit<
   ReactiveList<TValue>,
+  | "$"
+  | "length"
   | "push"
   | "pop"
   | "pushHead"
@@ -303,4 +313,9 @@ export type ReadonlyReactiveList<TValue> = Omit<
   | "replace"
   | "reverse"
   | "sort"
->;
+> & {
+  /**
+   * Gets the length of the array. This is a number one higher than the highest index in the array.
+   */
+  readonly length: number;
+};

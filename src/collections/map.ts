@@ -1,6 +1,5 @@
 import { readonlyVal } from "../readonly-val";
-import type { ReadonlyVal, ValSetValue } from "../typings";
-import { SET$ } from "./utils";
+import type { ReadonlyVal } from "../typings";
 
 /**
  * A reactive map inherited from `Map`.
@@ -24,20 +23,32 @@ import { SET$ } from "./utils";
  */
 export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   public constructor(entries?: readonly (readonly [TKey, TValue])[] | null) {
-    super(entries);
-    const [val, setVal] = readonlyVal(this, { equal: false });
-    this.$ = val;
-    this[SET$] = setVal;
+    super();
+
+    const [$, set$] = readonlyVal(this, { equal: false });
+    this.$ = $;
+    this.#notify = () => set$(this);
+
+    if (entries) {
+      for (const [key, value] of entries) {
+        this.set(key, value);
+      }
+    }
   }
 
+  /**
+   * A readonly val with value of `this`.
+   *
+   * To update the entire reactive map in place, use `map.replace()`.
+   */
   public readonly $: ReadonlyVal<this>;
 
-  private [SET$]?: ValSetValue<this>;
+  #notify: () => void;
 
   public override delete(key: TKey): boolean {
     const deleted = super.delete(key);
     if (deleted) {
-      this[SET$]?.(this);
+      this.#notify();
     }
     return deleted;
   }
@@ -45,7 +56,7 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   public override clear(): void {
     if (this.size > 0) {
       super.clear();
-      this[SET$]?.(this);
+      this.#notify();
     }
   }
 
@@ -53,7 +64,7 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     const isDirty = !this.has(key) || this.get(key) !== value;
     super.set(key, value);
     if (isDirty) {
-      this[SET$]?.(this);
+      this.#notify();
     }
     return this;
   }
@@ -75,7 +86,7 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
       cached.delete(key);
     }
     if (isDirty || cached.size > 0) {
-      this[SET$]?.(this);
+      this.#notify();
     }
     return cached.entries();
   }
@@ -91,5 +102,7 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
  */
 export type ReadonlyReactiveMap<TKey, TValue> = Omit<
   ReactiveMap<TKey, TValue>,
-  "delete" | "clear" | "set" | "replace"
->;
+  "$" | "delete" | "clear" | "set" | "replace"
+> & {
+  readonly: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
+};

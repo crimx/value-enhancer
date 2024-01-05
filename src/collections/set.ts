@@ -1,6 +1,5 @@
 import { readonlyVal } from "../readonly-val";
-import type { ReadonlyVal, ValSetValue } from "../typings";
-import { SET$ } from "./utils";
+import type { ReadonlyVal } from "../typings";
 
 /**
  * A reactive set inherited from `Set`.
@@ -21,21 +20,32 @@ import { SET$ } from "./utils";
  */
 export class ReactiveSet<TValue> extends Set<TValue> {
   public constructor(entries?: readonly TValue[] | null) {
-    super(entries);
+    super();
 
-    const [val, setVal] = readonlyVal(this, { equal: false });
-    this.$ = val;
-    this[SET$] = setVal;
+    const [$, set$] = readonlyVal(this, { equal: false });
+    this.$ = $;
+    this.#notify = () => set$(this);
+
+    if (entries) {
+      for (const value of entries) {
+        this.add(value);
+      }
+    }
   }
 
+  /**
+   * A readonly val with value of `this`.
+   *
+   * To update the entire reactive set in place, use `set.replace()`.
+   */
   public readonly $: ReadonlyVal<this>;
 
-  private [SET$]?: ValSetValue<this>;
+  #notify: () => void;
 
   public override delete(key: TValue): boolean {
     const deleted = super.delete(key);
     if (deleted) {
-      this[SET$]?.(this);
+      this.#notify();
     }
     return deleted;
   }
@@ -43,7 +53,7 @@ export class ReactiveSet<TValue> extends Set<TValue> {
   public override clear(): void {
     if (this.size > 0) {
       super.clear();
-      this[SET$]?.(this);
+      this.#notify();
     }
   }
 
@@ -51,7 +61,7 @@ export class ReactiveSet<TValue> extends Set<TValue> {
     const isDirty = !this.has(value);
     super.add(value);
     if (isDirty) {
-      this[SET$]?.(this);
+      this.#notify();
     }
     return this;
   }
@@ -74,7 +84,7 @@ export class ReactiveSet<TValue> extends Set<TValue> {
       super.add(item);
     }
     if (isDirty || cached.size > 0) {
-      this[SET$]?.(this);
+      this.#notify();
     }
     return cached.values();
   }
@@ -86,5 +96,7 @@ export class ReactiveSet<TValue> extends Set<TValue> {
  */
 export type ReadonlyReactiveSet<TValue> = Omit<
   ReactiveSet<TValue>,
-  "delete" | "clear" | "add" | "replace"
->;
+  "$" | "delete" | "clear" | "add" | "replace"
+> & {
+  readonly $: ReadonlyVal<ReadonlyReactiveSet<TValue>>;
+};
