@@ -18,7 +18,7 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg?maxAge=2592000)](https://conventionalcommits.org)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-A tiny library to enhance value with reactive wrapper.
+A small library to enhance value with plain and explicit reactive wrapper.
 
 Docs: <https://value-enhancer.js.org>
 
@@ -319,7 +319,7 @@ console.log(firstItem$.value); // 4
 
 ## From
 
-`from` creates a Val from any value source. Both `derive` and `combine` are implemented using `from`.
+`from` creates a Val from any value source. Both `derive` and `combine` are implemented using `from` under the hood.
 
 ```ts
 import { from } from "value-enhancer";

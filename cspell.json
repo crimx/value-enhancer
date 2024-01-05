@@ -4,6 +4,7 @@
     "coverallsapp",
     "CRIMX",
     "esbuild",
+    "keyof",
     "lcov",
     "pnpm",
     "Preact",
