@@ -49,7 +49,15 @@ export const INIT_VALUE: any = {};
  *
  * @returns `true` if `val` is `ReadonlyVal` or `Val`.
  */
-export const isVal = <T>(
+export function isVal<T extends ReadonlyVal>(
   val: T
-): val is T extends ReadonlyValImpl ? T : never =>
-  !!(val as ReadonlyValImpl | undefined)?.$valCompute;
+): val is T extends ReadonlyVal ? T : never;
+/**
+ * Checks if `val` is `ReadonlyVal` or `Val`.
+ *
+ * @returns `true` if `val` is `ReadonlyVal` or `Val`.
+ */
+export function isVal(val: unknown): val is ReadonlyVal;
+export function isVal(val: unknown): val is ReadonlyVal {
+  return !!(val && (val as any).$valCompute);
+}

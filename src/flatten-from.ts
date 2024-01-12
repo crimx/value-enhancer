@@ -52,7 +52,9 @@ class FlattenFromImpl<
       const maybeVal = getValue();
       if (maybeVal !== innerMaybeVal) {
         innerMaybeVal = maybeVal;
-        innerVal = isVal(maybeVal) ? maybeVal : null;
+        innerVal = isVal(maybeVal)
+          ? (maybeVal as unknown as ReadonlyValImpl<TValue>)
+          : null;
         innerDisposer?.();
         innerDisposer = innerVal && innerVal.$valCompute(notify);
         this.$equal =
