@@ -450,11 +450,11 @@ const item$ = flatten(map.$, map => map.get("someKey")); // watch the item at "s
 
 console.log(item$.value); // undefined
 
-map.set("someKey", v);
+map.set("someKey", v); // set a val, the value inside the val is subscribed and flatten to `item$`
 
 console.log(item$.value); // "someValue"
 
-v.set("someValue2");
+v.set("someValue2"); // you can also set a non-val value, which is passed to `item$`` directly
 
 console.log(item$.value); // "someValue2"
 ```
