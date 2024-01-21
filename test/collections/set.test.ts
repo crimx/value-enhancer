@@ -44,6 +44,31 @@ describe("ReactiveSet", () => {
     });
   });
 
+  describe("batchDelete", () => {
+    it("should delete multiple values", () => {
+      const reactiveSet = new ReactiveSet<number>();
+      reactiveSet.add(1);
+      reactiveSet.add(2);
+      reactiveSet.batchDelete([1, 2, 3]);
+      expect(reactiveSet.has(1)).toBe(false);
+      expect(reactiveSet.has(2)).toBe(false);
+      expect(reactiveSet.has(3)).toBe(false);
+    });
+
+    it("should notify on batchDelete", () => {
+      const reactiveSet = new ReactiveSet<number>();
+      reactiveSet.add(1);
+      const mockNotify = jest.fn();
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
+
+      reactiveSet.batchDelete([1]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
+
+      dispose();
+    });
+  });
+
   describe("clear", () => {
     it("should clear all values", () => {
       const reactiveSet = new ReactiveSet<number>();
@@ -111,6 +136,28 @@ describe("ReactiveSet", () => {
 
       reactiveSet.add(1);
       expect(mockNotify).toHaveBeenCalledTimes(0);
+
+      dispose();
+    });
+  });
+
+  describe("batchAdd", () => {
+    it("should add values", () => {
+      const reactiveSet = new ReactiveSet<number>();
+      reactiveSet.batchAdd([1, 2, 3]);
+      expect(reactiveSet.has(1)).toBe(true);
+      expect(reactiveSet.has(2)).toBe(true);
+      expect(reactiveSet.has(3)).toBe(true);
+    });
+
+    it("should notify once on add", () => {
+      const reactiveSet = new ReactiveSet<number>();
+      const mockNotify = jest.fn();
+      const dispose = reactiveSet.$.reaction(mockNotify, true);
+
+      reactiveSet.batchAdd([1, 2, 3, 4]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveSet);
 
       dispose();
     });

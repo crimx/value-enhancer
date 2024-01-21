@@ -336,6 +336,116 @@ describe("ReactiveList", () => {
     });
   });
 
+  describe("splice", () => {
+    it("should remove the specified elements from the list", () => {
+      const list = new ReactiveList([1, 2, 3]);
+      list.splice(1, 2);
+      expect(list.array).toEqual([1]);
+    });
+
+    it("should remove the specified elements from the list and insert new elements", () => {
+      const list = new ReactiveList([1, 2, 3]);
+      list.splice(1, 2, 4, 5);
+      expect(list.array).toEqual([1, 4, 5]);
+    });
+
+    it("should count backward on negative index", () => {
+      const list = new ReactiveList([1, 2, 3]);
+      list.splice(-1, 2);
+      expect(list.array).toEqual([1, 2]);
+    });
+
+    it("should notify on splice", () => {
+      const list = new ReactiveList(["a", "b", "c", "d", "e"]);
+      const mockNotify = jest.fn();
+      const dispose = list.$.reaction(mockNotify, true);
+
+      list.splice(1, 2);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).lastCalledWith(list.array);
+
+      list.splice(0, 0, "x", "y");
+      expect(mockNotify).toHaveBeenCalledTimes(2);
+      expect(mockNotify).lastCalledWith(list.array);
+
+      list.splice(2, 1, "z");
+      expect(mockNotify).toHaveBeenCalledTimes(3);
+      expect(mockNotify).lastCalledWith(list.array);
+
+      dispose();
+    });
+
+    it("should not notify on splice if the list is empty.", () => {
+      const list = new ReactiveList();
+      const mockNotify = jest.fn();
+      const dispose = list.$.reaction(mockNotify, true);
+
+      list.splice(0, 0);
+      expect(mockNotify).not.toHaveBeenCalled();
+
+      list.splice(0, 0, "x", "y");
+      expect(mockNotify).lastCalledWith(["x", "y"]);
+
+      dispose();
+    });
+  });
+
+  describe("batchSet", () => {
+    it("should set the elements at the specified indices", () => {
+      const list = new ReactiveList([1, 2, 3]);
+      list.batchSet([
+        [0, 4],
+        [2, 5],
+      ]);
+      expect(list.array).toEqual([4, 2, 5]);
+    });
+
+    it("should ignore negative index", () => {
+      const list = new ReactiveList([1, 2, 3]);
+      list.batchSet([
+        [-1, 4],
+        [-2, 5],
+      ]);
+      expect(list.array).toEqual([1, 2, 3]);
+    });
+
+    it("should notify on batchSet", () => {
+      const list = new ReactiveList(["a", "b", "c"]);
+      const mockNotify = jest.fn();
+      const dispose = list.$.reaction(mockNotify, true);
+
+      list.batchSet([
+        [1, "x"],
+        [2, "y"],
+      ]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).lastCalledWith(list.array);
+
+      list.batchSet([
+        [0, "z"],
+        [1, "w"],
+      ]);
+      expect(mockNotify).toHaveBeenCalledTimes(2);
+      expect(mockNotify).lastCalledWith(list.array);
+
+      dispose();
+    });
+
+    it("should not notify on batchSet for negative index", () => {
+      const list = new ReactiveList(["a", "b", "c"]);
+      const mockNotify = jest.fn();
+      const dispose = list.$.reaction(mockNotify, true);
+
+      list.batchSet([
+        [-2, "x"],
+        [-1, "y"],
+      ]);
+      expect(mockNotify).not.toHaveBeenCalled();
+
+      dispose();
+    });
+  });
+
   describe("insert", () => {
     it("should insert an element at the specified index", () => {
       const list = new ReactiveList([1, 2, 3]);

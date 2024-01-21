@@ -19,17 +19,15 @@ import type { ReadonlyVal } from "../typings";
  * ```
  */
 export class ReactiveSet<TValue> extends Set<TValue> {
-  public constructor(entries?: readonly TValue[] | null) {
+  public constructor(values?: Iterable<TValue> | null) {
     super();
 
     const [$, set$] = readonlyVal(this, { equal: false });
     this.$ = $;
     this.#notify = () => set$(this);
 
-    if (entries) {
-      for (const value of entries) {
-        this.add(value);
-      }
+    if (values) {
+      this.batchAdd(values);
     }
   }
 
@@ -42,8 +40,22 @@ export class ReactiveSet<TValue> extends Set<TValue> {
 
   #notify: () => void;
 
-  public override delete(key: TValue): boolean {
-    const deleted = super.delete(key);
+  public override delete(value: TValue): boolean {
+    const deleted = super.delete(value);
+    if (deleted) {
+      this.#notify();
+    }
+    return deleted;
+  }
+
+  /**
+   * Delete multiple values from the Set.
+   */
+  public batchDelete(values: Iterable<TValue>): boolean {
+    let deleted = false;
+    for (const value of values) {
+      deleted = super.delete(value) || deleted;
+    }
     if (deleted) {
       this.#notify();
     }
@@ -61,6 +73,20 @@ export class ReactiveSet<TValue> extends Set<TValue> {
     const isDirty = !this.has(value);
     super.add(value);
     if (isDirty) {
+      this.#notify();
+    }
+    return this;
+  }
+
+  /**
+   * Add multiple values to the Set.
+   */
+  public batchAdd(values: Iterable<TValue>): this {
+    const prevSize = this.size;
+    for (const value of values) {
+      super.add(value);
+    }
+    if (prevSize !== this.size) {
       this.#notify();
     }
     return this;

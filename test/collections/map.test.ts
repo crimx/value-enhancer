@@ -48,6 +48,56 @@ describe("ReactiveMap", () => {
     });
   });
 
+  describe("batchSet", () => {
+    it("should set multiple values", () => {
+      const reactiveMap = new ReactiveMap<string, number>();
+      reactiveMap.batchSet([
+        ["foo", 1],
+        ["bar", 2],
+      ]);
+      expect(reactiveMap.get("foo")).toEqual(1);
+      expect(reactiveMap.get("bar")).toEqual(2);
+    });
+
+    it("should notify on batchSet", () => {
+      const reactiveMap = new ReactiveMap<string, number>();
+      const mockNotify = jest.fn();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+
+      reactiveMap.batchSet([
+        ["foo", 1],
+        ["bar", 2],
+      ]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
+
+      dispose();
+    });
+
+    it("should not notify on batchSet if setting same values", () => {
+      const reactiveMap = new ReactiveMap<string, number>();
+      const mockNotify = jest.fn();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+
+      reactiveMap.batchSet([
+        ["foo", 1],
+        ["bar", 2],
+      ]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
+
+      mockNotify.mockClear();
+
+      reactiveMap.batchSet([
+        ["foo", 1],
+        ["bar", 2],
+      ]);
+      expect(mockNotify).toHaveBeenCalledTimes(0);
+
+      dispose();
+    });
+  });
+
   describe("delete", () => {
     it("should delete a value", () => {
       const reactiveMap = new ReactiveMap<string, number>();
@@ -75,6 +125,41 @@ describe("ReactiveMap", () => {
       const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       reactiveMap.delete("foo");
+      expect(mockNotify).not.toHaveBeenCalled();
+
+      dispose();
+    });
+  });
+
+  describe("batchDelete", () => {
+    it("should delete multiple values", () => {
+      const reactiveMap = new ReactiveMap<string, number>();
+      reactiveMap.set("foo", 1);
+      reactiveMap.set("bar", 2);
+      reactiveMap.batchDelete(["foo", "bar"]);
+      expect(reactiveMap.get("foo")).toBeUndefined();
+      expect(reactiveMap.get("bar")).toBeUndefined();
+    });
+
+    it("should notify on batchDelete", () => {
+      const reactiveMap = new ReactiveMap<string, number>();
+      reactiveMap.set("foo", 1);
+      const mockNotify = jest.fn();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+
+      reactiveMap.batchDelete(["foo"]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).toHaveBeenCalledWith(reactiveMap);
+
+      dispose();
+    });
+
+    it("should not notify on batchDelete if the element does not exist.", () => {
+      const reactiveMap = new ReactiveMap<string, number>();
+      const mockNotify = jest.fn();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+
+      reactiveMap.batchDelete(["foo"]);
       expect(mockNotify).not.toHaveBeenCalled();
 
       dispose();

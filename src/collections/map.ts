@@ -22,7 +22,7 @@ import type { ReadonlyVal } from "../typings";
  * ```
  */
 export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
-  public constructor(entries?: readonly (readonly [TKey, TValue])[] | null) {
+  public constructor(entries?: Iterable<readonly [TKey, TValue]> | null) {
     super();
 
     const [$, set$] = readonlyVal(this, { equal: false });
@@ -53,6 +53,20 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     return deleted;
   }
 
+  /**
+   * Delete multiple entries from the Map.
+   */
+  public batchDelete(keys: Iterable<TKey>): boolean {
+    let deleted = false;
+    for (const key of keys) {
+      deleted = super.delete(key) || deleted;
+    }
+    if (deleted) {
+      this.#notify();
+    }
+    return deleted;
+  }
+
   public override clear(): void {
     if (this.size > 0) {
       super.clear();
@@ -63,6 +77,21 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   public override set(key: TKey, value: TValue): this {
     const isDirty = !this.has(key) || this.get(key) !== value;
     super.set(key, value);
+    if (isDirty) {
+      this.#notify();
+    }
+    return this;
+  }
+
+  /**
+   * Set multiple entries in the Map.
+   */
+  public batchSet(entries: Iterable<readonly [TKey, TValue]>): this {
+    let isDirty = false;
+    for (const [key, value] of entries) {
+      isDirty = isDirty || !this.has(key) || this.get(key) !== value;
+      super.set(key, value);
+    }
     if (isDirty) {
       this.#notify();
     }
@@ -102,7 +131,7 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
  */
 export type ReadonlyReactiveMap<TKey, TValue> = Omit<
   ReactiveMap<TKey, TValue>,
-  "$" | "delete" | "clear" | "set" | "replace"
+  "$" | "delete" | "clear" | "set" | "batchSet" | "replace"
 > & {
   readonly $: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
 };

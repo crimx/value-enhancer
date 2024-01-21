@@ -19,9 +19,9 @@ import type { ReadonlyVal } from "../typings";
  * ```
  */
 export class ReactiveList<TValue> {
-  public constructor(arrayLike?: ArrayLike<TValue>) {
+  public constructor(items?: Iterable<TValue> | null) {
     const [$, set$] = readonlyVal<ReadonlyArray<TValue>>(
-      arrayLike ? Array.from(arrayLike) : [],
+      items ? [...items] : [],
       { equal: false }
     );
     this.$ = $;
@@ -168,16 +168,76 @@ export class ReactiveList<TValue> {
   }
 
   /**
-   * Sets new element to the list at specific index in place of the existing element.
-   * @param index The zero-based location in the list at which to insert element.
+   * Same as `Array.prototype.splice`.
+   * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+   * @param start The zero-based location in the array from which to start removing elements.
    *        A negative index will be ignored.
-   * @param item Element to insert into the list.
+   * @param deleteCount The number of elements to remove.
+   * @returns An array containing the elements that were deleted.
    */
-  public set(index: number, item: TValue): void {
-    if (index >= 0) {
+  public splice(start: number, deleteCount?: number): TValue[];
+  /**
+   * Same as `Array.prototype.splice`.
+   * Removes elements from an array and, if necessary, inserts new elements in their place, returning the deleted elements.
+   * @param start The zero-based location in the array from which to start removing elements.
+   *        A negative index will be ignored.
+   * @param deleteCount The number of elements to remove.
+   * @param items Elements to insert into the array in place of the deleted elements.
+   * @returns An array containing the elements that were deleted.
+   */
+  public splice(
+    start: number,
+    deleteCount: number,
+    ...items: TValue[]
+  ): TValue[];
+  public splice(
+    start: number,
+    deleteCount?: number,
+    ...rest: TValue[]
+  ): TValue[] {
+    const result = (this.array as TValue[]).splice(
+      start as number,
+      deleteCount as number,
+      ...(rest as TValue[])
+    );
+    if (result.length > 0 || rest.length > 0) {
+      this.#notify();
+    }
+    return result;
+  }
+
+  /**
+   * Sets new item to the list at specific index in place of the existing item.
+   * @param index The zero-based location in the list at which to insert item.
+   *        A negative index will be ignored.
+   * @param item Item to set to the list.
+   * @returns this
+   */
+  public set(index: number, item: TValue): this {
+    if (index >= 0 && this.array[index] !== item) {
       (this.array as TValue[])[index] = item;
       this.#notify();
     }
+    return this;
+  }
+
+  /**
+   * Sets new items to the list at specific index in place of the existing items.
+   * @param entries An iterable object that contains key-value pairs.
+   * @returns this
+   */
+  public batchSet(entries: Iterable<readonly [number, TValue]>): this {
+    let isDirty = false;
+    for (const [index, item] of entries) {
+      if (index >= 0 && this.array[index] !== item) {
+        isDirty = true;
+        (this.array as TValue[])[index] = item;
+      }
+    }
+    if (isDirty) {
+      this.#notify();
+    }
+    return this;
   }
 
   /**
@@ -188,8 +248,7 @@ export class ReactiveList<TValue> {
    */
   public insert(index: number, ...items: TValue[]): void {
     if (index >= 0 && items.length > 0) {
-      (this.array as TValue[]).splice(index, 0, ...items);
-      this.#notify();
+      this.splice(index, 0, ...items);
     }
   }
 
@@ -202,10 +261,7 @@ export class ReactiveList<TValue> {
    */
   public delete(index: number, count = 1): void {
     if (index >= 0 && count >= 1) {
-      const result = (this.array as TValue[]).splice(index, count);
-      if (result.length > 0) {
-        this.#notify();
-      }
+      this.splice(index, count);
     }
   }
 
@@ -300,7 +356,6 @@ export class ReactiveList<TValue> {
  */
 export type ReadonlyReactiveList<TValue> = Omit<
   ReactiveList<TValue>,
-  | "$"
   | "length"
   | "push"
   | "pop"
