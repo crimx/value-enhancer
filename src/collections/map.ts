@@ -104,5 +104,5 @@ export type ReadonlyReactiveMap<TKey, TValue> = Omit<
   ReactiveMap<TKey, TValue>,
   "$" | "delete" | "clear" | "set" | "replace"
 > & {
-  readonly: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
+  readonly $: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
 };
