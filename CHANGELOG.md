@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.1.2](https://github.com/crimx/value-enhancer/compare/v4.1.1...v4.1.2) (2024-01-21)
+
+
+### Bug Fixes
+
+* **collections:** correct ReadonlyReactiveMap typo ([dbeb461](https://github.com/crimx/value-enhancer/commit/dbeb4610fb2323d4023f1d29ad6c45498b4b0a6c))
+
 ### [4.1.1](https://github.com/crimx/value-enhancer/compare/v4.1.0...v4.1.1) (2024-01-12)
 
 ## [4.1.0](https://github.com/crimx/value-enhancer/compare/v4.0.3...v4.1.0) (2024-01-05)
