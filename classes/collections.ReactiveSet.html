@@ -36,7 +36,7 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <ul class="tsd-hierarchy">
 <li><span class="target">ReactiveSet</span></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L21">src/collections/set.ts:21</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L21">src/collections/set.ts:21</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-index-accordion" open><summary class="tsd-accordion-summary tsd-index-summary">
@@ -57,6 +57,8 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <h3 class="tsd-index-heading">Methods</h3>
 <div class="tsd-index-list"><a href="collections.ReactiveSet.html#_iterator_" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>[iterator]</span></a>
 <a href="collections.ReactiveSet.html#add" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add</span></a>
+<a href="collections.ReactiveSet.html#batchAdd" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>batch<wbr/>Add</span></a>
+<a href="collections.ReactiveSet.html#batchDelete" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>batch<wbr/>Delete</span></a>
 <a href="collections.ReactiveSet.html#clear" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear</span></a>
 <a href="collections.ReactiveSet.html#delete" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>delete</span></a>
 <a href="collections.ReactiveSet.html#dispose" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>dispose</span></a>
@@ -72,7 +74,7 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_ReactiveSet"><span class="tsd-kind-constructor-signature">new <wbr/>Reactive<wbr/>Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">entries</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="collections.ReactiveSet.html" class="tsd-signature-type tsd-kind-class">ReactiveSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span><a href="#constructor.new_ReactiveSet" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_ReactiveSet"><span class="tsd-kind-constructor-signature">new <wbr/>Reactive<wbr/>Set</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">values</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="collections.ReactiveSet.html" class="tsd-signature-type tsd-kind-class">ReactiveSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span><a href="#constructor.new_ReactiveSet" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <section class="tsd-panel">
 <h4>Type Parameters</h4>
@@ -83,11 +85,11 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">entries</span>: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">readonly </span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">[]</span></h5></li></ul></div>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">values</span>: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type ">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="collections.ReactiveSet.html" class="tsd-signature-type tsd-kind-class">ReactiveSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides Set&lt;TValue&gt;.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L22">src/collections/set.ts:22</a></li></ul></aside></li></ul></section></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L22">src/collections/set.ts:22</a></li></ul></aside></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
 <section class="tsd-panel tsd-member"><a id="_" class="tsd-anchor"></a>
@@ -98,7 +100,7 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L41">src/collections/set.ts:41</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L39">src/collections/set.ts:39</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member"><a id="_toStringTag_" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagReadonly">Readonly</code> <span>[to<wbr/>String<wbr/>Tag]</span><a href="#_toStringTag_" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">[to<wbr/>String<wbr/>Tag]</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
@@ -147,7 +149,39 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <h4 class="tsd-returns-title">Returns <a href="collections.ReactiveSet.html" class="tsd-signature-type tsd-kind-class">ReactiveSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides Set.add</p>
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L60">src/collections/set.ts:60</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L72">src/collections/set.ts:72</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="batchAdd" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>batch<wbr/>Add</span><a href="#batchAdd" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="batchAdd.batchAdd-1"><span class="tsd-kind-call-signature">batch<wbr/>Add</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">values</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="collections.ReactiveSet.html" class="tsd-signature-type tsd-kind-class">ReactiveSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span><a href="#batchAdd.batchAdd-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Add multiple values to the Set.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">values</span>: <span class="tsd-signature-type ">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="collections.ReactiveSet.html" class="tsd-signature-type tsd-kind-class">ReactiveSet</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L84">src/collections/set.ts:84</a></li></ul></aside></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="batchDelete" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>batch<wbr/>Delete</span><a href="#batchDelete" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="batchDelete.batchDelete-1"><span class="tsd-kind-call-signature">batch<wbr/>Delete</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">values</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#batchDelete.batchDelete-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Delete multiple values from the Set.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">values</span>: <span class="tsd-signature-type ">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type tsd-kind-type-parameter">TValue</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L54">src/collections/set.ts:54</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="clear" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>clear</span><a href="#clear" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -156,21 +190,21 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <p>Overrides Set.clear</p>
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L53">src/collections/set.ts:53</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L65">src/collections/set.ts:65</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="delete" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>delete</span><a href="#delete" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="delete.delete-1"><span class="tsd-kind-call-signature">delete</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">key</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#delete.delete-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="delete.delete-1"><span class="tsd-kind-call-signature">delete</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#delete.delete-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">key</span>: <span class="tsd-signature-type tsd-kind-type-parameter">TValue</span></h5></li></ul></div>
+<h5><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type tsd-kind-type-parameter">TValue</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <p>Overrides Set.delete</p>
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L45">src/collections/set.ts:45</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L43">src/collections/set.ts:43</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="dispose" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>dispose</span><a href="#dispose" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -178,7 +212,7 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L69">src/collections/set.ts:69</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L95">src/collections/set.ts:95</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="entries" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>entries</span><a href="#entries" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -269,7 +303,7 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/2089354/src/collections/set.ts#L78">src/collections/set.ts:78</a></li></ul></aside></li></ul></section>
+<li>Defined in <a href="https://github.com/crimx/value-enhancer/blob/e65e6ea/src/collections/set.ts#L104">src/collections/set.ts:104</a></li></ul></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="values" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>values</span><a href="#values" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -301,6 +335,8 @@ Changes to the set will be notified to subscribers of <code>set.$</code>.</p>
 <li><a href="#_species_" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>[species]</span></a></li>
 <li><a href="#_iterator_" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>[iterator]</span></a></li>
 <li><a href="#add" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>add</span></a></li>
+<li><a href="#batchAdd" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>batch<wbr/>Add</span></a></li>
+<li><a href="#batchDelete" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>batch<wbr/>Delete</span></a></li>
 <li><a href="#clear" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>clear</span></a></li>
 <li><a href="#delete" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>delete</span></a></li>
 <li><a href="#dispose" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>dispose</span></a></li>
