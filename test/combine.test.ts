@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { combine, val } from "../src";
+import { combine, nextTick, val } from "../src";
 
 describe("combine", () => {
   it("should lazy-calculate value", () => {
@@ -135,7 +135,7 @@ describe("combine", () => {
     expect(spy3).toHaveBeenCalledTimes(0);
     expect(spy4).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toHaveBeenCalledTimes(1);
     expect(spy2).toHaveBeenCalledTimes(1);
@@ -159,7 +159,7 @@ describe("combine", () => {
     expect(spy3).toHaveBeenCalledTimes(0);
     expect(spy4).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toHaveBeenCalledTimes(1);
     expect(spy2).toHaveBeenCalledTimes(1);
@@ -196,7 +196,7 @@ describe("combine", () => {
     });
 
     val1.set(2);
-    await Promise.resolve();
+    await nextTick();
     expect(spy).toBeCalledTimes(2);
     expect(spy.mock.calls[1][0]).toEqual({
       val1: 2,
@@ -206,7 +206,7 @@ describe("combine", () => {
     });
 
     val1.set(3);
-    await Promise.resolve();
+    await nextTick();
     expect(spy).toBeCalledTimes(3);
     expect(spy.mock.calls[2][0]).toEqual({
       val1: 3,
@@ -249,7 +249,7 @@ describe("combine", () => {
     val2.set({ code: 2 });
     expect(spy2).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy2).toBeCalledTimes(1);
     expect(spy).toBeCalledTimes(1);
@@ -310,7 +310,7 @@ describe("combine", () => {
     expect(spy4).toBeCalledTimes(0);
     expect(spy5).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy2).toBeCalledTimes(1);
     expect(spy3).toBeCalledTimes(1);
@@ -371,7 +371,7 @@ describe("combine", () => {
     expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 4 });
@@ -388,7 +388,7 @@ describe("combine", () => {
     expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 3 });
@@ -497,7 +497,7 @@ describe("combine", () => {
 
     expect(spy).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).lastCalledWith(3);
     expect(combined.value).toBe(3);
@@ -518,7 +518,7 @@ describe("combine", () => {
     val1.set(4);
     expect(even.value).toBe(true);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toBeCalledTimes(1);
     expect(spy).lastCalledWith(true);
@@ -538,19 +538,19 @@ describe("combine", () => {
 
     expect(spy).toBeCalledTimes(1);
 
-    await Promise.resolve();
+    await nextTick();
     expect(spy).toBeCalledTimes(2);
 
     val1.set(2);
     val2.set(3);
 
-    await Promise.resolve();
+    await nextTick();
     expect(spy).toBeCalledTimes(3);
 
     val1.set(3);
     val2.set(4);
 
-    await Promise.resolve();
+    await nextTick();
     expect(spy).toBeCalledTimes(4);
   });
 });

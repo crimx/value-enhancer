@@ -1,7 +1,7 @@
 import type { ReadonlyVal } from "../src";
 
 import { describe, expect, it, jest } from "@jest/globals";
-import { readonlyVal } from "../src";
+import { nextTick, readonlyVal } from "../src";
 import { ReadonlyValImpl, groupVals } from "../src/readonly-val";
 
 describe("ReadonlyVal", () => {
@@ -130,7 +130,7 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(1);
       expect(spyAsync).toBeCalledTimes(0);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(spy).toBeCalledTimes(1);
       expect(spyAsync).toBeCalledTimes(1);
@@ -165,7 +165,7 @@ describe("ReadonlyVal", () => {
       expect(spySync).toBeCalledTimes(1);
       expect(spyAsync).toBeCalledTimes(0);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(spySync).toBeCalledTimes(1);
       expect(spyAsync).toBeCalledTimes(1);
@@ -203,7 +203,7 @@ describe("ReadonlyVal", () => {
       set(2);
       expect(spy).toBeCalledTimes(1);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(spy).toBeCalledTimes(2);
       expect(spy.mock.calls[1][0]).toBe(2);
@@ -246,12 +246,12 @@ describe("ReadonlyVal", () => {
       expect(spy).lastCalledWith(value1);
 
       set(value1);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
       set(value2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(2);
       expect(spy).lastCalledWith(value2);
@@ -271,18 +271,18 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(0);
 
       val.subscribe(spy);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(value1);
 
       set(value1);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
       set(valueClone);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(value1);
@@ -306,13 +306,13 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(2);
         expect(spy).lastCalledWith(2);
@@ -337,7 +337,7 @@ describe("ReadonlyVal", () => {
       spy1Disposer();
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
@@ -357,7 +357,7 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
@@ -365,7 +365,7 @@ describe("ReadonlyVal", () => {
       val.unsubscribe();
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
@@ -386,7 +386,7 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(2);
       expect(spy).lastCalledWith(1);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(3);
@@ -428,7 +428,7 @@ describe("ReadonlyVal", () => {
 
       expect(consoleErrorMock).toBeCalledTimes(0);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(consoleErrorMock).toBeCalledTimes(1);
       expect(consoleErrorMock).toBeCalledWith(error);
@@ -451,7 +451,7 @@ describe("ReadonlyVal", () => {
       set(2);
       expect(spy).toBeCalledTimes(0);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
@@ -489,7 +489,7 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(0);
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
 
       expect(val.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
@@ -512,12 +512,12 @@ describe("ReadonlyVal", () => {
       expect(spy).toBeCalledTimes(0);
 
       set(value1);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
       set(value2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(value2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(value2);
@@ -540,13 +540,13 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
         expect(spy).lastCalledWith(2);
@@ -569,7 +569,7 @@ describe("ReadonlyVal", () => {
       spy1Disposer();
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(1);
@@ -589,7 +589,7 @@ describe("ReadonlyVal", () => {
       });
 
       set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
@@ -597,7 +597,7 @@ describe("ReadonlyVal", () => {
       val.unsubscribe();
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
@@ -625,7 +625,7 @@ describe("ReadonlyVal", () => {
       expect(spy2).lastCalledWith(1);
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
@@ -650,7 +650,7 @@ describe("ReadonlyVal", () => {
       expect(spy2).toBeCalledTimes(0);
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
@@ -658,7 +658,7 @@ describe("ReadonlyVal", () => {
       expect(spy2).lastCalledWith(2);
 
       set(3);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(3);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
@@ -683,7 +683,7 @@ describe("ReadonlyVal", () => {
       spy2.mockClear();
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
@@ -696,7 +696,7 @@ describe("ReadonlyVal", () => {
       spy2.mockClear();
 
       set(3);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(3);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(0);
@@ -719,7 +719,7 @@ describe("ReadonlyVal", () => {
       spy2.mockClear();
 
       set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(1);
@@ -732,7 +732,7 @@ describe("ReadonlyVal", () => {
       spy2.mockClear();
 
       set(3);
-      await Promise.resolve();
+      await nextTick();
       expect(val.value).toBe(3);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(0);

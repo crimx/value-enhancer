@@ -237,7 +237,7 @@ console.log(count$.value); // 4
 ## Subscribe to value changes
 
 ```js
-import { val, combine, derive } from "value-enhancer";
+import { val, combine, derive, nextTick } from "value-enhancer";
 
 const count$ = val(3);
 
@@ -257,7 +257,7 @@ count$.set(3); // nothing happened
 // subscription triggered asynchronously by default
 count$.set(4); // nothing happened
 
-await Promise.resolve(); // subscription triggered asynchronously by default
+await nextTick(); // subscription triggered asynchronously by default
 
 // printed "subscribe: 4"
 // printed "reaction: 4"

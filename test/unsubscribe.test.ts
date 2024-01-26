@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { unsubscribe, val } from "../src";
+import { nextTick, unsubscribe, val } from "../src";
 
 describe("unsubscribe", () => {
   it("should unsubscribe a subscribe callback", async () => {
@@ -20,7 +20,7 @@ describe("unsubscribe", () => {
     expect(spy2).lastCalledWith(1);
 
     val1.set(2);
-    await Promise.resolve();
+    await nextTick();
     expect(val1.value).toBe(2);
     expect(spy1).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(2);
@@ -45,7 +45,7 @@ describe("unsubscribe", () => {
     expect(spy2).toBeCalledTimes(0);
 
     val1.set(2);
-    await Promise.resolve();
+    await nextTick();
     expect(val1.value).toBe(2);
     expect(spy1).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(1);
@@ -53,7 +53,7 @@ describe("unsubscribe", () => {
     expect(spy2).lastCalledWith(2);
 
     val1.set(3);
-    await Promise.resolve();
+    await nextTick();
     expect(val1.value).toBe(3);
     expect(spy1).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(2);
@@ -78,7 +78,7 @@ describe("unsubscribe", () => {
     expect(spy2).toBeCalledTimes(0);
 
     val1.set(2);
-    await Promise.resolve();
+    await nextTick();
     expect(val1.value).toBe(2);
     expect(spy1).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(1);
@@ -88,7 +88,7 @@ describe("unsubscribe", () => {
     unsubscribe(val1);
 
     val1.set(3);
-    await Promise.resolve();
+    await nextTick();
     expect(val1.value).toBe(3);
     expect(spy1).toBeCalledTimes(1);
     expect(spy2).toBeCalledTimes(1);

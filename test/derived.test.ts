@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { derive, val } from "../src";
+import { derive, nextTick, val } from "../src";
 
 describe("derive", () => {
   it("should lazy-calculate value", () => {
@@ -94,7 +94,7 @@ describe("derive", () => {
     expect(spy3).toHaveBeenCalledTimes(0);
     expect(spy4).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toHaveBeenCalledTimes(1);
     expect(spy2).toHaveBeenCalledTimes(1);
@@ -118,7 +118,7 @@ describe("derive", () => {
     expect(spy3).toHaveBeenCalledTimes(0);
     expect(spy4).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toHaveBeenCalledTimes(1);
     expect(spy2).toHaveBeenCalledTimes(1);
@@ -178,7 +178,7 @@ describe("derive", () => {
     val1.set(88);
     expect(spy).toBeCalledTimes(1);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toBeCalledTimes(2);
     expect(spy).toBeCalledWith(89);
@@ -212,7 +212,7 @@ describe("derive", () => {
     expect(sub1).toBeCalledTimes(0);
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(0);
     expect(sub1).toBeCalledTimes(1);
@@ -222,7 +222,7 @@ describe("derive", () => {
     sub1.mockClear();
 
     val1.set({ code: 3 });
-    await Promise.resolve();
+    await nextTick();
     expect(sub).toBeCalledTimes(1);
     expect(sub1).toBeCalledTimes(1);
     expect(sub).lastCalledWith({ content: "3" });
@@ -298,7 +298,7 @@ describe("derive", () => {
     expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 4 });
@@ -315,7 +315,7 @@ describe("derive", () => {
     expect(spyEven).toBeCalledTimes(0);
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spyOdd).toBeCalledTimes(1);
     expect(spyOdd).lastCalledWith({ v: 3 });
@@ -424,7 +424,7 @@ describe("derive", () => {
 
     expect(spy).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).lastCalledWith(3);
     expect(derived.value).toEqual(3);
@@ -476,7 +476,7 @@ describe("derive", () => {
     expect(spy).toBeCalledTimes(0);
     expect(spy2).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy3).toBeCalledTimes(1);
     expect(spy3).lastCalledWith(5);
@@ -554,7 +554,7 @@ describe("derive", () => {
     val1.set(4);
     expect(even.value).toBe(true);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toBeCalledTimes(1);
     expect(spy).lastCalledWith(true);

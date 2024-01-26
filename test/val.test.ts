@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { val } from "../src";
+import { nextTick, val } from "../src";
 
 describe("Val", () => {
   describe("value", () => {
@@ -42,7 +42,7 @@ describe("Val", () => {
       v.set(2);
       expect(spy).toBeCalledTimes(1);
 
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
       expect(spy).lastCalledWith(2);
@@ -63,7 +63,7 @@ describe("Val", () => {
 
       v.set(2);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(v.value).toBe(2);
       expect(spy).toBeCalledTimes(2);
@@ -88,14 +88,14 @@ describe("Val", () => {
 
       v.set(value1);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
       v.set(value2);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(v.value).toBe(value2);
       expect(spy).toBeCalledTimes(2);
@@ -122,14 +122,14 @@ describe("Val", () => {
 
       v.set(value1);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
 
       v.set(valueClone);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(1);
@@ -154,13 +154,13 @@ describe("Val", () => {
       });
 
       v.set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
 
       v.set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(2);
         expect(spy).lastCalledWith(2);
@@ -185,7 +185,7 @@ describe("Val", () => {
       spy1Disposer();
 
       v.set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(2);
       expect(spy1).toBeCalledTimes(1);
       expect(spy2).toBeCalledTimes(2);
@@ -205,7 +205,7 @@ describe("Val", () => {
       });
 
       v.set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
@@ -213,7 +213,7 @@ describe("Val", () => {
       v.unsubscribe();
 
       v.set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
@@ -234,7 +234,7 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(0);
 
       v.set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(2);
@@ -255,7 +255,7 @@ describe("Val", () => {
       v.set(2);
       expect(spy).toBeCalledTimes(0);
 
-      await Promise.resolve();
+      await nextTick();
 
       expect(v.value).toBe(2);
       expect(spy).toBeCalledTimes(1);
@@ -278,12 +278,12 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(0);
 
       v.set(value1);
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
       v.set(value2);
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(value2);
       expect(spy).toBeCalledTimes(1);
       expect(spy).lastCalledWith(value2);
@@ -307,12 +307,12 @@ describe("Val", () => {
       expect(spy).toBeCalledTimes(0);
 
       v.set(value1);
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
       v.set(value1Clone);
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(value1);
       expect(spy).toBeCalledTimes(0);
 
@@ -334,13 +334,13 @@ describe("Val", () => {
       });
 
       v.set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
 
       v.set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
         expect(spy).lastCalledWith(2);
@@ -363,7 +363,7 @@ describe("Val", () => {
       spy1Disposer();
 
       v.set(2);
-      await Promise.resolve();
+      await nextTick();
       expect(v.value).toBe(2);
       expect(spy1).toBeCalledTimes(0);
       expect(spy2).toBeCalledTimes(1);
@@ -383,7 +383,7 @@ describe("Val", () => {
       });
 
       v.set(1);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });
@@ -391,7 +391,7 @@ describe("Val", () => {
       v.unsubscribe();
 
       v.set(2);
-      await Promise.resolve();
+      await nextTick();
       spies.forEach(spy => {
         expect(spy).toBeCalledTimes(0);
       });

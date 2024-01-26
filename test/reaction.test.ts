@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { reaction, val } from "../src";
+import { nextTick, reaction, val } from "../src";
 
 describe("reaction", () => {
   it("should reaction", async () => {
@@ -13,7 +13,7 @@ describe("reaction", () => {
 
     expect(spy1).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(2);
@@ -28,7 +28,7 @@ describe("reaction", () => {
 
     expect(spy1).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toBeCalledTimes(0);
   });
@@ -55,7 +55,7 @@ describe("reaction", () => {
 
     expect(spy1).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toBeCalledTimes(0);
   });

@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import type { ReadonlyVal } from "../src";
-import { flattenFrom, val } from "../src";
+import { flattenFrom, nextTick, val } from "../src";
 
 const noop = () => void 0;
 
@@ -82,7 +82,7 @@ describe("flattenFrom", () => {
 
     expect(sub).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toHaveBeenCalledTimes(1);
     expect(sub).lastCalledWith(2);
@@ -93,7 +93,7 @@ describe("flattenFrom", () => {
 
     expect(sub).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toHaveBeenCalledTimes(1);
     expect(sub).lastCalledWith(3);
@@ -191,13 +191,13 @@ describe("flattenFrom", () => {
     val$.reaction(sub);
 
     expect(sub).not.toHaveBeenCalled();
-    await Promise.resolve();
+    await nextTick();
     expect(sub).not.toHaveBeenCalled();
 
     set("c");
 
     expect(sub).not.toHaveBeenCalled();
-    await Promise.resolve();
+    await nextTick();
     expect(sub).not.toHaveBeenCalled();
 
     val$.unsubscribe();
@@ -242,7 +242,7 @@ describe("flattenFrom", () => {
     set(val({ content: 1 }));
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(0);
 
@@ -251,7 +251,7 @@ describe("flattenFrom", () => {
     set(val({ content: 2 }));
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(1);
     expect(sub).lastCalledWith({ content: 2 });
@@ -298,7 +298,7 @@ describe("flattenFrom", () => {
     notify();
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(1);
     expect(sub).lastCalledWith(source$.value);
@@ -308,7 +308,7 @@ describe("flattenFrom", () => {
     notify();
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(1);
     expect(sub).lastCalledWith(source$.value);
@@ -357,7 +357,7 @@ describe("flattenFrom", () => {
 
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spySub).toBeCalledTimes(1);
     expect(spySub).lastCalledWith({ content: 2 });
@@ -368,7 +368,7 @@ describe("flattenFrom", () => {
 
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spySub).toBeCalledTimes(1);
     expect(spySub).lastCalledWith({ content: 3 });
@@ -563,7 +563,7 @@ describe("flattenFrom", () => {
     startSpy.mockClear();
     spy1.mockClear();
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(getValueSpy).toBeCalledTimes(0);
     expect(startSpy).toBeCalledTimes(0);
@@ -630,7 +630,7 @@ describe("flattenFrom", () => {
     startSpy.mockClear();
     spy1.mockClear();
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(getValueSpy).toBeCalledTimes(0);
     expect(startSpy).toBeCalledTimes(0);

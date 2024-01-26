@@ -3,7 +3,7 @@ import { SubscriberMode } from "./subscribers";
 
 export type Task<TValue = any> = (value: TValue) => void;
 
-const nextTick = /*#__PURE__*/ Promise.resolve();
+const tick = /*#__PURE__*/ Promise.resolve();
 const pendingSubs1 = new Set<Subscribers>();
 const pendingSubs2 = new Set<Subscribers>();
 let pendingSubs = pendingSubs1;
@@ -23,8 +23,10 @@ const flush = () => {
 
 export const schedule = <TValue>(subs: Subscribers<TValue>): void => {
   pendingSubs.add(subs);
-  pending = pending || nextTick.then(flush);
+  pending = pending || tick.then(flush);
 };
 
 export const cancelTask = (subs: Subscribers): boolean =>
   pendingSubs.delete(subs);
+
+export const nextTick = (): Promise<void> => tick;

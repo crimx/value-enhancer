@@ -10,6 +10,7 @@ export type {
   ValSubscriber,
 } from "./typings";
 
+export { nextTick } from "./scheduler";
 export { identity, isVal } from "./utils";
 
 export { combine, type CombineValTransform } from "./combine";

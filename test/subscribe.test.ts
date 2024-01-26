@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { subscribe, val } from "../src";
+import { nextTick, subscribe, val } from "../src";
 
 describe("combine", () => {
   it("should subscribe", async () => {
@@ -16,7 +16,7 @@ describe("combine", () => {
 
     expect(spy1).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).toBeCalledWith(2);
@@ -31,7 +31,7 @@ describe("combine", () => {
 
     expect(spy1).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toBeCalledTimes(0);
   });
@@ -61,7 +61,7 @@ describe("combine", () => {
 
     expect(spy1).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy1).toBeCalledTimes(0);
   });

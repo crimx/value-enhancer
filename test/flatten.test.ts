@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { combine, derive, flatten, identity, val } from "../src";
+import { combine, derive, flatten, identity, nextTick, val } from "../src";
 
 describe("flatten", () => {
   it("should flatten value", () => {
@@ -81,7 +81,7 @@ describe("flatten", () => {
 
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toHaveBeenCalledTimes(0);
 
@@ -89,7 +89,7 @@ describe("flatten", () => {
 
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -102,7 +102,7 @@ describe("flatten", () => {
 
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).lastCalledWith(3);
@@ -113,7 +113,7 @@ describe("flatten", () => {
 
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toHaveBeenCalledTimes(1);
     expect(spy).lastCalledWith(9);
@@ -140,7 +140,7 @@ describe("flatten", () => {
 
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toHaveBeenCalledTimes(0);
 
@@ -148,7 +148,7 @@ describe("flatten", () => {
 
     expect(spy).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toHaveBeenCalledTimes(0);
 
@@ -187,7 +187,7 @@ describe("flatten", () => {
     expect(sub1).toBeCalledTimes(0);
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(0);
     expect(sub1).toBeCalledTimes(1);
@@ -197,7 +197,7 @@ describe("flatten", () => {
     sub1.mockClear();
 
     val1.set({ code: 3 });
-    await Promise.resolve();
+    await nextTick();
     expect(sub).toBeCalledTimes(1);
     expect(sub1).toBeCalledTimes(1);
     expect(sub).lastCalledWith({ code: 3 });
@@ -238,7 +238,7 @@ describe("flatten", () => {
 
     expect(spy).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).lastCalledWith(2);
     expect(flattened.value).toEqual(2);
@@ -262,7 +262,7 @@ describe("flatten", () => {
     val1.set(4);
     expect(flattened.value).toBe(5);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spy).toBeCalledTimes(1);
     expect(spy).lastCalledWith(5);

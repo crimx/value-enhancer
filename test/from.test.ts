@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
-import { from } from "../src";
+import { from, nextTick } from "../src";
 
 const noop = () => void 0;
 
@@ -62,7 +62,7 @@ describe("from", () => {
 
     expect(sub).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toHaveBeenCalledTimes(1);
     expect(sub).lastCalledWith(2);
@@ -73,7 +73,7 @@ describe("from", () => {
 
     expect(sub).toHaveBeenCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toHaveBeenCalledTimes(1);
     expect(sub).lastCalledWith(3);
@@ -116,13 +116,13 @@ describe("from", () => {
     val$.reaction(sub);
 
     expect(sub).not.toHaveBeenCalled();
-    await Promise.resolve();
+    await nextTick();
     expect(sub).not.toHaveBeenCalled();
 
     set("c");
 
     expect(sub).not.toHaveBeenCalled();
-    await Promise.resolve();
+    await nextTick();
     expect(sub).not.toHaveBeenCalled();
 
     val$.unsubscribe();
@@ -167,7 +167,7 @@ describe("from", () => {
     set({ content: 1 });
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(0);
 
@@ -176,7 +176,7 @@ describe("from", () => {
     set({ content: 2 });
     expect(sub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(sub).toBeCalledTimes(1);
     expect(sub).lastCalledWith({ content: 2 });
@@ -225,7 +225,7 @@ describe("from", () => {
 
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spySub).toBeCalledTimes(1);
     expect(spySub).lastCalledWith({ content: 2 });
@@ -236,7 +236,7 @@ describe("from", () => {
 
     expect(spySub).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(spySub).toBeCalledTimes(1);
     expect(spySub).lastCalledWith({ content: 3 });
@@ -427,7 +427,7 @@ describe("from", () => {
     expect(startSpy).toBeCalledTimes(0);
     expect(spy1).toBeCalledTimes(0);
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(getValueSpy).toBeCalledTimes(1);
     expect(startSpy).toBeCalledTimes(0);
@@ -494,7 +494,7 @@ describe("from", () => {
     startSpy.mockClear();
     spy1.mockClear();
 
-    await Promise.resolve();
+    await nextTick();
 
     expect(getValueSpy).toBeCalledTimes(0);
     expect(startSpy).toBeCalledTimes(0);
