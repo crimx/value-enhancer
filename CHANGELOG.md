@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.0](https://github.com/crimx/value-enhancer/compare/v4.1.2...v4.2.0) (2024-01-26)
+
+
+### Features
+
+* **val:** add ref val ([65e83fb](https://github.com/crimx/value-enhancer/commit/65e83fb97b0a5d989a68ee7eaf1110f6021ae689))
+
 ### [4.1.2](https://github.com/crimx/value-enhancer/compare/v4.1.1...v4.1.2) (2024-01-21)
 
 
