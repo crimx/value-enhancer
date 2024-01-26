@@ -374,52 +374,6 @@ const count$ = val(3, { eager: true });
 const derived$ = derive(count$, count => count * 3, { eager: true });
 ```
 
-## Use in Class
-
-With `groupVals` you can easily create a group of ReadonlyVals and hide the setters.
-
-```ts
-import {
-  type ReadonlyVal,
-  type ValSetValue,
-  type FlattenVal,
-  readonlyVal,
-  groupVals,
-} from "value-enhancer";
-
-export interface Foo$ {
-  a: ReadonlyVal<number>;
-  b: ReadonlyVal<number>;
-  c: ReadonlyVal<string>;
-}
-
-export class Foo {
-  public readonly $: Foo$;
-  private setVals: { [K in keyof Foo$]: ValSetValue<FlattenVal<Foo$[K]>> };
-
-  public constructor() {
-    const [vals, setVals] = groupVals({
-      a: readonlyVal(1),
-      b: readonlyVal(2),
-      c: readonlyVal("3"),
-    });
-    this.$ = vals;
-    this.setVals = setVals;
-  }
-
-  public myMethod() {
-    this.setVals.a(2);
-    this.setVals.c("4");
-  }
-}
-
-const foo = new Foo();
-console.log(foo.$.a.value); // 1
-
-foo.myMethod();
-console.log(foo.$.a.value); // 2
-```
-
 ## Reactive Collections
 
 The Reactive Collections are a group of classes that expand on the built-in JavaScript collections, allowing changes to the collections to be observed. See [docs](https://value-enhancer.js.org/modules/collections.html) for API details.
@@ -457,4 +411,202 @@ console.log(item$.value); // "someValue"
 v.set("someValue2"); // you can also set a non-val value, which is passed to `item$`` directly
 
 console.log(item$.value); // "someValue2"
+```
+
+## Patterns
+
+### Use in Class with different types.
+
+With this pattern, Writable `Val` properties are exposed as `$` and `ReadonlyVal` properties are exposed as `$$`.
+
+Note that they are all Writable `Val` under the hood. The difference is just the type.
+
+```ts
+import { val, type ReadonlyVal, type Val } from "value-enhancer";
+
+interface MyClassVals {
+  a: number;
+  b: string;
+}
+
+export type MyClass$ = {
+  [K in keyof MyClassVals]: ReadonlyVal<MyClassVals[K]>;
+};
+
+export type MyClass$$ = {
+  [K in keyof MyClassVals]: Val<MyClassVals[K]>;
+};
+
+export class MyClass {
+  public readonly $: MyClass$;
+  public readonly $$: MyClassSet$;
+
+  public constructor() {
+    this.$ = this.$$ = {
+      a: val(1),
+      b: val("2"),
+    };
+  }
+}
+
+const myClass = new MyClass();
+console.log(myClass.$.a.value);
+myClass.$$.a.set(3);
+```
+
+### Use in Class with ReadonlyVal and setter
+
+If you want to ensure maximum safety and prevent others from modifying the value accidentally, you can use a real `ReadonlyVal`.
+
+```ts
+import {
+  readonlyVal,
+  type ReadonlyVal,
+  type ValSetValue,
+} from "value-enhancer";
+
+interface MyClassVals {
+  a: number;
+  b: string;
+}
+
+export type MyClass$ = {
+  [K in keyof MyClassVals]: ReadonlyVal<MyClassVals[K]>;
+};
+
+export type MyClassSet$ = {
+  [K in keyof MyClassVals]: ValSetValue<MyClassVals[K]>;
+};
+
+export class MyClass {
+  public readonly $: MyClass$;
+  public readonly set$: MyClass$$;
+
+  public constructor() {
+    const [a$, setA] = readonlyVal(1);
+    const [b$, setB] = readonlyVal("2");
+    this.$ = { a: a$, b: b$ };
+    this.set$ = { a: setA, b: setB };
+  }
+}
+
+const myClass = new MyClass();
+console.log(myClass.$.a.value);
+myClass.set$.a(3);
+```
+
+### Use in Class with GroupVals
+
+Writing all these ReadonlyVals and setters could be cumbersome. With `groupVals` you can easily create a group of ReadonlyVals and setters.
+
+```ts
+import {
+  type ReadonlyVal,
+  type ValSetValue,
+  type FlattenVal,
+  readonlyVal,
+  groupVals,
+} from "value-enhancer";
+
+export interface Foo$ {
+  a: ReadonlyVal<number>;
+  b: ReadonlyVal<number>;
+  c: ReadonlyVal<string>;
+}
+
+export class Foo {
+  public readonly $: Foo$;
+  private setVals: { [K in keyof Foo$]: ValSetValue<UnwrapVal<Foo$[K]>> };
+
+  public constructor() {
+    const [vals, setVals] = groupVals({
+      a: readonlyVal(1),
+      b: readonlyVal(2),
+      c: readonlyVal("3"),
+    });
+    this.$ = vals;
+    this.setVals = setVals;
+  }
+
+  public myMethod() {
+    this.setVals.a(2);
+    this.setVals.c("4");
+  }
+}
+
+const foo = new Foo();
+console.log(foo.$.a.value); // 1
+
+foo.myMethod();
+console.log(foo.$.a.value); // 2
+```
+
+### Sharing vals to other Classes
+
+Sharing vals to other classes directly should be careful. Other classes may `dispose` the vals and cause unexpected behavior.
+
+To share ReadonlyVals to other classes, use a derived val.
+
+```ts
+import { val, derive, type ReadonlyVal } from "value-enhancer";
+
+interface AProps {
+  a$: ReadonlyVal<number>;
+}
+
+class A {
+  a$: ReadonlyVal<number>;
+
+  constructor(props: AProps) {
+    this.a$ = props.a$;
+  }
+
+  dispose() {
+    this.a$.dispose();
+  }
+}
+
+const a$ = val(1);
+const a = new A({ a$: derive(a$) });
+a.dispose(); // will not affect a$
+```
+
+To share writable vals to other classes, use a ref val.
+
+`Val.ref` creates a new Val referencing the value of the current Val as source.
+All ref Vals share the same value from the source Val.
+The act of setting a value on the ref Val is essentially setting the value on the source Val.
+
+The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
+
+```ts
+import { val, type Val } from "value-enhancer";
+
+interface AProps {
+  a$: Val<number>;
+}
+
+class A {
+  a$: Val<number>;
+
+  constructor(props: AProps) {
+    this.a$ = props.a$;
+  }
+
+  dispose() {
+    this.a$.dispose();
+  }
+}
+
+const a$ = val(1);
+const a1 = new A({ a$: a$.ref() });
+const a2 = new A({ a$: a$.ref() });
+
+a2.a$.set(2);
+
+console.log(a$.value); // 2
+console.log(a1.a$.value); // 2
+console.log(a2.a$.value); // 2
+
+a1.dispose(); // will not affect a$ and a2.a$
 ```
