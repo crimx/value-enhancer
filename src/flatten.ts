@@ -1,5 +1,5 @@
 import type { ReadonlyValImpl } from "./readonly-val";
-import type { FlattenVal, ReadonlyVal, ValConfig } from "./typings";
+import type { ReadonlyVal, UnwrapVal, ValConfig } from "./typings";
 
 import { flattenFrom } from "./flatten-from";
 import { identity } from "./utils";
@@ -23,7 +23,7 @@ import { identity } from "./utils";
  */
 export function flatten<TValOrValue = any>(
   val: ReadonlyVal<TValOrValue>
-): ReadonlyVal<FlattenVal<TValOrValue>>;
+): ReadonlyVal<UnwrapVal<TValOrValue>>;
 /**
  * Flatten an inner val extracted from a source val to a val of the inner val value.
  * @param val Input value.
@@ -45,8 +45,8 @@ export function flatten<TValOrValue = any>(
 export function flatten<TSrcValue = any, TValOrValue = any>(
   val: ReadonlyVal<TSrcValue>,
   get: (value: TSrcValue) => TValOrValue,
-  config?: ValConfig<FlattenVal<TValOrValue>>
-): ReadonlyVal<FlattenVal<TValOrValue>>;
+  config?: ValConfig<UnwrapVal<TValOrValue>>
+): ReadonlyVal<UnwrapVal<TValOrValue>>;
 export function flatten<
   TSrcValue = any,
   TValOrValue = any,
@@ -54,8 +54,8 @@ export function flatten<
 >(
   val: TSrcVal,
   get: (value: TSrcValue) => TValOrValue = identity as any,
-  config?: ValConfig<FlattenVal<TValOrValue>>
-): ReadonlyVal<FlattenVal<TValOrValue>> {
+  config?: ValConfig<UnwrapVal<TValOrValue>>
+): ReadonlyVal<UnwrapVal<TValOrValue>> {
   return flattenFrom(
     () => get(val.value),
     notify => val.$valCompute(notify),

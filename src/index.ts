@@ -1,6 +1,7 @@
 export type {
   FlattenVal,
   ReadonlyVal,
+  UnwrapVal,
   Val,
   ValConfig,
   ValDisposer,

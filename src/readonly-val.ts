@@ -193,7 +193,7 @@ export function readonlyVal<TValue = any>(
  *
  * export class Foo {
  *  public $: Foo$;
- *  private setVals: { [K in keyof Foo$]: ValSetValue<FlattenVal<Foo$[K]>> };
+ *  private setVals: { [K in keyof Foo$]: ValSetValue<UnwrapVal<Foo$[K]>> };
  *
  *  public constructor() {
  *   const [vals, setVals] = groupVals({

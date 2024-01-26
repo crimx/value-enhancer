@@ -1,16 +1,11 @@
-import type {
-  FlattenVal,
-  ReadonlyVal,
-  ValConfig,
-  ValDisposer,
-} from "./typings";
+import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
 import { INIT_VALUE, defaultEqual, isVal } from "./utils";
 
 class FlattenFromImpl<
   TValOrValue = any,
-  TValue = FlattenVal<TValOrValue>
+  TValue = UnwrapVal<TValOrValue>
 > extends ReadonlyValImpl<TValue> {
   public constructor(
     getValue: () => TValOrValue,
@@ -108,6 +103,6 @@ class FlattenFromImpl<
 export const flattenFrom = <TValOrValue = any>(
   getValue: () => TValOrValue,
   listen: (notify: () => void) => ValDisposer | void | undefined,
-  config?: ValConfig<FlattenVal<TValOrValue>>
-): ReadonlyVal<FlattenVal<TValOrValue>> =>
+  config?: ValConfig<UnwrapVal<TValOrValue>>
+): ReadonlyVal<UnwrapVal<TValOrValue>> =>
   new FlattenFromImpl(getValue, listen, config);
