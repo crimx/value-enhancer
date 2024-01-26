@@ -40,6 +40,15 @@ export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   value: TValue;
   /** Set new value */
   set(this: void, value: TValue): void;
+  /**
+   * Create a new Val referencing the value of the current Val as source.
+   * All ref Vals share the same value from the source Val.
+   * The act of setting a value on the ref Val is essentially setting the value on the source Val.
+   *
+   * With this pattern you can pass a ref Val as a writable Val to downstream.
+   * The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
+   */
+  ref(): Val<TValue>;
 }
 
 export type ValSetValue<TValue = any> = (value: TValue) => void;

@@ -399,4 +399,156 @@ describe("Val", () => {
       v.unsubscribe();
     });
   });
+
+  describe("ref", () => {
+    it("should create a ref val", () => {
+      const v = val(1);
+      const ref = v.ref();
+      expect(ref.value).toBe(1);
+      expect(ref.value).toBe(v.value);
+    });
+
+    it("should set value on source val", () => {
+      const v = val(1);
+      const ref = v.ref();
+      ref.set(2);
+      expect(ref.value).toBe(2);
+      expect(v.value).toBe(2);
+    });
+
+    it("should chain ref val from the same source", () => {
+      const v = val(1);
+      const ref1 = v.ref();
+      const ref2 = ref1.ref();
+      ref1.set(2);
+      expect(ref1.value).toBe(2);
+      expect(ref2.value).toBe(2);
+      expect(v.value).toBe(2);
+    });
+
+    it("should not dispose the source val", () => {
+      const v = val(0);
+      const ref = v.ref();
+
+      const spyV = jest.fn();
+      const spyRef = jest.fn();
+
+      const mockClear = () => {
+        spyV.mockClear();
+        spyRef.mockClear();
+      };
+
+      v.reaction(spyV, true);
+      ref.reaction(spyRef, true);
+
+      expect(spyV).toBeCalledTimes(0);
+      expect(spyRef).toBeCalledTimes(0);
+
+      mockClear();
+
+      v.set(1);
+      expect(spyV).toBeCalledTimes(1);
+      expect(spyRef).toBeCalledTimes(1);
+      expect(spyV).lastCalledWith(1);
+      expect(spyRef).lastCalledWith(1);
+
+      mockClear();
+
+      ref.set(2);
+      expect(spyV).toBeCalledTimes(1);
+      expect(spyRef).toBeCalledTimes(1);
+      expect(spyV).lastCalledWith(2);
+      expect(spyRef).lastCalledWith(2);
+
+      mockClear();
+
+      ref.dispose();
+
+      ref.set(3);
+      expect(spyV).toBeCalledTimes(1);
+      expect(spyRef).toBeCalledTimes(0);
+      expect(spyV).lastCalledWith(3);
+
+      v.dispose();
+    });
+
+    it("all ref value should share the value from source val", () => {
+      const v = val(0);
+      const spyV = jest.fn();
+
+      const refs = Array(10)
+        .fill(0)
+        .map(() => ({
+          ref: v.ref(),
+          spyRef: jest.fn(),
+        }));
+
+      v.reaction(spyV, true);
+      for (const { ref, spyRef } of refs) {
+        ref.reaction(spyRef, true);
+      }
+
+      const mockClear = () => {
+        spyV.mockClear();
+        for (const { spyRef } of refs) {
+          spyRef.mockClear();
+        }
+      };
+
+      expect(spyV).toBeCalledTimes(0);
+      for (const { spyRef } of refs) {
+        expect(spyRef).toBeCalledTimes(0);
+      }
+
+      mockClear();
+
+      v.set(1);
+      expect(spyV).toBeCalledTimes(1);
+      expect(spyV).lastCalledWith(1);
+      for (const { spyRef } of refs) {
+        expect(spyRef).toBeCalledTimes(1);
+        expect(spyRef).lastCalledWith(1);
+      }
+
+      mockClear();
+
+      refs[0].ref.value = 2;
+      expect(spyV).toBeCalledTimes(1);
+      expect(spyV).lastCalledWith(2);
+      for (const { spyRef } of refs) {
+        expect(spyRef).toBeCalledTimes(1);
+        expect(spyRef).lastCalledWith(2);
+      }
+
+      mockClear();
+
+      refs[1].ref.dispose();
+
+      refs[1].ref.set(3);
+      expect(spyV).toBeCalledTimes(1);
+      expect(spyV).lastCalledWith(3);
+      for (let i = 0; i < refs.length; i++) {
+        if (i === 1) {
+          expect(refs[i].spyRef).toBeCalledTimes(0);
+        } else {
+          expect(refs[i].spyRef).toBeCalledTimes(1);
+          expect(refs[i].spyRef).lastCalledWith(3);
+        }
+      }
+
+      mockClear();
+
+      refs[0].ref.set(4);
+      expect(spyV).toBeCalledTimes(1);
+      expect(spyV).lastCalledWith(4);
+      for (let i = 0; i < refs.length; i++) {
+        if (i === 1) {
+          expect(refs[i].spyRef).toBeCalledTimes(0);
+        } else {
+          expect(refs[i].spyRef).toBeCalledTimes(1);
+          expect(refs[i].spyRef).lastCalledWith(4);
+        }
+      }
+    });
+  });
 });
