@@ -224,6 +224,80 @@ describe("ReactiveMap", () => {
       dispose();
     });
 
+    it("should replace more entries", () => {
+      const reactiveMap = new ReactiveMap<string, number>(
+        Object.entries({
+          foo: 1,
+          bar: 2,
+        })
+      );
+
+      const mockNotify = jest.fn();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+
+      reactiveMap.replace([
+        ["baz", 3],
+        ["qux", 4],
+        ["quux", 5],
+      ]);
+
+      expect(reactiveMap.get("foo")).toBeUndefined();
+      expect(reactiveMap.get("bar")).toBeUndefined();
+      expect(reactiveMap.get("baz")).toEqual(3);
+      expect(reactiveMap.get("qux")).toEqual(4);
+      expect(reactiveMap.get("quux")).toEqual(5);
+
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+
+      dispose();
+    });
+
+    it("should replace less entries", () => {
+      const reactiveMap = new ReactiveMap<string, number>(
+        Object.entries({
+          foo: 1,
+          bar: 2,
+        })
+      );
+
+      const mockNotify = jest.fn();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+
+      reactiveMap.replace([["baz", 3]]);
+
+      expect(reactiveMap.get("foo")).toBeUndefined();
+      expect(reactiveMap.get("bar")).toBeUndefined();
+      expect(reactiveMap.get("baz")).toEqual(3);
+
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+
+      dispose();
+    });
+
+    it("should not replace same entries", () => {
+      const reactiveMap = new ReactiveMap<string, number>(
+        Object.entries({
+          foo: 1,
+          bar: 2,
+        })
+      );
+
+      const mockNotify = jest.fn();
+      const dispose = reactiveMap.$.reaction(mockNotify, true);
+
+      reactiveMap.replace([
+        ["bar", 2],
+        ["foo", 1],
+      ]);
+
+      expect(reactiveMap.get("foo")).toBe(1);
+      expect(reactiveMap.get("bar")).toBe(2);
+
+      expect(mockNotify).toHaveBeenCalledTimes(0);
+
+      dispose();
+    });
+
     it("should not notify if not changed", () => {
       const reactiveMap = new ReactiveMap<string, number>([["baz", 3]]);
       const mockNotify = jest.fn();
@@ -261,7 +335,7 @@ describe("ReactiveMap", () => {
       const dispose = reactiveMap.$.reaction(mockNotify, true);
 
       const deleted = reactiveMap.replace([["baz", 3]]);
-      expect([...deleted]).toEqual([["foo", 4]]);
+      expect([...deleted]).toEqual([4]);
 
       dispose();
     });

@@ -282,17 +282,21 @@ export class ReactiveList<TValue> {
    * @returns deleted items
    */
   public replace(items: Iterable<TValue>): Iterable<TValue> {
-    const cached = new Set(this);
-    (this.array as TValue[]).length = 0;
+    const deleted = new Set(this.array);
+    const oldLen = this.array.length;
     let isDirty = false;
+    let i = 0;
     for (const item of items) {
-      isDirty = isDirty || cached.delete(item);
-      (this.array as TValue[]).push(item);
+      isDirty = isDirty || !Object.is(item, this.array[i]);
+      (this.array as TValue[])[i++] = item;
+      deleted.delete(item);
     }
-    if (isDirty || cached.size > 0) {
+    (this.array as TValue[]).length = i;
+
+    if (isDirty || oldLen !== i) {
       this.#notify();
     }
-    return cached.values();
+    return deleted.values();
   }
 
   /**

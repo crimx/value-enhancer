@@ -101,23 +101,25 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   /**
    * Replace all entries in the Map.
    *
-   * @returns Deleted entries.
+   * @returns Deleted values.
    */
-  public replace(
-    entries: Iterable<readonly [TKey, TValue]>
-  ): Iterable<readonly [TKey, TValue]> {
-    const cached = new Map(this);
-    super.clear();
+  public replace(entries: Iterable<readonly [TKey, TValue]>): Iterable<TValue> {
+    const oldMap = new Map(this);
+    const deleted = new Set<TValue>(this.values());
     let isDirty = false;
+    super.clear();
+
     for (const [key, value] of entries) {
-      isDirty = isDirty || !cached.has(key) || cached.get(key) !== value;
+      isDirty =
+        isDirty || !oldMap.has(key) || !Object.is(oldMap.get(key), value);
       super.set(key, value);
-      cached.delete(key);
+      deleted.delete(value);
     }
-    if (isDirty || cached.size > 0) {
+
+    if (isDirty || oldMap.size !== this.size) {
       this.#notify();
     }
-    return cached.entries();
+    return deleted.values();
   }
 
   public dispose(): void {

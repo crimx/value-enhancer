@@ -1,4 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
+import { nextTick } from "../../src";
 import { ReactiveList } from "../../src/collections";
 
 describe("ReactiveList", () => {
@@ -606,10 +607,65 @@ describe("ReactiveList", () => {
   });
 
   describe("replace", () => {
-    it("should replace the list with the specified elements", () => {
+    it("should replace the list with the specified elements", async () => {
       const list = new ReactiveList([1, 2, 3]);
+      const spy = jest.fn();
+      list.$.reaction(spy);
+
+      expect(spy).toHaveBeenCalledTimes(0);
+
       list.replace([4, 5, 6]);
+      await nextTick();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+
       expect(list.array).toEqual([4, 5, 6]);
+    });
+
+    it("should replace the list with less elements", async () => {
+      const list = new ReactiveList([1, 2, 3]);
+      const spy = jest.fn();
+      list.$.reaction(spy);
+
+      expect(spy).toHaveBeenCalledTimes(0);
+
+      list.replace([1]);
+      await nextTick();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      expect(list.array).toEqual([1]);
+    });
+
+    it("should replace the list with different order", async () => {
+      const list = new ReactiveList([1, 2, 3]);
+      const spy = jest.fn();
+      list.$.reaction(spy);
+
+      expect(spy).toHaveBeenCalledTimes(0);
+
+      list.replace([3, 2, 1]);
+      await nextTick();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      expect(list.array).toEqual([3, 2, 1]);
+    });
+
+    it("should replace an empty list with the specified elements", async () => {
+      const list = new ReactiveList<number>([]);
+
+      const spy = jest.fn();
+      list.$.reaction(spy);
+
+      expect(spy).toHaveBeenCalledTimes(0);
+
+      list.replace([1, 2, 3]);
+      await nextTick();
+
+      expect(spy).toHaveBeenCalledTimes(1);
+
+      expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should notify on replace", () => {

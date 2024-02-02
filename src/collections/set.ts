@@ -102,17 +102,17 @@ export class ReactiveSet<TValue> extends Set<TValue> {
    * @returns Deleted items.
    */
   public replace(items: Iterable<TValue>): Iterable<TValue> {
-    const cached = new Set(this);
+    const deleted = new Set(this);
     super.clear();
     let isDirty = false;
     for (const item of items) {
-      isDirty = isDirty || cached.delete(item);
+      isDirty = isDirty || deleted.delete(item);
       super.add(item);
     }
-    if (isDirty || cached.size > 0) {
+    if (isDirty || deleted.size > 0) {
       this.#notify();
     }
-    return cached.values();
+    return deleted.values();
   }
 }
 
