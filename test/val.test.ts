@@ -411,21 +411,21 @@ describe("Val", () => {
   describe("ref", () => {
     it("should create a ref val", () => {
       const v = val(1);
-      const ref = v.ref();
+      const ref = v.ref(true);
       expect(ref.value).toBe(1);
       expect(ref.value).toBe(v.value);
     });
 
     it("should create a ref readonly val", () => {
       const v = val(1);
-      const readonlyRef = v.ref(true);
+      const readonlyRef = v.ref();
       expect(readonlyRef.value).toBe(1);
       expect(readonlyRef.value).toBe(v.value);
       // @ts-expect-error - not set on readonly val
       expect(readonlyRef.set).toBeUndefined();
 
-      const ref = v.ref();
-      const readonlyREf2 = ref.ref(true);
+      const ref = v.ref(true);
+      const readonlyREf2 = ref.ref();
       expect(readonlyREf2.value).toBe(1);
       expect(readonlyREf2.value).toBe(v.value);
       // @ts-expect-error - not set on readonly val
@@ -434,7 +434,7 @@ describe("Val", () => {
 
     it("should set value on source val", () => {
       const v = val(1);
-      const ref = v.ref();
+      const ref = v.ref(true);
       ref.set(2);
       expect(ref.value).toBe(2);
       expect(v.value).toBe(2);
@@ -442,8 +442,8 @@ describe("Val", () => {
 
     it("should chain ref val from the same source", () => {
       const v = val(1);
-      const ref1 = v.ref();
-      const ref2 = ref1.ref();
+      const ref1 = v.ref(true);
+      const ref2 = ref1.ref(true);
       ref1.set(2);
       expect(ref1.value).toBe(2);
       expect(ref2.value).toBe(2);
@@ -452,7 +452,7 @@ describe("Val", () => {
 
     it("should not dispose the source val", () => {
       const v = val(0);
-      const ref = v.ref();
+      const ref = v.ref(true);
 
       const spyV = jest.fn();
       const spyRef = jest.fn();
@@ -503,7 +503,7 @@ describe("Val", () => {
       const refs = Array(10)
         .fill(0)
         .map(() => ({
-          ref: v.ref(),
+          ref: v.ref(true),
           spyRef: jest.fn(),
         }));
 

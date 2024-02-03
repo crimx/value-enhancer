@@ -545,10 +545,10 @@ console.log(foo.$.a.value); // 2
 
 Sharing vals to other classes directly should be careful. Other classes may `dispose` the vals and cause unexpected behavior.
 
-To share ReadonlyVals to other classes, use a ref readonly val. It is just like `derive` a val without `transform`. It is simpler hence more efficient.
+To share ReadonlyVals to other classes, use `.ref()` to create a ref ReadonlyVal. It is just like `derive` a val without `transform`. It is simpler hence more efficient.
 
 ```ts
-import { val, derive, type ReadonlyVal } from "value-enhancer";
+import { val, type ReadonlyVal } from "value-enhancer";
 
 interface AProps {
   a$: ReadonlyVal<number>;
@@ -567,13 +567,13 @@ class A {
 }
 
 const a$ = val(1);
-const a = new A({ a$: derive(a$) });
+const a = new A({ a$: a$.ref() });
 a.dispose(); // will not affect a$
 ```
 
-To share writable vals to other classes, use a ref val.
+To share writable vals to other classes, use a `.ref(true)`.
 
-`Val.ref` creates a new Val referencing the value of the current Val as source.
+It creates a new Val referencing the value of the current Val as source.
 All ref Vals share the same value from the source Val.
 The act of setting a value on the ref Val is essentially setting the value on the source Val.
 
@@ -599,8 +599,8 @@ class A {
 }
 
 const a$ = val(1);
-const a1 = new A({ a$: a$.ref() });
-const a2 = new A({ a$: a$.ref() });
+const a1 = new A({ a$: a$.ref(true) });
+const a2 = new A({ a$: a$.ref(true) });
 
 a2.a$.set(2);
 

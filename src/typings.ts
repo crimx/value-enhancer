@@ -50,23 +50,14 @@ export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   /** Set new value */
   set: (this: void, value: TValue) => void;
   /**
-   * Create a new Val referencing the value of the current Val as source.
-   * All ref Vals share the same value from the source Val.
-   * The act of setting a value on the ref Val is essentially setting the value on the source Val.
+   * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
+   * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)
+   * All ref ReadonlyVals share the same value from the source ReadonlyVal.
    *
-   * With this pattern you can pass a ref Val as a writable Val to downstream.
-   * The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
+   * With this pattern you can pass a ref ReadonlyVal to downstream.
+   * The ref ReadonlyVals can be safely disposed without affecting the source ReadonlyVal and other ref ReadonlyVals.
    */
-  ref(): Val<TValue>;
-  /**
-   * Create a new Val referencing the value of the current Val as source.
-   * All ref Vals share the same value from the source Val.
-   * The act of setting a value on the ref Val is essentially setting the value on the source Val.
-   *
-   * With this pattern you can pass a ref Val as a writable Val to downstream.
-   * The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
-   */
-  ref(readonly: false): Val<TValue>;
+  ref(): ReadonlyVal<TValue>;
   /**
    * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
    * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)
@@ -75,12 +66,21 @@ export interface Val<TValue = any> extends ReadonlyVal<TValue> {
    * With this pattern you can pass a ref ReadonlyVal to downstream.
    * The ref ReadonlyVals can be safely disposed without affecting the source ReadonlyVal and other ref ReadonlyVals.
    */
-  ref(readonly: true): ReadonlyVal<TValue>;
+  ref(writable?: false): ReadonlyVal<TValue>;
   /**
-   * @param readonly If true, creates a new Ref ReadonlyVal referencing the value of the current Val as source.
-   *                 If false, creates a new Ref Val referencing the value of the current Val as source.
+   * Create a new Val referencing the value of the current Val as source.
+   * All ref Vals share the same value from the source Val.
+   * The act of setting a value on the ref Val is essentially setting the value on the source Val.
+   *
+   * With this pattern you can pass a ref Val as a writable Val to downstream.
+   * The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
    */
-  ref(readonly?: boolean): ReadonlyVal<TValue> | Val<TValue>;
+  ref(writable: true): Val<TValue>;
+  /**
+   * @param writable If true, creates a new Ref Val referencing the value of the current Val as source.
+   *                 If false, creates a new Ref ReadonlyVal referencing the value of the current Val as source.
+   */
+  ref(writable?: boolean): ReadonlyVal<TValue> | Val<TValue>;
 }
 
 export type ValSetValue<TValue = any> = (value: TValue) => void;

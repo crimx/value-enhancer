@@ -1,4 +1,4 @@
-import type { Val, ValConfig } from "./typings";
+import type { ReadonlyVal, Val, ValConfig } from "./typings";
 
 import { ReadonlyValImpl, ReadonlyValRefImpl } from "./readonly-val";
 import { Subscribers } from "./subscribers";
@@ -35,18 +35,14 @@ class ValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     this.set(value);
   }
 
-  public override ref(): Val<TValue>;
-  public override ref(readonly: false): Val<TValue>;
-  public override ref(readonly: true): ReadonlyValRefImpl<TValue>;
-  public override ref(
-    readonly?: boolean
-  ): ReadonlyValRefImpl<TValue> | Val<TValue>;
-  public override ref(
-    readonly?: boolean
-  ): ReadonlyValRefImpl<TValue> | Val<TValue> {
-    return readonly
-      ? new ReadonlyValRefImpl(this, this.#config)
-      : new ValRefImpl(this, this.#config);
+  public override ref(): ReadonlyVal<TValue>;
+  public override ref(writable?: false): ReadonlyVal<TValue>;
+  public override ref(writable: true): Val<TValue>;
+  public override ref(writable?: boolean): ReadonlyVal<TValue> | Val<TValue>;
+  public override ref(writable?: boolean): ReadonlyVal<TValue> | Val<TValue> {
+    return writable
+      ? new ValRefImpl(this, this.#config)
+      : new ReadonlyValRefImpl(this, this.#config);
   }
 }
 
@@ -70,18 +66,14 @@ export class ValRefImpl<TValue = any> extends ReadonlyValRefImpl<TValue> {
     this.set(value);
   }
 
-  public override ref(): Val<TValue>;
-  public override ref(readonly: false): Val<TValue>;
-  public override ref(readonly: true): ReadonlyValRefImpl<TValue>;
-  public override ref(
-    readonly?: boolean
-  ): ReadonlyValRefImpl<TValue> | Val<TValue>;
-  public override ref(
-    readonly?: boolean
-  ): ReadonlyValRefImpl<TValue> | Val<TValue> {
-    return readonly
-      ? new ReadonlyValRefImpl(this.#source$, this.#config)
-      : new ValRefImpl(this.#source$, this.#config);
+  public override ref(): ReadonlyVal<TValue>;
+  public override ref(writable?: false): ReadonlyVal<TValue>;
+  public override ref(writable: true): ReadonlyVal<TValue>;
+  public override ref(writable?: boolean): ReadonlyVal<TValue> | Val<TValue>;
+  public override ref(writable?: boolean): ReadonlyVal<TValue> | Val<TValue> {
+    return writable
+      ? new ValRefImpl(this.#source$, this.#config)
+      : new ReadonlyValRefImpl(this.#source$, this.#config);
   }
 }
 
