@@ -39,7 +39,7 @@ export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   /** Current value of the val */
   value: TValue;
   /** Set new value */
-  set(this: void, value: TValue): void;
+  set: (this: void, value: TValue) => void;
   /**
    * Create a new Val referencing the value of the current Val as source.
    * All ref Vals share the same value from the source Val.

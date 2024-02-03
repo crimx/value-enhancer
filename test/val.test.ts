@@ -1,4 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals";
+import type { Val } from "../src";
 import { nextTick, val } from "../src";
 
 describe("Val", () => {
@@ -6,6 +7,13 @@ describe("Val", () => {
     it("should have a Val with value 1", () => {
       const v = val(1);
       expect(v.value).toBe(1);
+    });
+
+    it("should not accept a `Val<string>` as a valid argument for param `Val<string | undefined>`.", () => {
+      const fn = (v: Val<string | undefined>) => v.value;
+      const v = val<string>("hello");
+      // @ts-expect-error - v does not accept `undefined`.
+      expect(fn(v)).toBe("hello");
     });
   });
 
