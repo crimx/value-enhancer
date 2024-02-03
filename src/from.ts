@@ -1,4 +1,5 @@
 import { ReadonlyValImpl } from "./readonly-val";
+import { Subscribers } from "./subscribers";
 import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
 import { INIT_VALUE } from "./utils";
 
@@ -13,12 +14,12 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     let notified = false;
 
     const get = () => {
-      if (currentValue === INIT_VALUE || this._subs.subs.size <= 0) {
+      if (currentValue === INIT_VALUE || subs.size_ <= 0) {
         currentValue = getValue();
       } else if (dirty) {
         const value = getValue();
         if (!this.$equal?.(value, currentValue)) {
-          this._subs.dirty = true;
+          subs.dirty_ = true;
           currentValue = value;
         }
       }
@@ -30,17 +31,19 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
       dirty = true;
       if (!notified) {
         notified = true;
-        this._subs.notify();
+        subs.notify_();
       }
     };
 
-    super(get, config, () => {
+    const subs = new Subscribers(get, () => {
       // attach listener first so that upstream value is resolved
       const disposer = listen(notify);
       currentValue = getValue();
       dirty = notified = false;
       return disposer;
     });
+
+    super(subs, config);
   }
 }
 

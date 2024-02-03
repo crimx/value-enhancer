@@ -1,8 +1,9 @@
 import type { ReadonlyVal } from "../src";
 
 import { describe, expect, it, jest } from "@jest/globals";
-import { nextTick, readonlyVal } from "../src";
-import { ReadonlyValImpl, groupVals } from "../src/readonly-val";
+import { groupVals, nextTick, readonlyVal } from "../src";
+import { ReadonlyValImpl } from "../src/readonly-val";
+import { Subscribers } from "../src/subscribers";
 
 describe("ReadonlyVal", () => {
   describe("value", () => {
@@ -821,9 +822,10 @@ describe("ReadonlyVal", () => {
 
     it("should support nested vals", () => {
       const value = { a: 2 };
-      const [val] = readonlyVal(
-        new ReadonlyValImpl(() => new ReadonlyValImpl(() => value))
-      );
+      const [val1] = readonlyVal(value);
+      const [val2] = readonlyVal(val1);
+      const [val3] = readonlyVal(val2);
+      const [val] = readonlyVal(val3);
       expect(JSON.stringify(val)).toBe(JSON.stringify(value));
     });
   });
@@ -836,10 +838,11 @@ describe("ReadonlyVal", () => {
     });
 
     it("should support nested vals", () => {
-      const value = {};
-      const [val] = readonlyVal(
-        new ReadonlyValImpl(() => new ReadonlyValImpl(() => value))
-      );
+      const value = "222223";
+      const [val1] = readonlyVal(value);
+      const [val2] = readonlyVal(val1);
+      const [val3] = readonlyVal(val2);
+      const [val] = readonlyVal(val3);
       expect(String(val)).toBe(String(value));
     });
   });
@@ -849,7 +852,8 @@ describe("ReadonlyValImpl", () => {
   describe("start", () => {
     it("should be called before first subscription", () => {
       const start = jest.fn(() => void 0);
-      const val = new ReadonlyValImpl(() => 1, {}, start);
+      const subs = new Subscribers(() => 1, start);
+      const val = new ReadonlyValImpl(subs);
       expect(start).toHaveBeenCalledTimes(0);
 
       const sub1 = jest.fn();
@@ -886,7 +890,8 @@ describe("ReadonlyValImpl", () => {
     it("should trigger disposer after last un-subscription", () => {
       const startDisposer = jest.fn();
       const start = jest.fn(() => startDisposer);
-      const val = new ReadonlyValImpl(() => 1, {}, start);
+      const subs = new Subscribers(() => 1, start);
+      const val = new ReadonlyValImpl(subs);
       expect(startDisposer).toHaveBeenCalledTimes(0);
 
       const sub1 = jest.fn();

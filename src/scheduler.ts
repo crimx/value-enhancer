@@ -16,7 +16,7 @@ const flush = () => {
   pending = false;
 
   for (const subs of curPendingSubs) {
-    subs.exec(SubscriberMode.Async);
+    subs.exec_(SubscriberMode.Async);
   }
   curPendingSubs.clear();
 };

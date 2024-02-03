@@ -1,6 +1,7 @@
 import type { Val, ValConfig } from "./typings";
 
 import { ReadonlyValImpl, ReadonlyValRefImpl } from "./readonly-val";
+import { Subscribers } from "./subscribers";
 
 export type { ValImpl };
 
@@ -10,14 +11,16 @@ class ValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
   public constructor(currentValue: TValue, config?: ValConfig<TValue>) {
     const get = () => currentValue;
 
-    super(get, config);
+    const subs = new Subscribers(get);
+
+    super(subs, config);
 
     this.#config = config;
     this.set = (value: TValue) => {
       if (!this.$equal?.(value, currentValue)) {
-        this._subs.dirty = true;
         currentValue = value;
-        this._subs.notify();
+        subs.dirty_ = true;
+        subs.notify_();
       }
     };
   }

@@ -1,4 +1,3 @@
-import type { ValOnStart } from "./subscribers";
 import type {
   ReadonlyVal,
   ValConfig,
@@ -18,7 +17,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   /**
    * Manage subscribers for a val.
    */
-  protected readonly _subs: Subscribers<TValue>;
+  readonly #subs: Subscribers<TValue>;
 
   readonly #config?: ValConfig;
 
@@ -30,16 +29,12 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * @param start A function that is called when a val get its first subscriber.
    *        The returned disposer will be called when the last subscriber unsubscribed from the val.
    */
-  public constructor(
-    get: () => TValue,
-    config?: ValConfig<TValue>,
-    start?: ValOnStart
-  ) {
-    this.get = get;
+  public constructor(subs: Subscribers<TValue>, config?: ValConfig<TValue>) {
+    this.#subs = subs;
+    this.get = subs.getValue_;
     this.#config = config;
     this.$equal = (config?.equal ?? defaultEqual) || void 0;
     this.#eager = config?.eager;
-    this._subs = new Subscribers<TValue>(get, start);
   }
 
   public get value(): TValue {
@@ -58,7 +53,7 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     subscriber: ValSubscriber<TValue>,
     eager = this.#eager
   ): ValDisposer {
-    return this._subs.add(
+    return this.#subs.add_(
       subscriber,
       eager ? SubscriberMode.Eager : SubscriberMode.Async
     );
@@ -70,24 +65,24 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     invoke(subscriber, this.value);
-    this._subs.dirty = false;
+    this.#subs.dirty_ = false;
     return disposer;
   }
 
   public $valCompute(subscriber: ValSubscriber<void>): ValDisposer {
-    return this._subs.add(subscriber, SubscriberMode.Computed);
+    return this.#subs.add_(subscriber, SubscriberMode.Computed);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {
     if (subscriber) {
-      this._subs.remove(subscriber);
+      this.#subs.remove_(subscriber);
     } else {
-      this._subs.clear();
+      this.#subs.clear_();
     }
   }
 
   public dispose(): void {
-    this._subs.clear();
+    this.#subs.clear_();
   }
 
   /**
@@ -129,12 +124,13 @@ export class ReadonlyValRefImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     source$: ReadonlyValImpl<TValue>,
     config?: ValConfig<TValue>
   ) {
-    super(source$.get, config, () =>
+    const subs = new Subscribers(source$.get, () =>
       source$.$valCompute(() => {
-        this._subs.dirty = true;
-        this._subs.notify();
+        subs.dirty_ = true;
+        subs.notify_();
       })
     );
+    super(subs, config);
 
     this.#source$ = source$;
     this.#config = config;
@@ -171,25 +167,21 @@ export function readonlyVal<TValue = any>(
 ): [ReadonlyVal<TValue | undefined>, ValSetValue<TValue | undefined>] {
   let currentValue = value;
 
-  let subs: Subscribers;
+  const get = () => currentValue;
+
+  const subs = new Subscribers(get);
 
   const set = (value: TValue | undefined): void => {
     if (!val.$equal?.(value, currentValue)) {
       currentValue = value;
       if (subs) {
-        subs.dirty = true;
-        subs.notify();
+        subs.dirty_ = true;
+        subs.notify_();
       }
     }
   };
 
-  const val = new ReadonlyValImpl(
-    () => currentValue,
-    config,
-    s => {
-      subs = s;
-    }
-  );
+  const val = new ReadonlyValImpl(subs, config);
 
   return [val, set];
 }

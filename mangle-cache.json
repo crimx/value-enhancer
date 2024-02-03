@@ -1,3 +1,10 @@
 {
-  "_watchers_": "_ws"
+  "dirty_": "d",
+  "notify_": "n",
+  "add_": "a",
+  "remove_": "r",
+  "clear_": "c",
+  "exec_": "e",
+  "getValue_": "g",
+  "size_": "s"
 }

@@ -20,56 +20,62 @@ export type ValOnStart = (subs: Subscribers) => void | ValDisposer | undefined;
  */
 export class Subscribers<TValue = any> implements Subscribers {
   public constructor(getValue: () => TValue, start?: ValOnStart | null) {
-    this.#getValue = getValue;
+    this.getValue_ = getValue;
     this.#start = start;
   }
 
-  public dirty = false;
+  public dirty_ = false;
 
-  public notify(): void {
+  public get size_(): number {
+    return this.#subs.size;
+  }
+
+  public getValue_: () => TValue;
+
+  public notify_(): void {
     this.#notReadySubscribers.clear();
-    if (this.subs.size > 0) {
-      this.exec(SubscriberMode.Computed);
-      this.exec(SubscriberMode.Eager);
+    if (this.size_ > 0) {
+      this.exec_(SubscriberMode.Computed);
+      this.exec_(SubscriberMode.Eager);
       if (this[SubscriberMode.Async] > 0) {
         schedule(this);
       }
     } else {
-      this.dirty = false;
+      this.dirty_ = false;
     }
   }
 
-  public add(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
-    if (this.#start && this.subs.size <= 0) {
+  public add_(subscriber: ValSubscriber, mode: SubscriberMode): () => void {
+    if (this.#start && this.size_ <= 0) {
       // Subscribe added, clear notified state
       this.#startDisposer = this.#start(this);
     }
 
-    const currentMode = this.subs.get(subscriber);
+    const currentMode = this.#subs.get(subscriber);
     if (currentMode) {
       this[currentMode]--;
     }
     this.#notReadySubscribers.add(subscriber);
-    this.subs.set(subscriber, mode);
+    this.#subs.set(subscriber, mode);
     this[mode]++;
 
-    return (): void => this.remove(subscriber);
+    return (): void => this.remove_(subscriber);
   }
 
-  public remove(subscriber: ValSubscriber): void {
+  public remove_(subscriber: ValSubscriber): void {
     this.#notReadySubscribers.delete(subscriber);
-    const mode = this.subs.get(subscriber);
+    const mode = this.#subs.get(subscriber);
     if (mode) {
-      this.subs.delete(subscriber);
+      this.#subs.delete(subscriber);
       this[mode]--;
-      if (this.subs.size <= 0) {
+      if (this.size_ <= 0) {
         this.#stop();
       }
     }
   }
 
-  public clear(): void {
-    this.subs.clear();
+  public clear_(): void {
+    this.#subs.clear();
     this.#notReadySubscribers.clear();
     this[SubscriberMode.Async] =
       this[SubscriberMode.Eager] =
@@ -79,26 +85,26 @@ export class Subscribers<TValue = any> implements Subscribers {
     this.#stop();
   }
 
-  public exec(mode: SubscriberMode): void {
+  public exec_(mode: SubscriberMode): void {
     if (this[mode] > 0) {
       let value: TValue | undefined;
       if (mode === SubscriberMode.Computed) {
         if (this[SubscriberMode.Async] + this[SubscriberMode.Eager] <= 0) {
-          this.dirty = false;
+          this.dirty_ = false;
         }
       } else {
-        value = this.#getValue();
-        if (!this.dirty) {
+        value = this.getValue_();
+        if (!this.dirty_) {
           return;
         }
         if (
           mode === SubscriberMode.Async ||
           /* mode === SubscriberMode.Eager && */ this[SubscriberMode.Async] <= 0
         ) {
-          this.dirty = false;
+          this.dirty_ = false;
         }
       }
-      for (const [sub, subMode] of this.subs) {
+      for (const [sub, subMode] of this.#subs) {
         if (subMode === mode && !this.#notReadySubscribers.has(sub)) {
           invoke(sub, value as TValue);
         }
@@ -106,13 +112,11 @@ export class Subscribers<TValue = any> implements Subscribers {
     }
   }
 
-  public readonly subs = new Map<ValSubscriber<TValue>, SubscriberMode>();
+  #subs = new Map<ValSubscriber<TValue>, SubscriberMode>();
 
   #stop(): void {
     this.#startDisposer && (this.#startDisposer = this.#startDisposer());
   }
-
-  #getValue: () => TValue;
 
   private [SubscriberMode.Async] = 0;
   private [SubscriberMode.Eager] = 0;

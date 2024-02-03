@@ -1,6 +1,7 @@
 import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
+import { Subscribers } from "./subscribers";
 import { INIT_VALUE, defaultEqual, isVal } from "./utils";
 
 class FlattenFromImpl<
@@ -23,19 +24,19 @@ class FlattenFromImpl<
     let innerDisposer: ValDisposer | undefined | null;
 
     const computeValue = (): TValue => {
-      if (this._subs.subs.size <= 0) {
+      if (subs.size_ <= 0) {
         updateInnerVal();
       }
       return innerVal ? innerVal.value : (innerMaybeVal as TValue);
     };
 
     const get = () => {
-      if (currentValue === INIT_VALUE || this._subs.subs.size <= 0) {
+      if (currentValue === INIT_VALUE || subs.size_ <= 0) {
         currentValue = computeValue();
       } else if (dirty) {
         const value = computeValue();
         if (!this.$equal?.(value, currentValue)) {
-          this._subs.dirty = true;
+          subs.dirty_ = true;
           currentValue = value;
         }
       }
@@ -66,11 +67,11 @@ class FlattenFromImpl<
       dirty = true;
       if (!notified) {
         notified = true;
-        this._subs.notify();
+        subs.notify_();
       }
     };
 
-    super(get, config, () => {
+    const subs = new Subscribers(get, () => {
       // attach listener first so that upstream value is resolved
       const outerDisposer = listen(() => {
         updateInnerVal();
@@ -86,6 +87,8 @@ class FlattenFromImpl<
         outerDisposer?.();
       };
     });
+
+    super(subs, config);
   }
 }
 
