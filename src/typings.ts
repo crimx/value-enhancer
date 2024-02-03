@@ -7,6 +7,15 @@ export interface ReadonlyVal<TValue = any> {
   /** Get current value of the val */
   get(this: void): TValue;
   /**
+   * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
+   * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)
+   * All ref ReadonlyVals share the same value from the source ReadonlyVal.
+   *
+   * With this pattern you can pass a ref ReadonlyVal to downstream.
+   * The ref ReadonlyVals can be safely disposed without affecting the source ReadonlyVal and other ref ReadonlyVals.
+   */
+  ref(): ReadonlyVal<TValue>;
+  /**
    * Subscribe to value changes without immediate emission.
    * @param subscriber
    * @param eager by default subscribers will be notified on next tick. set `true` to notify subscribers of value changes synchronously.
@@ -49,6 +58,29 @@ export interface Val<TValue = any> extends ReadonlyVal<TValue> {
    * The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
    */
   ref(): Val<TValue>;
+  /**
+   * Create a new Val referencing the value of the current Val as source.
+   * All ref Vals share the same value from the source Val.
+   * The act of setting a value on the ref Val is essentially setting the value on the source Val.
+   *
+   * With this pattern you can pass a ref Val as a writable Val to downstream.
+   * The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
+   */
+  ref(readonly: false): Val<TValue>;
+  /**
+   * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
+   * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)
+   * All ref ReadonlyVals share the same value from the source ReadonlyVal.
+   *
+   * With this pattern you can pass a ref ReadonlyVal to downstream.
+   * The ref ReadonlyVals can be safely disposed without affecting the source ReadonlyVal and other ref ReadonlyVals.
+   */
+  ref(readonly: true): ReadonlyVal<TValue>;
+  /**
+   * @param readonly If true, creates a new Ref ReadonlyVal referencing the value of the current Val as source.
+   *                 If false, creates a new Ref Val referencing the value of the current Val as source.
+   */
+  ref(readonly?: boolean): ReadonlyVal<TValue> | Val<TValue>;
 }
 
 export type ValSetValue<TValue = any> = (value: TValue) => void;
@@ -70,12 +102,12 @@ export interface ValConfig<TValue = any> {
    * Compare two values. Default `Object.is`.
    * `false` to disable equality check.
    */
-  equal?: ValEqual<TValue> | false;
+  readonly equal?: ValEqual<TValue> | false;
   /**
    * Set the default behavior of subscription and reaction.
    * Emission triggers synchronously if `true`. Default `false`.
    */
-  eager?: boolean;
+  readonly eager?: boolean;
 }
 
 export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;

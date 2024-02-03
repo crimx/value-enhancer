@@ -703,6 +703,79 @@ describe("ReadonlyVal", () => {
     });
   });
 
+  describe("ref", () => {
+    it("should create a ref ReadonlyVal", async () => {
+      const [val, setValue] = readonlyVal(1);
+      const ref = val.ref();
+      expect(ref.value).toBe(1);
+
+      setValue(2);
+      expect(val.value).toBe(2);
+      expect(ref.value).toBe(2);
+
+      const spy = jest.fn();
+      ref.subscribe(spy);
+
+      expect(spy).toBeCalledTimes(1);
+
+      setValue(3);
+
+      await nextTick();
+
+      expect(spy).toBeCalledTimes(2);
+      expect(val.value).toBe(3);
+      expect(ref.value).toBe(3);
+
+      ref.dispose();
+
+      setValue(4);
+
+      await nextTick();
+
+      expect(spy).toBeCalledTimes(2);
+      expect(val.value).toBe(4);
+      expect(ref.value).toBe(4);
+    });
+
+    it("should chain ref from the same source", async () => {
+      const [val, setValue] = readonlyVal(1);
+      const ref = val.ref();
+      const refRef = ref.ref();
+
+      expect(refRef.value).toBe(1);
+
+      setValue(2);
+      expect(val.value).toBe(2);
+      expect(ref.value).toBe(2);
+      expect(refRef.value).toBe(2);
+
+      const spy = jest.fn();
+      refRef.subscribe(spy);
+
+      expect(spy).toBeCalledTimes(1);
+
+      setValue(3);
+
+      await nextTick();
+
+      expect(spy).toBeCalledTimes(2);
+      expect(val.value).toBe(3);
+      expect(ref.value).toBe(3);
+      expect(refRef.value).toBe(3);
+
+      refRef.dispose();
+
+      setValue(4);
+
+      await nextTick();
+
+      expect(spy).toBeCalledTimes(2);
+      expect(val.value).toBe(4);
+      expect(ref.value).toBe(4);
+      expect(refRef.value).toBe(4);
+    });
+  });
+
   describe("dispose", () => {
     it("should unsubscribe all callbacks", async () => {
       const spy1 = jest.fn();

@@ -545,7 +545,7 @@ console.log(foo.$.a.value); // 2
 
 Sharing vals to other classes directly should be careful. Other classes may `dispose` the vals and cause unexpected behavior.
 
-To share ReadonlyVals to other classes, use a derived val.
+To share ReadonlyVals to other classes, use a ref readonly val. It is just like `derive` a val without `transform`. It is simpler hence more efficient.
 
 ```ts
 import { val, derive, type ReadonlyVal } from "value-enhancer";

@@ -18,9 +18,11 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   /**
    * Manage subscribers for a val.
    */
-  protected _subs: Subscribers<TValue>;
+  protected readonly _subs: Subscribers<TValue>;
 
-  #eager?: boolean;
+  readonly #config?: ValConfig;
+
+  readonly #eager?: boolean;
 
   /**
    * @param get A pure function that returns the current value of the val.
@@ -30,14 +32,13 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
    */
   public constructor(
     get: () => TValue,
-    { equal = defaultEqual, eager }: ValConfig<TValue> = {},
+    config?: ValConfig<TValue>,
     start?: ValOnStart
   ) {
     this.get = get;
-    if (equal) {
-      this.$equal = equal;
-    }
-    this.#eager = eager;
+    this.#config = config;
+    this.$equal = (config?.equal ?? defaultEqual) || void 0;
+    this.#eager = config?.eager;
     this._subs = new Subscribers<TValue>(get, start);
   }
 
@@ -48,6 +49,10 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
   public get: (this: void) => TValue;
 
   public $equal?: (this: void, newValue: TValue, oldValue: TValue) => boolean;
+
+  public ref(): ReadonlyVal<TValue> {
+    return new ReadonlyValRefImpl(this, this.#config);
+  }
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
@@ -113,6 +118,30 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
       | null
       | { toJSON?: (key: string) => unknown };
     return value && value.toJSON ? value.toJSON(key) : value;
+  }
+}
+
+export class ReadonlyValRefImpl<TValue = any> extends ReadonlyValImpl<TValue> {
+  readonly #source$: ReadonlyValImpl<TValue>;
+  readonly #config?: ValConfig<TValue>;
+
+  public constructor(
+    source$: ReadonlyValImpl<TValue>,
+    config?: ValConfig<TValue>
+  ) {
+    super(source$.get, config, () =>
+      source$.$valCompute(() => {
+        this._subs.dirty = true;
+        this._subs.notify();
+      })
+    );
+
+    this.#source$ = source$;
+    this.#config = config;
+  }
+
+  public override ref(): ReadonlyVal<TValue> {
+    return new ReadonlyValRefImpl(this.#source$, this.#config);
   }
 }
 

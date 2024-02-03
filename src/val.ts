@@ -1,6 +1,8 @@
 import type { Val, ValConfig } from "./typings";
 
-import { ReadonlyValImpl } from "./readonly-val";
+import { ReadonlyValImpl, ReadonlyValRefImpl } from "./readonly-val";
+
+export type { ValImpl };
 
 class ValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
   #config?: ValConfig<TValue>;
@@ -30,25 +32,28 @@ class ValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     this.set(value);
   }
 
-  public ref(): Val<TValue> {
-    return new RefValImpl(this, this.#config);
+  public override ref(): Val<TValue>;
+  public override ref(readonly: false): Val<TValue>;
+  public override ref(readonly: true): ReadonlyValRefImpl<TValue>;
+  public override ref(
+    readonly?: boolean
+  ): ReadonlyValRefImpl<TValue> | Val<TValue>;
+  public override ref(
+    readonly?: boolean
+  ): ReadonlyValRefImpl<TValue> | Val<TValue> {
+    return readonly
+      ? new ReadonlyValRefImpl(this, this.#config)
+      : new ValRefImpl(this, this.#config);
   }
 }
 
-class RefValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
-  #config?: ValConfig<TValue>;
-  #source$: ValImpl<TValue>;
+export class ValRefImpl<TValue = any> extends ReadonlyValRefImpl<TValue> {
+  readonly #source$: ValImpl<TValue>;
+  readonly #config?: ValConfig<TValue>;
 
   public constructor(source$: ValImpl<TValue>, config?: ValConfig<TValue>) {
-    super(source$.get, config, () =>
-      source$.$valCompute(() => {
-        this._subs.dirty = true;
-        this._subs.notify();
-      })
-    );
-
-    this.#source$ = source$;
-    this.#config = config;
+    super(source$);
+    (this.#source$ = source$), (this.#config = config);
     this.set = source$.set;
   }
 
@@ -62,8 +67,18 @@ class RefValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     this.set(value);
   }
 
-  public ref(): Val<TValue> {
-    return new RefValImpl(this.#source$, this.#config);
+  public override ref(): Val<TValue>;
+  public override ref(readonly: false): Val<TValue>;
+  public override ref(readonly: true): ReadonlyValRefImpl<TValue>;
+  public override ref(
+    readonly?: boolean
+  ): ReadonlyValRefImpl<TValue> | Val<TValue>;
+  public override ref(
+    readonly?: boolean
+  ): ReadonlyValRefImpl<TValue> | Val<TValue> {
+    return readonly
+      ? new ReadonlyValRefImpl(this.#source$, this.#config)
+      : new ValRefImpl(this.#source$, this.#config);
   }
 }
 
