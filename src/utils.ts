@@ -18,7 +18,7 @@ export const strictEqual = Object.is;
  *          2. arrA and arrB have different lengths
  *          3. arrA and arrB have different values at any index
  */
-export const arrayShallowEqual = (arrA: unknown, arrB: unknown): boolean => {
+export const arrayShallowEqual = (arrA: any, arrB: any): boolean => {
   if (arrA === arrB) {
     return true;
   }
