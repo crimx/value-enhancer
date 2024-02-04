@@ -18,7 +18,7 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg?maxAge=2592000)](https://conventionalcommits.org)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-A small library to enhance value with plain and explicit reactive wrapper.
+Enhance value with plain and explicit reactive wrapper.
 
 Docs: <https://value-enhancer.js.org>
 
@@ -40,12 +40,12 @@ npm add value-enhancer
   It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
 - Safe and fast lazy computation.  
   It solves multi-level derivation issue (like in Svelte Stores) with smart lazy value evaluation.
+- Side effect free.  
+  `Val`s are created without side effects, which means you can create and access derived `Val.value` without worrying about memory leaks. Disposers returned by subscriptions can be easily managed with libraries like [`@wopjs/disposable`](https://github.com/wopjs/disposable).
 - Explicit.  
   Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy/Signal implementations.
 - Simple DX.  
   Designed with ergonomics in mind. No hidden rules for getting or setting values. What you see is what you get.
-- Bundle size and Performance.  
-  By carefully defining scope and choosing right features that balance usability and performance, less work needed to be done in `value-enhancer` which makes it smaller and faster.
 
 ## Quick Q&A
 

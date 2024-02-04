@@ -15,6 +15,7 @@
     "Vals",
     "vite",
     "vitest",
+    "wopjs",
     "yoctocolors"
   ],
   "ignorePaths": [
