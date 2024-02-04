@@ -8,6 +8,7 @@ export type {
   ValEqual,
   ValSetValue,
   ValSubscriber,
+  ValVersion,
 } from "./typings";
 
 export { nextTick } from "./scheduler";

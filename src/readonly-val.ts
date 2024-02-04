@@ -4,9 +4,9 @@ import type {
   ValDisposer,
   ValSetValue,
   ValSubscriber,
+  ValVersion,
 } from "./typings";
 
-import type { ValVersion } from "./subscribers";
 import { SubscriberMode, Subscribers } from "./subscribers";
 import { invoke, strictEqual } from "./utils";
 

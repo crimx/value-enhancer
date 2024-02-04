@@ -1,7 +1,12 @@
-import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
+import type {
+  ReadonlyVal,
+  UnwrapVal,
+  ValConfig,
+  ValDisposer,
+  ValVersion,
+} from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
-import type { ValVersion } from "./subscribers";
 import { Subscribers } from "./subscribers";
 import { INIT_VALUE, isVal, strictEqual } from "./utils";
 

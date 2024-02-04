@@ -1,7 +1,11 @@
 import { ReadonlyValImpl } from "./readonly-val";
-import type { ValVersion } from "./subscribers";
 import { Subscribers } from "./subscribers";
-import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
+import type {
+  ReadonlyVal,
+  ValConfig,
+  ValDisposer,
+  ValVersion,
+} from "./typings";
 import { INIT_VALUE } from "./utils";
 
 class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {

@@ -1,7 +1,11 @@
-import type { ReadonlyVal, ValConfig, ValInputsValueTuple } from "./typings";
+import type {
+  ReadonlyVal,
+  ValConfig,
+  ValInputsValueTuple,
+  ValVersion,
+} from "./typings";
 
 import { from } from "./from";
-import type { ValVersion } from "./subscribers";
 import {
   arrayShallowEqual,
   getValVersion,

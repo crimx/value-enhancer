@@ -1,5 +1,4 @@
-import type { ValVersion } from "./subscribers";
-import type { ReadonlyVal, ValInputsValueTuple } from "./typings";
+import type { ReadonlyVal, ValInputsValueTuple, ValVersion } from "./typings";
 
 /** Returns the value passed in. */
 export const identity = <TValue>(value: TValue): TValue => value;

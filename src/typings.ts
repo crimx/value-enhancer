@@ -1,5 +1,3 @@
-import type { ValVersion } from "./subscribers";
-
 /**
  * A ReadonlyVal contains a readonly `value` and does not have a `set` method.
  */
@@ -128,6 +126,8 @@ export interface ValConfig<TValue = any> {
    */
   readonly eager?: boolean;
 }
+
+export type ValVersion = any;
 
 export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
 

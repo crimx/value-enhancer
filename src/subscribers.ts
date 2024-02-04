@@ -1,9 +1,7 @@
-import type { ValDisposer, ValSubscriber } from "./typings";
+import type { ValDisposer, ValSubscriber, ValVersion } from "./typings";
 
 import { cancelTask, schedule } from "./scheduler";
 import { invoke, strictEqual } from "./utils";
-
-export type ValVersion = any;
 
 export enum SubscriberMode {
   Async = 1,
