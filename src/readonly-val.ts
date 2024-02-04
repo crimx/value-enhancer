@@ -6,8 +6,9 @@ import type {
   ValSubscriber,
 } from "./typings";
 
+import type { ValVersion } from "./subscribers";
 import { SubscriberMode, Subscribers } from "./subscribers";
-import { defaultEqual, invoke } from "./utils";
+import { invoke, strictEqual } from "./utils";
 
 /**
  * Bare minimum implementation of a readonly val.
@@ -33,8 +34,12 @@ export class ReadonlyValImpl<TValue = any> implements ReadonlyVal<TValue> {
     this.#subs = subs;
     this.get = subs.getValue_;
     this.#config = config;
-    this.$equal = (config?.equal ?? defaultEqual) || void 0;
+    this.$equal = (config?.equal ?? strictEqual) || void 0;
     this.#eager = config?.eager;
+  }
+
+  public get $version(): ValVersion {
+    return this.#subs.version_;
   }
 
   public get value(): TValue {
@@ -126,7 +131,7 @@ export class ReadonlyValRefImpl<TValue = any> extends ReadonlyValImpl<TValue> {
   ) {
     const subs = new Subscribers(source$.get, () =>
       source$.$valCompute(() => {
-        subs.dirty_ = true;
+        subs.newVersion_();
         subs.notify_();
       })
     );
@@ -173,11 +178,9 @@ export function readonlyVal<TValue = any>(
 
   const set = (value: TValue | undefined): void => {
     if (!val.$equal?.(value, currentValue)) {
+      subs.newVersion_(value, currentValue);
       currentValue = value;
-      if (subs) {
-        subs.dirty_ = true;
-        subs.notify_();
-      }
+      subs.notify_();
     }
   };
 

@@ -27,28 +27,6 @@ describe("ReadonlyVal", () => {
     });
   });
 
-  describe("value", () => {
-    it("should expose equal method", () => {
-      const [val] = readonlyVal(1);
-      expect((val as ReadonlyValImpl<number>).$equal?.(val.value, 1)).toBe(
-        true
-      );
-      expect((val as ReadonlyValImpl<number>).$equal?.(val.value, 2)).toBe(
-        false
-      );
-    });
-
-    it("should expose custom equal method", () => {
-      const [val] = readonlyVal({ a: 2 }, { equal: (a, b) => a.a === b.a });
-      expect(
-        (val as ReadonlyValImpl<{ a: number }>).$equal?.(val.value, { a: 2 })
-      ).toBe(true);
-      expect(
-        (val as ReadonlyValImpl<{ a: number }>).$equal?.(val.value, { a: 1 })
-      ).toBe(false);
-    });
-  });
-
   describe("config", () => {
     it("should perform custom equal", () => {
       const spy = jest.fn();

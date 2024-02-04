@@ -1,4 +1,5 @@
 import { ReadonlyValImpl } from "./readonly-val";
+import type { ValVersion } from "./subscribers";
 import { Subscribers } from "./subscribers";
 import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
 import { INIT_VALUE } from "./utils";
@@ -16,10 +17,11 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     const get = () => {
       if (currentValue === INIT_VALUE || subs.size_ <= 0) {
         currentValue = getValue();
+        subs.version_ = currentValue;
       } else if (dirty) {
         const value = getValue();
         if (!this.$equal?.(value, currentValue)) {
-          subs.dirty_ = true;
+          subs.newVersion_(value, currentValue);
           currentValue = value;
         }
       }
@@ -44,6 +46,12 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     });
 
     super(subs, config);
+  }
+
+  override get $version(): ValVersion {
+    // resolve current value for the latest version
+    this.get();
+    return super.$version;
   }
 }
 

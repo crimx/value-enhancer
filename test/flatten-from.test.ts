@@ -22,6 +22,21 @@ describe("flattenFrom", () => {
     expect(startSpy).toBeCalledTimes(0);
   });
 
+  it("should resolve correct version", () => {
+    let currentVal = val(1);
+
+    const val$ = flattenFrom(() => currentVal, noop);
+
+    const version = val$.$version;
+
+    currentVal = val(1);
+
+    expect(val$.$version).toBe(version);
+
+    currentVal = val(2);
+    expect(val$.$version).not.toBe(version);
+  });
+
   it("should flatten inner normal value", () => {
     const startSpy = jest.fn(noop);
     let currentValue: ReadonlyVal<number> | number = 1;

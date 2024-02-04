@@ -1,8 +1,9 @@
 import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
 
 import { ReadonlyValImpl } from "./readonly-val";
+import type { ValVersion } from "./subscribers";
 import { Subscribers } from "./subscribers";
-import { INIT_VALUE, defaultEqual, isVal } from "./utils";
+import { INIT_VALUE, isVal, strictEqual } from "./utils";
 
 class FlattenFromImpl<
   TValOrValue = any,
@@ -33,10 +34,11 @@ class FlattenFromImpl<
     const get = () => {
       if (currentValue === INIT_VALUE || subs.size_ <= 0) {
         currentValue = computeValue();
+        subs.version_ = currentValue;
       } else if (dirty) {
         const value = computeValue();
         if (!this.$equal?.(value, currentValue)) {
-          subs.dirty_ = true;
+          subs.newVersion_(value, currentValue);
           currentValue = value;
         }
       }
@@ -59,7 +61,7 @@ class FlattenFromImpl<
             ? void 0
             : innerVal
             ? innerVal.$equal
-            : defaultEqual);
+            : strictEqual);
       }
     };
 
@@ -89,6 +91,12 @@ class FlattenFromImpl<
     });
 
     super(subs, config);
+  }
+
+  override get $version(): ValVersion {
+    // resolve current value for the latest version
+    this.get();
+    return super.$version;
   }
 }
 

@@ -18,36 +18,62 @@ describe("derive", () => {
     expect(spy).toBeCalledTimes(1);
   });
 
-  it("should not trigger transform if upstream not changed", () => {
-    const spy = jest.fn(value => value);
+  it("should not trigger transform if upstream not changed", async () => {
+    const transformSpy = jest.fn(value => value);
     const val1 = val(1);
-    const derived = derive(val1, spy);
+    const derived = derive(val1, transformSpy);
 
-    expect(spy).toBeCalledTimes(0);
-
-    expect(val1.value).toBe(1);
-    expect(derived.value).toBe(1);
-    expect(spy).toBeCalledTimes(1);
+    expect(transformSpy).toBeCalledTimes(0);
 
     expect(val1.value).toBe(1);
     expect(derived.value).toBe(1);
-    expect(spy).toBeCalledTimes(1);
+    expect(transformSpy).toBeCalledTimes(1);
 
+    transformSpy.mockClear();
+
+    expect(val1.value).toBe(1);
+    expect(derived.value).toBe(1);
+    expect(transformSpy).toBeCalledTimes(0);
+
+    transformSpy.mockClear();
     val1.set(1);
 
     expect(val1.value).toBe(1);
     expect(derived.value).toBe(1);
-    expect(spy).toBeCalledTimes(1);
+    expect(transformSpy).toBeCalledTimes(0);
+
+    transformSpy.mockClear();
 
     expect(val1.value).toBe(1);
     expect(derived.value).toBe(1);
-    expect(spy).toBeCalledTimes(1);
+    expect(transformSpy).toBeCalledTimes(0);
 
+    transformSpy.mockClear();
     val1.set(2);
 
     expect(val1.value).toBe(2);
     expect(derived.value).toEqual(2);
-    expect(spy).toBeCalledTimes(2);
+    expect(transformSpy).toBeCalledTimes(1);
+
+    transformSpy.mockClear();
+
+    const subSpy = jest.fn();
+    derived.subscribe(subSpy);
+
+    expect(val1.value).toBe(2);
+    expect(derived.value).toEqual(2);
+    expect(transformSpy).toBeCalledTimes(0);
+    expect(subSpy).toBeCalledTimes(1);
+    expect(subSpy).lastCalledWith(2);
+
+    subSpy.mockClear();
+    transformSpy.mockClear();
+    val1.set(2);
+
+    expect(val1.value).toBe(2);
+    expect(derived.value).toEqual(2);
+    expect(transformSpy).toBeCalledTimes(0);
+    expect(subSpy).toBeCalledTimes(0);
   });
 
   it("should subscribe", async () => {

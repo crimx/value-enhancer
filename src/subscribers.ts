@@ -1,7 +1,9 @@
 import type { ValDisposer, ValSubscriber } from "./typings";
 
 import { cancelTask, schedule } from "./scheduler";
-import { invoke } from "./utils";
+import { invoke, strictEqual } from "./utils";
+
+export type ValVersion = any;
 
 export enum SubscriberMode {
   Async = 1,
@@ -24,10 +26,23 @@ export class Subscribers<TValue = any> implements Subscribers {
     this.#start = start;
   }
 
+  public version_: ValVersion = Symbol();
+
   public dirty_ = false;
 
   public get size_(): number {
     return this.#subs.size;
+  }
+
+  #shouldUseSymbolVersion?: boolean;
+  public newVersion_(newValue?: TValue, oldValue?: TValue): void {
+    // This happens if `equal` is `false` or it returns `false` when comparing same values.
+    // Use the value itself otherwise so that when setting back the same value, it will not trigger a new version.
+    if (!this.#shouldUseSymbolVersion && strictEqual(newValue, oldValue)) {
+      this.#shouldUseSymbolVersion = true;
+    }
+    this.version_ = this.#shouldUseSymbolVersion ? Symbol() : newValue;
+    this.dirty_ = true;
   }
 
   public getValue_: () => TValue;

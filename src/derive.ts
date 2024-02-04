@@ -1,8 +1,7 @@
-import type { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig } from "./typings";
 
 import { from } from "./from";
-import { INIT_VALUE, identity } from "./utils";
+import { INIT_VALUE, identity, strictEqual } from "./utils";
 
 export type DerivedValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue
@@ -31,7 +30,7 @@ export function derive<TSrcValue = any, TValue = any>(
 export function derive<
   TSrcValue = any,
   TValue = any,
-  TSrcVal extends ReadonlyValImpl<TSrcValue> = ReadonlyValImpl
+  TSrcVal extends ReadonlyVal<TSrcValue> = ReadonlyVal
 >(
   val: TSrcVal,
   transform: DerivedValTransform<
@@ -41,13 +40,17 @@ export function derive<
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> {
   let cachedValue: TValue;
-  let cachedSrcValue: TSrcValue = INIT_VALUE;
+  let cachedSrcVersion: TSrcValue = INIT_VALUE;
 
   return from(
-    () =>
-      cachedSrcValue === INIT_VALUE || !val.$equal?.(val.value, cachedSrcValue)
-        ? (cachedValue = transform((cachedSrcValue = val.value)))
-        : cachedValue,
+    () => {
+      const version = val.$version;
+      if (!strictEqual(version, cachedSrcVersion)) {
+        cachedSrcVersion = version;
+        cachedValue = transform(val.value);
+      }
+      return cachedValue;
+    },
     notify => val.$valCompute(notify),
     config
   );

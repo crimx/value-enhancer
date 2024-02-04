@@ -11,7 +11,7 @@ export type {
 } from "./typings";
 
 export { nextTick } from "./scheduler";
-export { identity, isVal } from "./utils";
+export { arrayShallowEqual, identity, isVal, strictEqual } from "./utils";
 
 export { combine, type CombineValTransform } from "./combine";
 export { derive, type DerivedValTransform } from "./derive";

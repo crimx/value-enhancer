@@ -1,10 +1,12 @@
 {
-  "dirty_": "d",
-  "notify_": "n",
   "add_": "a",
-  "remove_": "r",
   "clear_": "c",
+  "dirty_": "d",
   "exec_": "e",
   "getValue_": "g",
-  "size_": "s"
+  "notify_": "n",
+  "remove_": "r",
+  "size_": "s",
+  "version_": "v",
+  "newVersion_": "w"
 }

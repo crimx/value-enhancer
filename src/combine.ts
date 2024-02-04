@@ -1,13 +1,13 @@
-import type { ReadonlyValImpl } from "./readonly-val";
 import type { ReadonlyVal, ValConfig, ValInputsValueTuple } from "./typings";
 
 import { from } from "./from";
+import type { ValVersion } from "./subscribers";
 import {
-  INIT_VALUE,
+  arrayShallowEqual,
+  getValVersion,
   getValues,
   identity,
   invoke,
-  valInputsEqual,
 } from "./utils";
 
 export type CombineValTransform<
@@ -41,7 +41,7 @@ export function combine<
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue>;
 export function combine<
-  TValInputs extends readonly ReadonlyValImpl[] = ReadonlyValImpl[],
+  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
   TValue = any
 >(
   valInputs: readonly [...TValInputs],
@@ -55,14 +55,20 @@ export function combine<
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> {
   let cachedValue: TValue;
-  let cachedSrcValues: [...ValInputsValueTuple<TValInputs>] = INIT_VALUE;
+  let cachedSrcVersions: readonly ValVersion[] | undefined;
 
   return from(
-    () =>
-      cachedSrcValues !== INIT_VALUE &&
-      valInputsEqual(valInputs, cachedSrcValues)
-        ? cachedValue
-        : (cachedValue = transform((cachedSrcValues = getValues(valInputs)))),
+    () => {
+      const versions = valInputs.map(getValVersion);
+      if (
+        !cachedSrcVersions ||
+        !arrayShallowEqual(versions, cachedSrcVersions)
+      ) {
+        cachedSrcVersions = versions;
+        cachedValue = transform(getValues(valInputs));
+      }
+      return cachedValue;
+    },
     notify => {
       const disposers = valInputs.map(val => val.$valCompute(notify));
       return () => disposers.forEach(invoke);

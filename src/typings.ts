@@ -1,10 +1,21 @@
+import type { ValVersion } from "./subscribers";
+
 /**
  * A ReadonlyVal contains a readonly `value` and does not have a `set` method.
  */
 export interface ReadonlyVal<TValue = any> {
-  /** Current value of the val */
+  /**
+   * Current value of the val.
+   */
   readonly value: TValue;
-  /** Get current value of the val */
+  /**
+   * A version representation of the value.
+   * If two versions of a val is not equal(`Object.is`), it means the `value` has changed (event if the `value` is equal).
+   */
+  readonly $version: ValVersion;
+  /**
+   * Get current value of the val.
+   */
   get(this: void): TValue;
   /**
    * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
@@ -29,6 +40,14 @@ export interface ReadonlyVal<TValue = any> {
    * @returns a disposer function that cancels the subscription
    */
   subscribe(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
+  /**
+   * Subscribe to value changes without immediate emission.
+   * The subscribers will be called before sync and async subscribers from [[reaction]] and [[subscribe]].
+   * It is mainly used for chaining Vals.
+   * @param subscriber
+   * @returns a disposer function that cancels the subscription
+   */
+  $valCompute(subscriber: ValSubscriber<void>): ValDisposer;
   /**
    * Remove the given subscriber.
    * Remove all if no subscriber provided.
