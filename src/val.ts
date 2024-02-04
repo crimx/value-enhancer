@@ -18,7 +18,8 @@ class ValImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     this.#config = config;
     this.set = (value: TValue) => {
       if (!this.$equal?.(value, currentValue)) {
-        subs.newVersion_(value, currentValue);
+        subs.dirty_ = true;
+        subs.newVersion_(config, value, currentValue);
         currentValue = value;
         subs.notify_();
       }

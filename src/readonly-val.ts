@@ -131,7 +131,8 @@ export class ReadonlyValRefImpl<TValue = any> extends ReadonlyValImpl<TValue> {
   ) {
     const subs = new Subscribers(source$.get, () =>
       source$.$valCompute(() => {
-        subs.newVersion_();
+        subs.dirty_ = true;
+        subs.newVersion_(config);
         subs.notify_();
       })
     );
@@ -178,7 +179,8 @@ export function readonlyVal<TValue = any>(
 
   const set = (value: TValue | undefined): void => {
     if (!val.$equal?.(value, currentValue)) {
-      subs.newVersion_(value, currentValue);
+      subs.dirty_ = true;
+      subs.newVersion_(config, value, currentValue);
       currentValue = value;
       subs.notify_();
     }

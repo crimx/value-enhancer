@@ -21,11 +21,12 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
     const get = () => {
       if (currentValue === INIT_VALUE || subs.size_ <= 0) {
         currentValue = getValue();
-        subs.version_ = currentValue;
+        subs.newVersion_(config, currentValue);
       } else if (dirty) {
         const value = getValue();
         if (!this.$equal?.(value, currentValue)) {
-          subs.newVersion_(value, currentValue);
+          subs.dirty_ = true;
+          subs.newVersion_(config, value, currentValue);
           currentValue = value;
         }
       }
@@ -41,10 +42,11 @@ class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
       }
     };
 
-    const subs = new Subscribers(get, () => {
+    const subs = new Subscribers(get, subs => {
       // attach listener first so that upstream value is resolved
       const disposer = listen(notify);
       currentValue = getValue();
+      subs.newVersion_(config, currentValue);
       dirty = notified = false;
       return disposer;
     });

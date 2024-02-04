@@ -39,11 +39,12 @@ class FlattenFromImpl<
     const get = () => {
       if (currentValue === INIT_VALUE || subs.size_ <= 0) {
         currentValue = computeValue();
-        subs.version_ = currentValue;
+        subs.newVersion_(config, currentValue);
       } else if (dirty) {
         const value = computeValue();
         if (!this.$equal?.(value, currentValue)) {
-          subs.newVersion_(value, currentValue);
+          subs.dirty_ = true;
+          subs.newVersion_(config, value, currentValue);
           currentValue = value;
         }
       }
@@ -78,7 +79,7 @@ class FlattenFromImpl<
       }
     };
 
-    const subs = new Subscribers(get, () => {
+    const subs = new Subscribers(get, subs => {
       // attach listener first so that upstream value is resolved
       const outerDisposer = listen(() => {
         updateInnerVal();
@@ -87,6 +88,7 @@ class FlattenFromImpl<
 
       updateInnerVal();
       currentValue = innerVal ? innerVal.value : (innerMaybeVal as TValue);
+      subs.newVersion_(config, currentValue);
       dirty = notified = false;
 
       return () => {
