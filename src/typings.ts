@@ -143,3 +143,5 @@ export type ValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
 export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue>
   ? TValue
   : never;
+
+export type NoInfer<T> = [T][T extends any ? 0 : never];

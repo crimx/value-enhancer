@@ -1,4 +1,4 @@
-import type { ReadonlyVal, Val, ValConfig } from "./typings";
+import type { NoInfer, ReadonlyVal, Val, ValConfig } from "./typings";
 
 import { ReadonlyValImpl, ReadonlyValRefImpl } from "./readonly-val";
 import { Subscribers } from "./subscribers";
@@ -83,7 +83,7 @@ export class ValRefImpl<TValue = any> extends ReadonlyValRefImpl<TValue> {
  * Creates a writable val.
  * @returns A val with undefined value.
  */
-export function val<TValue>(): Val<TValue | undefined>;
+export function val<TValue>(): Val<NoInfer<TValue> | undefined>;
 /**
  * Creates a writable val.
  * @param value Initial value.
@@ -92,10 +92,10 @@ export function val<TValue>(): Val<TValue | undefined>;
 export function val<TValue = any>(
   value: TValue,
   config?: ValConfig<TValue>
-): Val<TValue>;
+): Val<NoInfer<TValue>>;
 export function val<TValue = any>(
   value?: TValue,
   config?: ValConfig<TValue>
-): Val<TValue> {
+): Val<NoInfer<TValue>> {
   return new ValImpl(value as TValue, config);
 }

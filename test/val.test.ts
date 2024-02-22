@@ -575,4 +575,22 @@ describe("Val", () => {
       }
     });
   });
+
+  describe("NoInfer", () => {
+    it("should not infer type", () => {
+      enum E {
+        A,
+        B,
+        C,
+      }
+
+      const v1 = val(E.A);
+      v1.set(E.B);
+      expect(v1.value).toBe(E.B);
+
+      const v2: Val<E> = val(E.A);
+      v2.set(E.C);
+      expect(v2.value).toBe(E.C);
+    });
+  });
 });

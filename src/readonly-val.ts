@@ -1,4 +1,5 @@
 import type {
+  NoInfer,
   ReadonlyVal,
   ValConfig,
   ValDisposer,
@@ -153,8 +154,8 @@ export class ReadonlyValRefImpl<TValue = any> extends ReadonlyValImpl<TValue> {
  * @returns A tuple with the readonly val and a function to set the value.
  */
 export function readonlyVal<TValue = undefined>(): [
-  ReadonlyVal<TValue | undefined>,
-  ValSetValue<TValue | undefined>
+  ReadonlyVal<NoInfer<TValue> | undefined>,
+  ValSetValue<NoInfer<TValue> | undefined>
 ];
 /**
  * Creates a readonly val with the given value.
@@ -166,11 +167,14 @@ export function readonlyVal<TValue = undefined>(): [
 export function readonlyVal<TValue = any>(
   value: TValue,
   config?: ValConfig<TValue>
-): [ReadonlyVal<TValue>, ValSetValue<TValue>];
+): [ReadonlyVal<NoInfer<TValue>>, ValSetValue<NoInfer<TValue>>];
 export function readonlyVal<TValue = any>(
   value?: TValue,
   config?: ValConfig<TValue | undefined>
-): [ReadonlyVal<TValue | undefined>, ValSetValue<TValue | undefined>] {
+): [
+  ReadonlyVal<NoInfer<TValue> | undefined>,
+  ValSetValue<NoInfer<TValue> | undefined>
+] {
   let currentValue = value;
 
   const get = () => currentValue;
