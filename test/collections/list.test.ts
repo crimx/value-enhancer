@@ -1,41 +1,41 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { nextTick } from "../../src";
-import { ReactiveList } from "../../src/collections";
+import { reactiveList } from "../../src/collections";
 
 describe("ReactiveList", () => {
   describe("constructor", () => {
     it("should create an empty list if no argument is passed", () => {
-      const emptyList = new ReactiveList();
+      const emptyList = reactiveList();
       expect(emptyList.array).toEqual([]);
     });
   });
 
   describe("array", () => {
     it("should create a list with the same elements as the array-like object passed as argument", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.array).toEqual([1, 2, 3]);
     });
   });
 
   describe("length", () => {
     it("should return the number of elements in the list", () => {
-      const list1 = new ReactiveList();
+      const list1 = reactiveList();
       expect(list1.length).toBe(0);
 
-      const list2 = new ReactiveList([1, 2, 3]);
+      const list2 = reactiveList([1, 2, 3]);
       expect(list2.length).toBe(3);
     });
 
     it("should set the length of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
-      list.length = 2;
+      const list = reactiveList([1, 2, 3]);
+      list.setLength(2);
       expect(list.array).toEqual([1, 2]);
     });
   });
 
   describe("Symbol.iterator", () => {
     it("should return an iterator over the elements of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       const iterator = list[Symbol.iterator]();
       expect(iterator.next()).toEqual({ value: 1, done: false });
       expect(iterator.next()).toEqual({ value: 2, done: false });
@@ -44,14 +44,14 @@ describe("ReactiveList", () => {
     });
 
     it("should be able to clone as array via spreading", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect([...list]).toEqual([1, 2, 3]);
     });
   });
 
   describe("entries", () => {
     it("should return an iterator over the key-value pairs of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       const iterator = list.entries();
       expect(iterator.next()).toEqual({ value: [0, 1], done: false });
       expect(iterator.next()).toEqual({ value: [1, 2], done: false });
@@ -62,7 +62,7 @@ describe("ReactiveList", () => {
 
   describe("values", () => {
     it("should return an iterator over the values of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       const iterator = list.values();
       expect(iterator.next()).toEqual({ value: 1, done: false });
       expect(iterator.next()).toEqual({ value: 2, done: false });
@@ -73,7 +73,7 @@ describe("ReactiveList", () => {
 
   describe("keys", () => {
     it("should return an iterator over the keys of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       const iterator = list.keys();
       expect(iterator.next()).toEqual({ value: 0, done: false });
       expect(iterator.next()).toEqual({ value: 1, done: false });
@@ -84,55 +84,55 @@ describe("ReactiveList", () => {
 
   describe("get", () => {
     it("should return the element at the specified index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.get(0)).toBe(1);
     });
 
     it("should ignore negative index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.get(-1)).toBe(undefined);
     });
   });
 
   describe("first", () => {
     it("should return the first element of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.first()).toBe(1);
     });
 
     it("should return undefined if the list is empty", () => {
-      const list = new ReactiveList();
+      const list = reactiveList();
       expect(list.first()).toBe(undefined);
     });
   });
 
   describe("last", () => {
     it("should return the last element of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.last()).toBe(3);
     });
 
     it("should return undefined if the list is empty", () => {
-      const list = new ReactiveList();
+      const list = reactiveList();
       expect(list.last()).toBe(undefined);
     });
   });
 
   describe("push", () => {
     it("should add an element to the end of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.push(4);
       expect(list.array).toEqual([1, 2, 3, 4]);
     });
 
     it("should add multiple elements to the end of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.push(4, 5);
       expect(list.array).toEqual([1, 2, 3, 4, 5]);
     });
 
     it("should notify on push", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -152,7 +152,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on push if pushing empty item", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -165,18 +165,18 @@ describe("ReactiveList", () => {
 
   describe("pop", () => {
     it("should remove the last element of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.pop();
       expect(list.array).toEqual([1, 2]);
     });
 
     it("should return the removed element", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.pop()).toBe(3);
     });
 
     it("should notify on pop", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -196,7 +196,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on pop if the list is empty.", () => {
-      const list = new ReactiveList();
+      const list = reactiveList();
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -209,19 +209,19 @@ describe("ReactiveList", () => {
 
   describe("pushHead", () => {
     it("should add an element to the beginning of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.pushHead(0);
       expect(list.array).toEqual([0, 1, 2, 3]);
     });
 
     it("should add multiple elements to the beginning of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.pushHead(-1, 0);
       expect(list.array).toEqual([-1, 0, 1, 2, 3]);
     });
 
     it("should notify on pushHead", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -241,7 +241,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on pushHead if pushing empty item", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -254,18 +254,18 @@ describe("ReactiveList", () => {
 
   describe("popHead", () => {
     it("should remove the first element of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.popHead();
       expect(list.array).toEqual([2, 3]);
     });
 
     it("should return the removed element", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.popHead()).toBe(1);
     });
 
     it("should notify on popHead", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -285,7 +285,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on popHead if the list is empty.", () => {
-      const list = new ReactiveList();
+      const list = reactiveList();
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -298,19 +298,19 @@ describe("ReactiveList", () => {
 
   describe("set", () => {
     it("should set the element at the specified index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.set(1, 4);
       expect(list.array).toEqual([1, 4, 3]);
     });
 
     it("should ignore negative index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.set(-1, 4);
       expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should notify on set", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -326,7 +326,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on set for negative index", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -339,25 +339,25 @@ describe("ReactiveList", () => {
 
   describe("splice", () => {
     it("should remove the specified elements from the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.splice(1, 2);
       expect(list.array).toEqual([1]);
     });
 
     it("should remove the specified elements from the list and insert new elements", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.splice(1, 2, 4, 5);
       expect(list.array).toEqual([1, 4, 5]);
     });
 
     it("should count backward on negative index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.splice(-1, 2);
       expect(list.array).toEqual([1, 2]);
     });
 
     it("should notify on splice", () => {
-      const list = new ReactiveList(["a", "b", "c", "d", "e"]);
+      const list = reactiveList(["a", "b", "c", "d", "e"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -377,7 +377,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on splice if the list is empty.", () => {
-      const list = new ReactiveList();
+      const list = reactiveList();
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -393,7 +393,7 @@ describe("ReactiveList", () => {
 
   describe("batchSet", () => {
     it("should set the elements at the specified indices", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.batchSet([
         [0, 4],
         [2, 5],
@@ -402,7 +402,7 @@ describe("ReactiveList", () => {
     });
 
     it("should ignore negative index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.batchSet([
         [-1, 4],
         [-2, 5],
@@ -411,7 +411,7 @@ describe("ReactiveList", () => {
     });
 
     it("should notify on batchSet", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -433,7 +433,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on batchSet for negative index", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -449,25 +449,25 @@ describe("ReactiveList", () => {
 
   describe("insert", () => {
     it("should insert an element at the specified index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.insert(1, 4);
       expect(list.array).toEqual([1, 4, 2, 3]);
     });
 
     it("should insert multiple elements at the specified index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.insert(1, 4, 5);
       expect(list.array).toEqual([1, 4, 5, 2, 3]);
     });
 
     it("should ignore negative index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.insert(-2, 4, 5);
       expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should notify on insert", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -483,7 +483,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on insert for negative index", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -496,25 +496,25 @@ describe("ReactiveList", () => {
 
   describe("delete", () => {
     it("should delete one element at the specified index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.delete(1);
       expect(list.array).toEqual([1, 3]);
     });
 
     it("should delete the rest elements from the specified index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.delete(1, list.length - 1);
       expect(list.array).toEqual([1]);
     });
 
     it("should ignore negative index", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.delete(-1);
       expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should notify on delete", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -530,7 +530,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify on delete for negative index", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -541,7 +541,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if delete count is 0", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -558,7 +558,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if list is empty", () => {
-      const list = new ReactiveList([]);
+      const list = reactiveList([]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -577,13 +577,13 @@ describe("ReactiveList", () => {
 
   describe("clear", () => {
     it("should clear the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.clear();
       expect(list.array).toEqual([]);
     });
 
     it("should notify on clear", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -595,7 +595,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if list is empty", () => {
-      const list = new ReactiveList([]);
+      const list = reactiveList([]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -608,7 +608,7 @@ describe("ReactiveList", () => {
 
   describe("replace", () => {
     it("should replace the list with the specified elements", async () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       const spy = jest.fn();
       list.$.reaction(spy);
 
@@ -623,7 +623,7 @@ describe("ReactiveList", () => {
     });
 
     it("should replace the list with less elements", async () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       const spy = jest.fn();
       list.$.reaction(spy);
 
@@ -638,7 +638,7 @@ describe("ReactiveList", () => {
     });
 
     it("should replace the list with different order", async () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       const spy = jest.fn();
       list.$.reaction(spy);
 
@@ -653,7 +653,7 @@ describe("ReactiveList", () => {
     });
 
     it("should replace an empty list with the specified elements", async () => {
-      const list = new ReactiveList<number>([]);
+      const list = reactiveList<number>([]);
 
       const spy = jest.fn();
       list.$.reaction(spy);
@@ -669,7 +669,7 @@ describe("ReactiveList", () => {
     });
 
     it("should notify on replace", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -681,7 +681,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if not changed", () => {
-      const list = new ReactiveList([1]);
+      const list = reactiveList([1]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -693,7 +693,7 @@ describe("ReactiveList", () => {
     });
 
     it("should notify if some keys are removed", () => {
-      const reactiveSet = new ReactiveList([1, 2, 3]);
+      const reactiveSet = reactiveList([1, 2, 3]);
       const mockNotify = jest.fn();
       const dispose = reactiveSet.$.reaction(mockNotify, true);
 
@@ -707,7 +707,7 @@ describe("ReactiveList", () => {
     });
 
     it("should return deleted entries", () => {
-      const reactiveMap = new ReactiveList([1, 2, 3]);
+      const reactiveMap = reactiveList([1, 2, 3]);
       const mockNotify = jest.fn();
       const dispose = reactiveMap.$.reaction(mockNotify, true);
 
@@ -720,13 +720,13 @@ describe("ReactiveList", () => {
 
   describe("reverse", () => {
     it("should reverse the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       list.reverse();
       expect(list.array).toEqual([3, 2, 1]);
     });
 
     it("should notify on reverse", () => {
-      const list = new ReactiveList(["a", "b", "c"]);
+      const list = reactiveList(["a", "b", "c"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -738,7 +738,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if list is empty", () => {
-      const list = new ReactiveList([]);
+      const list = reactiveList([]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -749,7 +749,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if list has only one element", () => {
-      const list = new ReactiveList(["a"]);
+      const list = reactiveList(["a"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -762,19 +762,19 @@ describe("ReactiveList", () => {
 
   describe("sort", () => {
     it("should sort the list", () => {
-      const list = new ReactiveList([3, 1, 2]);
+      const list = reactiveList([3, 1, 2]);
       list.sort();
       expect(list.array).toEqual([1, 2, 3]);
     });
 
     it("should sort the list with a custom compare function", () => {
-      const list = new ReactiveList([3, 1, 2]);
+      const list = reactiveList([3, 1, 2]);
       list.sort((a, b) => b - a);
       expect(list.array).toEqual([3, 2, 1]);
     });
 
     it("should notify on sort", () => {
-      const list = new ReactiveList(["c", "b", "a"]);
+      const list = reactiveList(["c", "b", "a"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -786,7 +786,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if list is empty", () => {
-      const list = new ReactiveList([]);
+      const list = reactiveList([]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -797,7 +797,7 @@ describe("ReactiveList", () => {
     });
 
     it("should not notify if list has only one element", () => {
-      const list = new ReactiveList(["a"]);
+      const list = reactiveList(["a"]);
       const mockNotify = jest.fn();
       const dispose = list.$.reaction(mockNotify, true);
 
@@ -810,28 +810,28 @@ describe("ReactiveList", () => {
 
   describe("toString", () => {
     it("should return a string representation of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.toString()).toBe(list.array.toString());
     });
   });
 
   describe("toLocaleString", () => {
     it("should return a locale string representation of the list", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.toLocaleString()).toBe(list.array.toLocaleString());
     });
   });
 
   describe("toJSON", () => {
     it("should return the internal array", () => {
-      const list = new ReactiveList([1, 2, 3]);
+      const list = reactiveList([1, 2, 3]);
       expect(list.toJSON()).toBe(list.array);
     });
   });
 
   describe("dispose", () => {
     it("should dispose all watchers", () => {
-      const list = new ReactiveList<number>();
+      const list = reactiveList<number>();
       const mockNotify1 = jest.fn();
       const mockNotify2 = jest.fn();
       list.$.reaction(mockNotify1, true);

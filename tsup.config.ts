@@ -6,7 +6,7 @@ export default defineConfig({
     collections: "src/collections/index.ts",
   },
   format: ["cjs", "esm"],
-  splitting: false,
+  splitting: true,
   sourcemap: false,
   clean: true,
   treeshake: true,

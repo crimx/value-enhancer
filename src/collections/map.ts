@@ -21,7 +21,52 @@ import type { ReadonlyVal } from "../typings";
  * console.log(item$.value); // "someValue2"
  * ```
  */
-export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
+export interface ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
+  /**
+   * A readonly val with value of `this`.
+   *
+   * To update the entire reactive map in place, use `map.replace()`.
+   */
+  readonly $: ReadonlyVal<this>;
+
+  /**
+   * Delete multiple entries from the Map.
+   */
+  batchDelete(keys: Iterable<TKey>): boolean;
+
+  /**
+   * Set multiple entries in the Map.
+   */
+  batchSet(entries: Iterable<readonly [TKey, TValue]>): this;
+
+  /**
+   * Replace all entries in the Map.
+   *
+   * @returns Deleted values.
+   */
+  replace(entries: Iterable<readonly [TKey, TValue]>): Iterable<TValue>;
+
+  /**
+   * Dispose the map.
+   */
+  dispose(): void;
+}
+
+/**
+ * A readonly reactive map inherited from `Map`.
+ * Changes to the map will be notified to subscribers of `map.$`.
+ */
+export type ReadonlyReactiveMap<TKey, TValue> = Omit<
+  ReactiveMap<TKey, TValue>,
+  "$" | "delete" | "clear" | "set" | "batchSet" | "replace"
+> & {
+  readonly $: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
+};
+
+class ReactiveMapImpl<TKey, TValue>
+  extends Map<TKey, TValue>
+  implements ReactiveMap<TKey, TValue>
+{
   public constructor(entries?: Iterable<readonly [TKey, TValue]> | null) {
     super();
 
@@ -36,11 +81,6 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     }
   }
 
-  /**
-   * A readonly val with value of `this`.
-   *
-   * To update the entire reactive map in place, use `map.replace()`.
-   */
   public readonly $: ReadonlyVal<this>;
 
   #notify: () => void;
@@ -53,9 +93,6 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     return deleted;
   }
 
-  /**
-   * Delete multiple entries from the Map.
-   */
   public batchDelete(keys: Iterable<TKey>): boolean {
     let deleted = false;
     for (const key of keys) {
@@ -83,9 +120,6 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     return this;
   }
 
-  /**
-   * Set multiple entries in the Map.
-   */
   public batchSet(entries: Iterable<readonly [TKey, TValue]>): this {
     let isDirty = false;
     for (const [key, value] of entries) {
@@ -98,11 +132,6 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
     return this;
   }
 
-  /**
-   * Replace all entries in the Map.
-   *
-   * @returns Deleted values.
-   */
   public replace(entries: Iterable<readonly [TKey, TValue]>): Iterable<TValue> {
     const oldMap = new Map(this);
     const deleted = new Set<TValue>(this.values());
@@ -127,13 +156,6 @@ export class ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   }
 }
 
-/**
- * A readonly reactive map inherited from `Map`.
- * Changes to the map will be notified to subscribers of `map.$`.
- */
-export type ReadonlyReactiveMap<TKey, TValue> = Omit<
-  ReactiveMap<TKey, TValue>,
-  "$" | "delete" | "clear" | "set" | "batchSet" | "replace"
-> & {
-  readonly $: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
-};
+export const reactiveMap = <TKey, TValue>(
+  entries?: Iterable<readonly [TKey, TValue]> | null
+): ReactiveMap<TKey, TValue> => new ReactiveMapImpl(entries);

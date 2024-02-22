@@ -18,7 +18,52 @@ import type { ReadonlyVal } from "../typings";
  * console.log(item$.value); // true
  * ```
  */
-export class ReactiveSet<TValue> extends Set<TValue> {
+export interface ReactiveSet<TValue> extends Set<TValue> {
+  /**
+   * A readonly val with value of `this`.
+   *
+   * To update the entire reactive set in place, use `set.replace()`.
+   */
+  readonly $: ReadonlyVal<this>;
+
+  /**
+   * Delete multiple values from the Set.
+   */
+  batchDelete(values: Iterable<TValue>): boolean;
+
+  /**
+   * Add multiple values to the Set.
+   */
+  batchAdd(values: Iterable<TValue>): this;
+
+  /**
+   * Replace all items in the Set.
+   *
+   * @returns Deleted items.
+   */
+  replace(items: Iterable<TValue>): Iterable<TValue>;
+
+  /**
+   * Dispose the reactive set.
+   */
+  dispose(): void;
+}
+
+/**
+ * A readonly reactive set inherited from `Set`.
+ * Changes to the set will be notified to subscribers of `set.$`.
+ */
+export type ReadonlyReactiveSet<TValue> = Omit<
+  ReactiveSet<TValue>,
+  "$" | "delete" | "clear" | "add" | "replace"
+> & {
+  readonly $: ReadonlyVal<ReadonlyReactiveSet<TValue>>;
+};
+
+class ReactiveSetImpl<TValue>
+  extends Set<TValue>
+  implements ReactiveSet<TValue>
+{
   public constructor(values?: Iterable<TValue> | null) {
     super();
 
@@ -31,11 +76,6 @@ export class ReactiveSet<TValue> extends Set<TValue> {
     }
   }
 
-  /**
-   * A readonly val with value of `this`.
-   *
-   * To update the entire reactive set in place, use `set.replace()`.
-   */
   public readonly $: ReadonlyVal<this>;
 
   #notify: () => void;
@@ -48,9 +88,6 @@ export class ReactiveSet<TValue> extends Set<TValue> {
     return deleted;
   }
 
-  /**
-   * Delete multiple values from the Set.
-   */
   public batchDelete(values: Iterable<TValue>): boolean {
     let deleted = false;
     for (const value of values) {
@@ -78,9 +115,6 @@ export class ReactiveSet<TValue> extends Set<TValue> {
     return this;
   }
 
-  /**
-   * Add multiple values to the Set.
-   */
   public batchAdd(values: Iterable<TValue>): this {
     const prevSize = this.size;
     for (const value of values) {
@@ -96,11 +130,6 @@ export class ReactiveSet<TValue> extends Set<TValue> {
     this.$.dispose();
   }
 
-  /**
-   * Replace all items in the Set.
-   *
-   * @returns Deleted items.
-   */
   public replace(items: Iterable<TValue>): Iterable<TValue> {
     const deleted = new Set(this);
     super.clear();
@@ -116,13 +145,6 @@ export class ReactiveSet<TValue> extends Set<TValue> {
   }
 }
 
-/**
- * A readonly reactive set inherited from `Set`.
- * Changes to the set will be notified to subscribers of `set.$`.
- */
-export type ReadonlyReactiveSet<TValue> = Omit<
-  ReactiveSet<TValue>,
-  "$" | "delete" | "clear" | "add" | "replace"
-> & {
-  readonly $: ReadonlyVal<ReadonlyReactiveSet<TValue>>;
-};
+export const reactiveSet = <TValue>(
+  values?: Iterable<TValue> | null
+): ReactiveSet<TValue> => new ReactiveSetImpl(values);

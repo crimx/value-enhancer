@@ -998,44 +998,43 @@ describe("ReadonlyValImpl", () => {
       expect(vals.c.value).toBe(4);
     });
 
-    it("should not infer", () => {
-      describe("NoInfer", () => {
-        it("should not infer type", () => {
-          enum E {
-            A,
-            B,
-            C,
-            D
-          }
+    it("should not infer type", () => {
+      enum E {
+        A,
+        B,
+        C,
+        D,
+      }
 
-          const [vals, setVals]: [{
-            a: ReadonlyVal<E>;
-            b: ReadonlyVal<E>;
-            c: ReadonlyVal<E>;
-          }, {
-            a: ValSetValue<E>;
-            b: ValSetValue<E>;
-            c: ValSetValue<E>;
-          }] = groupVals({
-            a: readonlyVal(E.A),
-            b: readonlyVal(E.B),
-            c: readonlyVal(E.C),
-          });
+      const [vals, setVals]: [
+        {
+          a: ReadonlyVal<E>;
+          b: ReadonlyVal<E>;
+          c: ReadonlyVal<E>;
+        },
+        {
+          a: ValSetValue<E>;
+          b: ValSetValue<E>;
+          c: ValSetValue<E>;
+        }
+      ] = groupVals({
+        a: readonlyVal(E.A),
+        b: readonlyVal(E.B),
+        c: readonlyVal(E.C),
+      });
 
-          expect(vals.a.value).toBe(E.A);
-          expect(vals.b.value).toBe(E.B);
-          expect(vals.c.value).toBe(E.C);
+      expect(vals.a.value).toBe(E.A);
+      expect(vals.b.value).toBe(E.B);
+      expect(vals.c.value).toBe(E.C);
 
-          setVals.a(E.D);
-          setVals.b(E.D);
-          setVals.c(E.D);
+      setVals.a(E.D);
+      setVals.b(E.D);
+      setVals.c(E.D);
 
-          expect(vals.a.value).toBe(E.D);
-          expect(vals.b.value).toBe(E.D);
-          expect(vals.c.value).toBe(E.D);
-        })
-      })
-    })
+      expect(vals.a.value).toBe(E.D);
+      expect(vals.b.value).toBe(E.D);
+      expect(vals.c.value).toBe(E.D);
+    });
   });
 
   describe("NoInfer", () => {
@@ -1043,16 +1042,16 @@ describe("ReadonlyValImpl", () => {
       enum E {
         A,
         B,
-        C
+        C,
       }
 
       const [v1, set1] = readonlyVal(E.A);
-      set1(E.B)
-      expect(v1.value).toBe(E.B)
+      set1(E.B);
+      expect(v1.value).toBe(E.B);
 
       const [v2, set2]: [ReadonlyVal<E>, ValSetValue<E>] = readonlyVal(E.A);
-      set2(E.C)
-      expect(v2.value).toBe(E.C)
-    })
-  })
+      set2(E.C);
+      expect(v2.value).toBe(E.C);
+    });
+  });
 });
