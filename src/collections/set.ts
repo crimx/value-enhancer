@@ -4,19 +4,6 @@ import type { ReadonlyVal } from "../typings";
 /**
  * A reactive set inherited from `Set`.
  * Changes to the set will be notified to subscribers of `set.$`.
- *
- * @example
- * ```ts
- * import { derive } from "value-enhancer";
- * import { ReactiveSet } from "value-enhancer/collections"
- *
- * const set = new ReactiveSet();
- * const item$ = derive(set.$, set => set.has("someValue")); // watch the existence of "someValue"
- *
- * console.log(item$.value); // false
- * set.add("someValue");
- * console.log(item$.value); // true
- * ```
  */
 export interface ReactiveSet<TValue> extends Set<TValue> {
   /**
@@ -145,6 +132,22 @@ class ReactiveSetImpl<TValue>
   }
 }
 
+/**
+ * Create a new ReactiveSet.
+ *
+ * @example
+ * ```ts
+ * import { derive } from "value-enhancer";
+ * import { reactiveSet } from "value-enhancer/collections"
+ *
+ * const set = reactiveSet();
+ * const item$ = derive(set.$, set => set.has("someValue")); // watch the existence of "someValue"
+ *
+ * console.log(item$.value); // false
+ * set.add("someValue");
+ * console.log(item$.value); // true
+ * ```
+ */
 export const reactiveSet = <TValue>(
   values?: Iterable<TValue> | null
 ): ReactiveSet<TValue> => new ReactiveSetImpl(values);

@@ -4,19 +4,6 @@ import type { ReadonlyVal } from "../typings";
 /**
  * A reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get/set elements.
  * Changes to the list will be notified to subscribers of `list.$`.
- *
- * @example
- * ```ts
- * import { derive } from "value-enhancer";
- * import { ReactiveList } from "value-enhancer/collections";
- *
- * const list = new ReactiveList(["a", "b", "c"]);
- * const item$ = derive(list.$, list => list.get(2)); // watch the item at index 2
- *
- * console.log(item$.value); // "c"
- * list.set(2, "d");
- * console.log(item$.value); // "d"
- * ```
  */
 export interface ReactiveList<TValue> {
   [Symbol.iterator](): IterableIterator<TValue>;
@@ -434,6 +421,22 @@ class ReactiveListImpl<TValue> implements ReactiveList<TValue> {
   }
 }
 
+/**
+ * Create a new ReactiveList.
+ *
+ * @example
+ * ```ts
+ * import { derive } from "value-enhancer";
+ * import { reactiveList } from "value-enhancer/collections";
+ *
+ * const list = reactiveList(["a", "b", "c"]);
+ * const item$ = derive(list.$, list => list.get(2)); // watch the item at index 2
+ *
+ * console.log(item$.value); // "c"
+ * list.set(2, "d");
+ * console.log(item$.value); // "d"
+ * ```
+ */
 export const reactiveList = <TValue>(
   items?: Iterable<TValue> | null
 ): ReactiveList<TValue> => new ReactiveListImpl(items);

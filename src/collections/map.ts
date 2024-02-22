@@ -4,22 +4,6 @@ import type { ReadonlyVal } from "../typings";
 /**
  * A reactive map inherited from `Map`.
  * Changes to the map will be notified to subscribers of `map.$`.
- *
- * @example
- * ```ts
- * import { val, flatten } from "value-enhancer";
- * import { ReactiveMap } from "value-enhancer/collections";
- *
- * const map = new ReactiveMap();
- * const v = val("someValue");
- * const item$ = flatten(map.$, map => map.get("someKey")); // watch the item at "someKey"
- *
- * console.log(item$.value); // undefined
- * map.set("someKey", v);
- * console.log(item$.value); // "someValue"
- * v.set("someValue2");
- * console.log(item$.value); // "someValue2"
- * ```
  */
 export interface ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   /**
@@ -156,6 +140,25 @@ class ReactiveMapImpl<TKey, TValue>
   }
 }
 
+/**
+ * Create a new ReactiveMap.
+ *
+ * @example
+ * ```ts
+ * import { val, flatten } from "value-enhancer";
+ * import { reactiveMap } from "value-enhancer/collections";
+ *
+ * const map = reactiveMap();
+ * const v = val("someValue");
+ * const item$ = flatten(map.$, map => map.get("someKey")); // watch the item at "someKey"
+ *
+ * console.log(item$.value); // undefined
+ * map.set("someKey", v);
+ * console.log(item$.value); // "someValue"
+ * v.set("someValue2");
+ * console.log(item$.value); // "someValue2"
+ * ```
+ */
 export const reactiveMap = <TKey, TValue>(
   entries?: Iterable<readonly [TKey, TValue]> | null
 ): ReactiveMap<TKey, TValue> => new ReactiveMapImpl(entries);

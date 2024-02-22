@@ -380,9 +380,9 @@ The Reactive Collections are a group of classes that expand on the built-in Java
 
 ```ts
 import { derive } from "value-enhancer";
-import { ReactiveList } from "value-enhancer/collections";
+import { reactiveList } from "value-enhancer/collections";
 
-const list = new ReactiveList(["a", "b", "c"]);
+const list = reactiveList(["a", "b", "c"]);
 
 const item$ = derive(list.$, list => list[2]); // watch the item at index 2
 
@@ -395,9 +395,9 @@ console.log(item$.value); // "d"
 
 ```ts
 import { val, flatten } from "value-enhancer";
-import { ReactiveMap } from "value-enhancer/collections";
+import { reactiveMap } from "value-enhancer/collections";
 
-const map = new ReactiveMap();
+const map = reactiveMap();
 const v = val("someValue");
 
 const item$ = flatten(map.$, map => map.get("someKey")); // watch the item at "someKey"
