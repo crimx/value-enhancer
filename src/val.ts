@@ -83,7 +83,7 @@ export class ValRefImpl<TValue = any> extends ReadonlyValRefImpl<TValue> {
  * Creates a writable val.
  * @returns A val with undefined value.
  */
-export function val<TValue>(): Val<NoInfer<TValue> | undefined>;
+export function val<TValue = any>(): Val<NoInfer<TValue> | undefined>;
 /**
  * Creates a writable val.
  * @param value Initial value.

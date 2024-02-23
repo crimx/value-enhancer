@@ -153,7 +153,7 @@ export class ReadonlyValRefImpl<TValue = any> extends ReadonlyValImpl<TValue> {
  *
  * @returns A tuple with the readonly val and a function to set the value.
  */
-export function readonlyVal<TValue = undefined>(): [
+export function readonlyVal<TValue = any>(): [
   ReadonlyVal<NoInfer<TValue> | undefined>,
   ValSetValue<NoInfer<TValue> | undefined>
 ];
