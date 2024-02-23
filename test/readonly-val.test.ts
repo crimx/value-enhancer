@@ -1053,5 +1053,13 @@ describe("ReadonlyValImpl", () => {
       set2(E.C);
       expect(v2.value).toBe(E.C);
     });
+
+    it("should not infer [] as never[]", () => {
+      const [a, setA]: [ReadonlyVal<number[]>, ValSetValue<number[]>] =
+        readonlyVal([]);
+
+      setA([1]);
+      expect(a.value).toEqual([1]);
+    });
   });
 });

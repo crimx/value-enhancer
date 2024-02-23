@@ -160,6 +160,15 @@ export function readonlyVal<TValue = any>(): [
 /**
  * Creates a readonly val with the given value.
  *
+ * @returns A tuple with the readonly val and a function to set the value.
+ */
+export function readonlyVal(
+  value: [],
+  config?: ValConfig<any[]>
+): [ReadonlyVal<any[]>, ValSetValue<any[]>];
+/**
+ * Creates a readonly val with the given value.
+ *
  * @param value Value for the val
  * @param config Custom config for the val.
  * @returns A tuple with the readonly val and a function to set the value.

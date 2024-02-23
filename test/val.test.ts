@@ -592,5 +592,11 @@ describe("Val", () => {
       v2.set(E.C);
       expect(v2.value).toBe(E.C);
     });
+
+    it("should not infer [] as never[]", () => {
+      const a: Val<number[]> = val([]);
+
+      expect(a.value).toEqual([]);
+    });
   });
 });

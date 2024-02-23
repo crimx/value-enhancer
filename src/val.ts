@@ -89,6 +89,12 @@ export function val<TValue = any>(): Val<NoInfer<TValue> | undefined>;
  * @param value Initial value.
  * @param config Custom config.
  */
+export function val(value: [], config?: ValConfig<any[]>): Val<any[]>;
+/**
+ * Creates a writable val.
+ * @param value Initial value.
+ * @param config Custom config.
+ */
 export function val<TValue = any>(
   value: TValue,
   config?: ValConfig<TValue>
