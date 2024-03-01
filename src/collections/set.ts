@@ -30,6 +30,8 @@ export interface ReactiveSet<TValue> extends Set<TValue> {
    */
   replace(items: Iterable<TValue>): Iterable<TValue>;
 
+  toJSON(): object[];
+
   /**
    * Dispose the reactive set.
    */
@@ -129,6 +131,12 @@ class ReactiveSetImpl<TValue>
       this.#notify();
     }
     return deleted.values();
+  }
+
+  public toJSON(): object[] {
+    return [...this].map((value: any, i) =>
+      value && value.toJSON ? value.toJSON(i) : value
+    );
   }
 }
 

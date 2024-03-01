@@ -30,6 +30,8 @@ export interface ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
    */
   replace(entries: Iterable<readonly [TKey, TValue]>): Iterable<TValue>;
 
+  toJSON(): object;
+
   /**
    * Dispose the map.
    */
@@ -133,6 +135,21 @@ class ReactiveMapImpl<TKey, TValue>
       this.#notify();
     }
     return deleted.values();
+  }
+
+  public toJSON(): object {
+    const result: Record<any, any> = {};
+    for (const [key, value] of this) {
+      if (key != null) {
+        const k = String(key);
+        const v = value as
+          | undefined
+          | null
+          | { toJSON?: (key: string) => object };
+        result[k] = v && v.toJSON ? v.toJSON(k) : v;
+      }
+    }
+    return result;
   }
 
   public dispose(): void {

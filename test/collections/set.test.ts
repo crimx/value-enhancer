@@ -249,6 +249,14 @@ describe("ReactiveSet", () => {
     });
   });
 
+  describe("toJSON", () => {
+    it("should return the JSON value as array", () => {
+      const set = reactiveSet([1, 2, 3, reactiveSet([4, 5, 6])]);
+      expect(set.toJSON()).toEqual([1, 2, 3, [4, 5, 6]]);
+      expect(JSON.stringify(set)).toBe(JSON.stringify([1, 2, 3, [4, 5, 6]]));
+    });
+  });
+
   describe("dispose", () => {
     it("should dispose all watchers", () => {
       const set = reactiveSet<number>();

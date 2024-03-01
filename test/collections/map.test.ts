@@ -363,6 +363,16 @@ describe("ReactiveMap", () => {
     });
   });
 
+  describe("toJSON", () => {
+    it("should return the JSON value as object", () => {
+      const map = reactiveMap(
+        Object.entries({ a: 1, b: reactiveMap(Object.entries({ c: 2 })) })
+      );
+      expect(map.toJSON()).toEqual({ a: 1, b: { c: 2 } });
+      expect(JSON.stringify(map)).toBe(JSON.stringify({ a: 1, b: { c: 2 } }));
+    });
+  });
+
   describe("dispose", () => {
     it("should dispose all watchers", () => {
       const map = reactiveMap<string, number>();

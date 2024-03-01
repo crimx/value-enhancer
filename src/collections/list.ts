@@ -145,7 +145,6 @@ export interface ReactiveList<TValue> {
    * @param index The zero-based location in the list from which to start deleting elements.
    *        A negative index will be ignored.
    * @param count The number of elements to remove. Default 1.
-   * @returns An array containing the elements that were deleted.
    */
   delete(index: number, count?: number): void;
 
