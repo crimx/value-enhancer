@@ -42,9 +42,19 @@ export interface ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
  * A readonly reactive map inherited from `Map`.
  * Changes to the map will be notified to subscribers of `map.$`.
  */
-export type ReadonlyReactiveMap<TKey, TValue> = Omit<
+export type ReadonlyReactiveMap<TKey, TValue> = Pick<
   ReactiveMap<TKey, TValue>,
-  "$" | "delete" | "clear" | "set" | "batchSet" | "replace"
+  | typeof Symbol.iterator
+  | typeof Symbol.toStringTag
+  | "toJSON"
+  | "dispose"
+  | "forEach"
+  | "get"
+  | "has"
+  | "size"
+  | "entries"
+  | "keys"
+  | "values"
 > & {
   readonly $: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
 };

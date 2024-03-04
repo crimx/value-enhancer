@@ -199,20 +199,23 @@ export interface ReactiveList<TValue> {
  * A readonly reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get elements.
  * Changes to the list will be notified to subscribers of `list.$`.
  */
-export type ReadonlyReactiveList<TValue> = Omit<
+export type ReadonlyReactiveList<TValue> = Pick<
   ReactiveList<TValue>,
-  | "setLength"
-  | "push"
-  | "pop"
-  | "pushHead"
-  | "popHead"
-  | "set"
-  | "insert"
-  | "delete"
-  | "clear"
-  | "replace"
-  | "reverse"
-  | "sort"
+  | typeof Symbol.iterator
+  | "$"
+  | "array"
+  | "length"
+  | "entries"
+  | "values"
+  | "keys"
+  | "get"
+  | "first"
+  | "last"
+  | "splice"
+  | "toString"
+  | "toLocaleString"
+  | "toJSON"
+  | "dispose"
 >;
 
 class ReactiveListImpl<TValue> implements ReactiveList<TValue> {

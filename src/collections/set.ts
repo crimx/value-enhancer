@@ -42,9 +42,18 @@ export interface ReactiveSet<TValue> extends Set<TValue> {
  * A readonly reactive set inherited from `Set`.
  * Changes to the set will be notified to subscribers of `set.$`.
  */
-export type ReadonlyReactiveSet<TValue> = Omit<
+export type ReadonlyReactiveSet<TValue> = Pick<
   ReactiveSet<TValue>,
-  "$" | "delete" | "clear" | "add" | "replace"
+  | typeof Symbol.iterator
+  | typeof Symbol.toStringTag
+  | "toJSON"
+  | "dispose"
+  | "forEach"
+  | "has"
+  | "size"
+  | "entries"
+  | "keys"
+  | "values"
 > & {
   readonly $: ReadonlyVal<ReadonlyReactiveSet<TValue>>;
 };
