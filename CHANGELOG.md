@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.1](https://github.com/crimx/value-enhancer/compare/v5.1.0...v5.1.1) (2024-03-23)
+
+
+### Bug Fixes
+
+* **collections:** clear collection on dispose ([aa490cb](https://github.com/crimx/value-enhancer/commit/aa490cb0b4ddec8998ba55458e32c4dda0a42d49))
+
 ## [5.1.0](https://github.com/crimx/value-enhancer/compare/v5.0.4...v5.1.0) (2024-03-23)
 
 
