@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.1.0](https://github.com/crimx/value-enhancer/compare/v5.0.4...v5.1.0) (2024-03-23)
+
+
+### Features
+
+* **collections:** add onDelete config to reactive map and set ([7240e26](https://github.com/crimx/value-enhancer/commit/7240e26ff13741e535dc4e8036723ee4e2aed0f5))
+
 ### [5.0.4](https://github.com/crimx/value-enhancer/compare/v5.0.3...v5.0.4) (2024-03-04)
 
 ### [5.0.3](https://github.com/crimx/value-enhancer/compare/v5.0.2...v5.0.3) (2024-03-01)
