@@ -176,6 +176,16 @@ describe("ReactiveSet", () => {
       expect(set.has(5)).toBe(true);
     });
 
+    it("should replace some values", () => {
+      const set = reactiveSet<number>([1, 2, 3, 4, 5]);
+      set.replace([3, 4, 5]);
+      expect(set.has(1)).toBe(false);
+      expect(set.has(2)).toBe(false);
+      expect(set.has(3)).toBe(true);
+      expect(set.has(4)).toBe(true);
+      expect(set.has(5)).toBe(true);
+    });
+
     it("should notify on replace", () => {
       const set = reactiveSet<number>();
       set.add(1);
@@ -268,6 +278,68 @@ describe("ReactiveSet", () => {
       set.add(1);
       expect(mockNotify1).not.toHaveBeenCalled();
       expect(mockNotify2).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("config-onDeleted", () => {
+    it("should call onDeleted when deleting an value", () => {
+      const set = reactiveSet<() => void>(null, {
+        onDeleted: value => value(),
+      });
+      const spy = jest.fn();
+      expect(spy).toHaveBeenCalledTimes(0);
+      set.add(spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      set.delete(spy);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not call onDeleted when deleting an non-existing entry", () => {
+      const set = reactiveSet<() => void>(null, {
+        onDeleted: value => value(),
+      });
+      const spy = jest.fn();
+      expect(spy).toHaveBeenCalledTimes(0);
+      set.add(spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      set.delete(jest.fn());
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    it("should call onDeleted when batch deleting entries", () => {
+      const spies = Array.from({ length: 5 }).map(() => jest.fn());
+      const set = reactiveSet<() => void>(spies, {
+        onDeleted: value => value(),
+      });
+      for (const spy of spies) {
+        expect(spy).toHaveBeenCalledTimes(0);
+      }
+      set.batchDelete(spies.slice(0, 3));
+      for (const [i, spy] of spies.entries()) {
+        expect(spy).toHaveBeenCalledTimes(i < 3 ? 1 : 0);
+      }
+    });
+
+    it("should call onDeleted when clearing the map", () => {
+      const spies = Array.from({ length: 5 }).map(() => jest.fn());
+      const set = reactiveSet<() => void>(spies, {
+        onDeleted: value => value(),
+      });
+      set.clear();
+      for (const spy of spies) {
+        expect(spy).toHaveBeenCalledTimes(1);
+      }
+    });
+
+    it("should call onDeleted when replace the map", () => {
+      const spies = Array.from({ length: 5 }).map(() => jest.fn());
+      const set = reactiveSet<() => void>(spies, {
+        onDeleted: value => value(),
+      });
+      set.replace(spies.slice(0, 2));
+      for (const [i, spy] of spies.entries()) {
+        expect(spy).toHaveBeenCalledTimes(i >= 2 ? 1 : 0);
+      }
     });
   });
 });

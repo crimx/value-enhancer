@@ -386,4 +386,73 @@ describe("ReactiveMap", () => {
       expect(mockNotify2).not.toHaveBeenCalled();
     });
   });
+
+  describe("config-onDeleted", () => {
+    it("should call onDeleted when deleting an entry", () => {
+      const map = reactiveMap<string, () => void>(null, {
+        onDeleted: value => value(),
+      });
+      const spy = jest.fn();
+      expect(spy).toHaveBeenCalledTimes(0);
+      map.set("foo", spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      map.delete("foo");
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not call onDeleted when deleting an non-existing entry", () => {
+      const map = reactiveMap<string, () => void>(null, {
+        onDeleted: value => value(),
+      });
+      const spy = jest.fn();
+      expect(spy).toHaveBeenCalledTimes(0);
+      map.set("foo", spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      map.delete("bar");
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
+
+    it("should call onDeleted when batch deleting entries", () => {
+      const spies = Array.from({ length: 5 }).map(() => jest.fn());
+      const map = reactiveMap<number, () => void>(
+        spies.map((spy, i) => [i, spy] as const),
+        {
+          onDeleted: value => value(),
+        }
+      );
+      for (const spy of spies) {
+        expect(spy).toHaveBeenCalledTimes(0);
+      }
+      map.batchDelete([0, 1, 2]);
+      for (const [i, spy] of spies.entries()) {
+        expect(spy).toHaveBeenCalledTimes(i <= 2 ? 1 : 0);
+      }
+    });
+
+    it("should call onDeleted when clearing the map", () => {
+      const spies = Array.from({ length: 5 }).map(() => jest.fn());
+      const map = reactiveMap<number, () => void>(
+        spies.map((spy, i) => [i, spy] as const),
+        {
+          onDeleted: value => value(),
+        }
+      );
+      map.clear();
+      for (const spy of spies) {
+        expect(spy).toHaveBeenCalledTimes(1);
+      }
+    });
+
+    it("should call onDeleted when replace the map", () => {
+      const spies = Array.from({ length: 5 }).map(() => jest.fn());
+      const entries = spies.map((spy, i) => [i, spy] as const);
+      const map = reactiveMap<number, () => void>(entries, {
+        onDeleted: value => value(),
+      });
+      map.replace(entries.slice(0, 2));
+      for (const [i, spy] of spies.entries()) {
+        expect(spy).toHaveBeenCalledTimes(i >= 2 ? 1 : 0);
+      }
+    });
+  });
 });

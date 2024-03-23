@@ -58,12 +58,26 @@ export type ReadonlyReactiveSet<TValue> = Pick<
   readonly $: ReadonlyVal<ReadonlyReactiveSet<TValue>>;
 };
 
+export interface ReactiveSetConfig<TValue> {
+  /**
+   * A callback function that will be called when an entry is deleted.
+   */
+  onDeleted?: (value: TValue) => void;
+}
+
 class ReactiveSetImpl<TValue>
   extends Set<TValue>
   implements ReactiveSet<TValue>
 {
-  public constructor(values?: Iterable<TValue> | null) {
+  public constructor(
+    values?: Iterable<TValue> | null,
+    config?: ReactiveSetConfig<TValue>
+  ) {
     super();
+
+    if (config) {
+      this.#onDeleted = config.onDeleted;
+    }
 
     const [$, set$] = readonlyVal(this, { equal: false });
     this.$ = $;
@@ -78,8 +92,18 @@ class ReactiveSetImpl<TValue>
 
   #notify: () => void;
 
-  public override delete(value: TValue): boolean {
+  #onDeleted?: (value: TValue) => void;
+
+  #delete(value: TValue): boolean {
     const deleted = super.delete(value);
+    if (deleted) {
+      this.#onDeleted?.(value);
+    }
+    return deleted;
+  }
+
+  public override delete(value: TValue): boolean {
+    const deleted = this.#delete(value);
     if (deleted) {
       this.#notify();
     }
@@ -89,7 +113,7 @@ class ReactiveSetImpl<TValue>
   public batchDelete(values: Iterable<TValue>): boolean {
     let deleted = false;
     for (const value of values) {
-      deleted = super.delete(value) || deleted;
+      deleted = this.#delete(value) || deleted;
     }
     if (deleted) {
       this.#notify();
@@ -99,7 +123,14 @@ class ReactiveSetImpl<TValue>
 
   public override clear(): void {
     if (this.size > 0) {
-      super.clear();
+      if (this.#onDeleted) {
+        for (const value of this) {
+          super.delete(value);
+          this.#onDeleted(value);
+        }
+      } else {
+        super.clear();
+      }
       this.#notify();
     }
   }
@@ -133,10 +164,16 @@ class ReactiveSetImpl<TValue>
     super.clear();
     let isDirty = false;
     for (const item of items) {
-      isDirty = isDirty || deleted.delete(item);
+      isDirty = deleted.delete(item) || isDirty;
       super.add(item);
     }
+
     if (isDirty || deleted.size > 0) {
+      if (this.#onDeleted) {
+        for (const item of deleted) {
+          this.#onDeleted(item);
+        }
+      }
       this.#notify();
     }
     return deleted.values();
@@ -166,5 +203,6 @@ class ReactiveSetImpl<TValue>
  * ```
  */
 export const reactiveSet = <TValue>(
-  values?: Iterable<TValue> | null
-): ReactiveSet<TValue> => new ReactiveSetImpl(values);
+  values?: Iterable<TValue> | null,
+  config?: ReactiveSetConfig<TValue>
+): ReactiveSet<TValue> => new ReactiveSetImpl(values, config);
