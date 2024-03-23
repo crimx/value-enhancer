@@ -279,6 +279,25 @@ describe("ReactiveSet", () => {
       expect(mockNotify1).not.toHaveBeenCalled();
       expect(mockNotify2).not.toHaveBeenCalled();
     });
+
+    it("should clear", () => {
+      const set = reactiveSet<number>();
+      set.add(1);
+      set.dispose();
+      expect(set.size).toBe(0);
+    });
+
+    it("should trigger onDeleted", () => {
+      const set = reactiveSet<() => void>(null, {
+        onDeleted: value => value(),
+      });
+      const spy = jest.fn();
+      set.add(spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      set.dispose();
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(set.size).toBe(0);
+    });
   });
 
   describe("config-onDeleted", () => {

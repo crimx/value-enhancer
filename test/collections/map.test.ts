@@ -361,6 +361,25 @@ describe("ReactiveMap", () => {
       map.set("foo", 1);
       expect(mockNotify).not.toHaveBeenCalled();
     });
+
+    it("should clear", () => {
+      const map = reactiveMap<string, number>();
+      map.set("foo", 1);
+      map.dispose();
+      expect(map.size).toBe(0);
+    });
+
+    it("should trigger onDelete", () => {
+      const map = reactiveMap<string, () => void>(null, {
+        onDeleted: value => value(),
+      });
+      const spy = jest.fn();
+      map.set("foo", spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      map.dispose();
+      expect(map.size).toBe(0);
+      expect(spy).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("toJSON", () => {

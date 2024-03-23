@@ -841,5 +841,11 @@ describe("ReactiveList", () => {
       expect(mockNotify1).not.toHaveBeenCalled();
       expect(mockNotify2).not.toHaveBeenCalled();
     });
+
+    it("should clear", () => {
+      const list = reactiveList([1, 2, 3]);
+      list.dispose();
+      expect(list.array).toEqual([]);
+    });
   });
 });

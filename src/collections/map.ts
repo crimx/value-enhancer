@@ -206,6 +206,7 @@ class ReactiveMapImpl<TKey, TValue>
 
   public dispose(): void {
     this.$.dispose();
+    this.clear();
   }
 }
 

@@ -157,6 +157,7 @@ class ReactiveSetImpl<TValue>
 
   public dispose(): void {
     this.$.dispose();
+    this.clear();
   }
 
   public replace(items: Iterable<TValue>): Iterable<TValue> {
