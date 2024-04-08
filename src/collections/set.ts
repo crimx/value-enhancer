@@ -61,6 +61,12 @@ export type ReadonlyReactiveSet<TValue> = Pick<
 export interface ReactiveSetConfig<TValue> {
   /**
    * A callback function that will be called when an entry is deleted.
+   *
+   * Entries are considered deleted from the set when:
+   * - `set.delete()` or `set.batchDelete()` entries.
+   * - `set.add()`, `set.batchAdd()` or `set.replace()` causing old entries being deleted.
+   * - `set.clear()` is called.
+   * - `set.dispose()` is called.
    */
   onDeleted?: (value: TValue) => void;
 }

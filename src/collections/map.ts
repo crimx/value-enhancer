@@ -63,6 +63,12 @@ export type ReadonlyReactiveMap<TKey, TValue> = Pick<
 export interface ReactiveMapConfig<TKey, TValue> {
   /**
    * A callback function that will be called when an entry is deleted.
+   *
+   * Entries are considered deleted from the map when:
+   * - `map.delete()` or `map.batchDelete()` entries.
+   * - `map.set()`, `map.batchSet()` or `map.replace()` causing old entries being deleted.
+   * - `map.clear()` is called.
+   * - `map.dispose()` is called.
    */
   onDeleted?: (value: TValue, key: TKey) => void;
 }
