@@ -1,5 +1,6 @@
 import { readonlyVal } from "../readonly-val";
 import type { ReadonlyVal } from "../typings";
+import { strictEqual } from "../utils";
 
 /**
  * A reactive map inherited from `Map`.
@@ -132,8 +133,9 @@ class ReactiveMapImpl<TKey, TValue>
   public override clear(): void {
     if (this.size > 0) {
       if (this.#onDeleted) {
-        for (const [key, value] of this) {
-          super.delete(key);
+        const deleted = [...this];
+        super.clear();
+        for (const [key, value] of deleted) {
           this.#onDeleted(value, key);
         }
       } else {
@@ -143,10 +145,24 @@ class ReactiveMapImpl<TKey, TValue>
     }
   }
 
+  #set(key: TKey, value: TValue): boolean {
+    if (this.has(key)) {
+      const oldValue = this.get(key)!;
+      if (strictEqual(oldValue, value)) {
+        return false;
+      }
+      super.set(key, value);
+      if (this.#onDeleted) {
+        this.#onDeleted(oldValue, key);
+      }
+    } else {
+      super.set(key, value);
+    }
+    return true;
+  }
+
   public override set(key: TKey, value: TValue): this {
-    const isDirty = !this.has(key) || this.get(key) !== value;
-    super.set(key, value);
-    if (isDirty) {
+    if (this.#set(key, value)) {
       this.#notify();
     }
     return this;
@@ -155,8 +171,7 @@ class ReactiveMapImpl<TKey, TValue>
   public batchSet(entries: Iterable<readonly [TKey, TValue]>): this {
     let isDirty = false;
     for (const [key, value] of entries) {
-      isDirty = isDirty || !this.has(key) || this.get(key) !== value;
-      super.set(key, value);
+      isDirty = this.#set(key, value) || isDirty;
     }
     if (isDirty) {
       this.#notify();
@@ -177,7 +192,7 @@ class ReactiveMapImpl<TKey, TValue>
       deleted.delete(key);
     }
 
-    if (isDirty || oldMap.size !== this.size) {
+    if (isDirty || deleted.size > 0) {
       if (this.#onDeleted) {
         for (const [key, value] of deleted) {
           this.#onDeleted(value, key);

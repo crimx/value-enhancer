@@ -473,5 +473,30 @@ describe("ReactiveMap", () => {
         expect(spy).toHaveBeenCalledTimes(i >= 2 ? 1 : 0);
       }
     });
+
+    it("should call onDeleted when setting different value on the same key", () => {
+      const spy1 = jest.fn();
+      const spy2 = jest.fn();
+      const map = reactiveMap<string, () => void>([["foo", spy1]], {
+        onDeleted: value => value(),
+      });
+      map.set("foo", spy1);
+      expect(spy1).toHaveBeenCalledTimes(0);
+      expect(spy2).toHaveBeenCalledTimes(0);
+      map.set("foo", spy2);
+      expect(spy1).toHaveBeenCalledTimes(1);
+      expect(spy2).toHaveBeenCalledTimes(0);
+    });
+
+    it("should not call onDeleted when setting the same entry", () => {
+      const spy = jest.fn();
+      const map = reactiveMap<string, () => void>([["foo", spy]], {
+        onDeleted: value => value(),
+      });
+      map.set("foo", spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+      map.set("foo", spy);
+      expect(spy).toHaveBeenCalledTimes(0);
+    });
   });
 });

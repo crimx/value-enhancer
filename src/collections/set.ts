@@ -124,8 +124,9 @@ class ReactiveSetImpl<TValue>
   public override clear(): void {
     if (this.size > 0) {
       if (this.#onDeleted) {
-        for (const value of this) {
-          super.delete(value);
+        const deleted = [...this];
+        super.clear();
+        for (const value of deleted) {
           this.#onDeleted(value);
         }
       } else {
@@ -136,11 +137,11 @@ class ReactiveSetImpl<TValue>
   }
 
   public override add(value: TValue): this {
-    const isDirty = !this.has(value);
-    super.add(value);
-    if (isDirty) {
-      this.#notify();
+    if (this.has(value)) {
+      return this;
     }
+    super.add(value);
+    this.#notify();
     return this;
   }
 
@@ -165,7 +166,7 @@ class ReactiveSetImpl<TValue>
     super.clear();
     let isDirty = false;
     for (const item of items) {
-      isDirty = deleted.delete(item) || isDirty;
+      isDirty = !deleted.delete(item) || isDirty;
       super.add(item);
     }
 
@@ -177,6 +178,7 @@ class ReactiveSetImpl<TValue>
       }
       this.#notify();
     }
+
     return deleted.values();
   }
 

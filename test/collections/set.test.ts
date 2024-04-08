@@ -200,13 +200,12 @@ describe("ReactiveSet", () => {
     });
 
     it("should not notify if not changed", () => {
-      const set = reactiveSet([1]);
+      const set = reactiveSet([1, 2, 3]);
       const mockNotify = jest.fn();
       const dispose = set.$.reaction(mockNotify, true);
 
-      set.replace([2, 3]);
-      expect(mockNotify).toHaveBeenCalledTimes(1);
-      expect(mockNotify).toHaveBeenCalledWith(set);
+      set.replace([1, 2, 3]);
+      expect(mockNotify).toHaveBeenCalledTimes(0);
 
       dispose();
     });
@@ -339,7 +338,7 @@ describe("ReactiveSet", () => {
       }
     });
 
-    it("should call onDeleted when clearing the map", () => {
+    it("should call onDeleted when clearing the set", () => {
       const spies = Array.from({ length: 5 }).map(() => jest.fn());
       const set = reactiveSet<() => void>(spies, {
         onDeleted: value => value(),
@@ -350,7 +349,7 @@ describe("ReactiveSet", () => {
       }
     });
 
-    it("should call onDeleted when replace the map", () => {
+    it("should call onDeleted when replacing the set with part of its items", () => {
       const spies = Array.from({ length: 5 }).map(() => jest.fn());
       const set = reactiveSet<() => void>(spies, {
         onDeleted: value => value(),
@@ -359,6 +358,27 @@ describe("ReactiveSet", () => {
       for (const [i, spy] of spies.entries()) {
         expect(spy).toHaveBeenCalledTimes(i >= 2 ? 1 : 0);
       }
+    });
+
+    it("should call onDeleted when replacing the set", () => {
+      const spies = Array.from({ length: 5 }).map(() => jest.fn());
+      const set = reactiveSet<() => void>(spies, {
+        onDeleted: value => value(),
+      });
+      set.replace([]);
+      for (const spy of spies.values()) {
+        expect(spy).toHaveBeenCalledTimes(1);
+      }
+    });
+
+    it("should not call onDeleted when adding the same value", () => {
+      const spy = jest.fn();
+      const set = reactiveSet<() => void>([spy], {
+        onDeleted: value => value(),
+      });
+      expect(spy).toHaveBeenCalledTimes(0);
+      set.add(spy);
+      expect(spy).toHaveBeenCalledTimes(0);
     });
   });
 });
