@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.2](https://github.com/crimx/value-enhancer/compare/v5.1.1...v5.1.2) (2024-04-08)
+
+
+### Bug Fixes
+
+* **collections:** trigger onDelete on setting new item ([6629c5b](https://github.com/crimx/value-enhancer/commit/6629c5bb2e959a4cee6bb205ee87c7a732ec1992))
+
 ### [5.1.1](https://github.com/crimx/value-enhancer/compare/v5.1.0...v5.1.1) (2024-03-23)
 
 
