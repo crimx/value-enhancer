@@ -54,7 +54,7 @@ class FlattenFromImpl<
 
     const updateInnerVal = () => {
       const maybeVal = getValue();
-      if (maybeVal !== innerMaybeVal) {
+      if (!strictEqual(maybeVal, innerMaybeVal)) {
         innerMaybeVal = maybeVal;
         innerVal = isVal(maybeVal)
           ? (maybeVal as unknown as ReadonlyValImpl<TValue>)

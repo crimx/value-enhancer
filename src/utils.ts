@@ -18,7 +18,7 @@ export const strictEqual = Object.is;
  *          3. arrA and arrB have different values at any index
  */
 export const arrayShallowEqual = (arrA: any, arrB: any): boolean => {
-  if (arrA === arrB) {
+  if (strictEqual(arrA, arrB)) {
     return true;
   }
   if (!Array.isArray(arrA) || !Array.isArray(arrB)) {

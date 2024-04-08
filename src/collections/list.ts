@@ -1,5 +1,6 @@
 import { readonlyVal } from "../readonly-val";
 import type { ReadonlyVal } from "../typings";
+import { strictEqual } from "../utils";
 
 /**
  * A reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get/set elements.
@@ -331,7 +332,7 @@ class ReactiveListImpl<TValue> implements ReactiveList<TValue> {
   }
 
   public set(index: number, item: TValue): this {
-    if (index >= 0 && this.array[index] !== item) {
+    if (index >= 0 && !strictEqual(this.array[index], item)) {
       (this.array as TValue[])[index] = item;
       this.#notify();
     }
@@ -341,7 +342,7 @@ class ReactiveListImpl<TValue> implements ReactiveList<TValue> {
   public batchSet(entries: Iterable<readonly [number, TValue]>): this {
     let isDirty = false;
     for (const [index, item] of entries) {
-      if (index >= 0 && this.array[index] !== item) {
+      if (index >= 0 && !strictEqual(this.array[index], item)) {
         isDirty = true;
         (this.array as TValue[])[index] = item;
       }
