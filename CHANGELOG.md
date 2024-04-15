@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.1.3](https://github.com/crimx/value-enhancer/compare/v5.1.2...v5.1.3) (2024-04-15)
+
+
+### Features
+
+* **utils:** export attachSetter ([8035ea9](https://github.com/crimx/value-enhancer/commit/8035ea9b12ea409a952f8f3c2409343da35bbd27))
+
 ### [5.1.2](https://github.com/crimx/value-enhancer/compare/v5.1.1...v5.1.2) (2024-04-08)
 
 
