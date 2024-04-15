@@ -1,5 +1,5 @@
-import type { ReadonlyVal } from "../typings";
-import { readonlyVal } from "../val";
+import type { ReadonlyVal } from "..";
+import { readonlyVal } from "..";
 
 /**
  * A reactive set inherited from `Set`.
