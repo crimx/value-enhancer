@@ -1,14 +1,21 @@
 import type { ReadonlyVal, Val, ValDisposer, ValSubscriber } from "./typings";
 
 /**
+ * @deprecated
  * Set the value of a val.
  * It works for both `Val` and `ReadonlyVal` type (if the `ReadonlyVal` is actually a `Val`).
- * Does nothing if the val is really `ReadonlyVal`.
+ * Throws error if the val is really `ReadonlyVal`.
  */
 export const setValue = <TValue>(
   val: ReadonlyVal<TValue>,
   value: TValue
-): void => (val as Val<TValue>).set?.(value);
+): void => {
+  try {
+    (val as Val<TValue>).set?.(value);
+  } catch {
+    // ignore
+  }
+};
 
 /**
  * Subscribe to value changes with immediate emission.

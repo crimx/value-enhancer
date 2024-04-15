@@ -1,4 +1,3 @@
-import { ReadonlyValImpl } from "./readonly-val";
 import { Subscribers } from "./subscribers";
 import type {
   ReadonlyVal,
@@ -7,8 +6,9 @@ import type {
   ValVersion,
 } from "./typings";
 import { INIT_VALUE } from "./utils";
+import { ValImpl } from "./val";
 
-class FromImpl<TValue = any> extends ReadonlyValImpl<TValue> {
+class FromImpl<TValue = any> extends ValImpl<TValue> {
   public constructor(
     getValue: () => TValue,
     listen: (notify: () => void) => ValDisposer | void | undefined,

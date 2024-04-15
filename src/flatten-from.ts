@@ -6,14 +6,14 @@ import type {
   ValVersion,
 } from "./typings";
 
-import { ReadonlyValImpl } from "./readonly-val";
 import { Subscribers } from "./subscribers";
 import { INIT_VALUE, isVal, strictEqual } from "./utils";
+import { ValImpl } from "./val";
 
 class FlattenFromImpl<
   TValOrValue = any,
   TValue = UnwrapVal<TValOrValue>
-> extends ReadonlyValImpl<TValue> {
+> extends ValImpl<TValue> {
   public constructor(
     getValue: () => TValOrValue,
     listen: (handler: () => void) => ValDisposer | void | undefined,
@@ -26,7 +26,7 @@ class FlattenFromImpl<
     let notified = false;
 
     let innerMaybeVal: TValOrValue | undefined;
-    let innerVal: ReadonlyValImpl<TValue> | undefined | null;
+    let innerVal: ValImpl<TValue> | undefined | null;
     let innerDisposer: ValDisposer | undefined | null;
 
     const computeValue = (): TValue => {
@@ -57,7 +57,7 @@ class FlattenFromImpl<
       if (!strictEqual(maybeVal, innerMaybeVal)) {
         innerMaybeVal = maybeVal;
         innerVal = isVal(maybeVal)
-          ? (maybeVal as unknown as ReadonlyValImpl<TValue>)
+          ? (maybeVal as unknown as ValImpl<TValue>)
           : null;
         innerDisposer?.();
         innerDisposer = innerVal && innerVal.$valCompute(notify);

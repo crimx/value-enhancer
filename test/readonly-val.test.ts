@@ -2,8 +2,8 @@ import type { ReadonlyVal, ValSetValue } from "../src";
 
 import { describe, expect, it, jest } from "@jest/globals";
 import { groupVals, nextTick, readonlyVal } from "../src";
-import { ReadonlyValImpl } from "../src/readonly-val";
 import { Subscribers } from "../src/subscribers";
+import { ValImpl } from "../src/val";
 
 describe("ReadonlyVal", () => {
   describe("value", () => {
@@ -826,12 +826,12 @@ describe("ReadonlyVal", () => {
   });
 });
 
-describe("ReadonlyValImpl", () => {
+describe("ValImpl", () => {
   describe("start", () => {
     it("should be called before first subscription", () => {
       const start = jest.fn(() => void 0);
       const subs = new Subscribers(() => 1, start);
-      const val = new ReadonlyValImpl(subs);
+      const val = new ValImpl(subs);
       expect(start).toHaveBeenCalledTimes(0);
 
       const sub1 = jest.fn();
@@ -869,7 +869,7 @@ describe("ReadonlyValImpl", () => {
       const startDisposer = jest.fn();
       const start = jest.fn(() => startDisposer);
       const subs = new Subscribers(() => 1, start);
-      const val = new ReadonlyValImpl(subs);
+      const val = new ValImpl(subs);
       expect(startDisposer).toHaveBeenCalledTimes(0);
 
       const sub1 = jest.fn();

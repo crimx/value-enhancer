@@ -1,4 +1,9 @@
-import type { ReadonlyVal, ValInputsValueTuple, ValVersion } from "./typings";
+import type {
+  ReadonlyVal,
+  Val,
+  ValInputsValueTuple,
+  ValVersion,
+} from "./typings";
 
 /** Returns the value passed in. */
 export const identity = <TValue>(value: TValue): TValue => value;
@@ -55,6 +60,17 @@ export const invoke = <TValue>(
     console.error(e);
   }
 };
+
+/**
+ * Make a readonly Val writable by providing a set method
+ * @param val$ a readonly Val
+ * @param set a function that sets the value of val$
+ * @returns The same val$ but writable
+ */
+export const makeWritable = <TValue>(
+  val$: ReadonlyVal<TValue>,
+  set: (this: void, value: TValue) => void
+): Val<TValue> => (((val$ as Val<TValue>).set = set), val$ as Val<TValue>);
 
 export const INIT_VALUE: any = {};
 

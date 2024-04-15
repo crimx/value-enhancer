@@ -1,6 +1,6 @@
-import { readonlyVal } from "../readonly-val";
 import type { ReadonlyVal } from "../typings";
 import { strictEqual } from "../utils";
+import { readonlyVal } from "../val";
 
 /**
  * A reactive list. Similar to an Array except bracket-notation(e.g. `arr[0]`) is not allowed to get/set elements.

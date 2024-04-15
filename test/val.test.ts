@@ -422,14 +422,14 @@ describe("Val", () => {
       expect(readonlyRef.value).toBe(1);
       expect(readonlyRef.value).toBe(v.value);
       // @ts-expect-error - not set on readonly val
-      expect(readonlyRef.set).toBeUndefined();
+      expect(() => readonlyRef.set()).toThrow();
 
       const ref = v.ref(true);
       const readonlyREf2 = ref.ref();
       expect(readonlyREf2.value).toBe(1);
       expect(readonlyREf2.value).toBe(v.value);
       // @ts-expect-error - not set on readonly val
-      expect(readonlyREf2.set).toBeUndefined();
+      expect(() => readonlyREf2.set()).toThrow();
     });
 
     it("should set value on source val", () => {

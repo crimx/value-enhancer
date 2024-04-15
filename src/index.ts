@@ -1,3 +1,9 @@
+export { combine, type CombineValTransform } from "./combine";
+export { derive, type DerivedValTransform } from "./derive";
+export { flatten } from "./flatten";
+export { flattenFrom } from "./flatten-from";
+export { from } from "./from";
+export { nextTick } from "./scheduler";
 export type {
   FlattenVal,
   ReadonlyVal,
@@ -10,16 +16,6 @@ export type {
   ValSubscriber,
   ValVersion,
 } from "./typings";
-
-export { nextTick } from "./scheduler";
 export { arrayShallowEqual, identity, isVal, strictEqual } from "./utils";
-
-export { combine, type CombineValTransform } from "./combine";
-export { derive, type DerivedValTransform } from "./derive";
-export { flatten } from "./flatten";
-export { flattenFrom } from "./flatten-from";
-export { from } from "./from";
-export { groupVals, readonlyVal } from "./readonly-val";
-export { val } from "./val";
-
+export { groupVals, readonlyVal, val } from "./val";
 export { reaction, setValue, subscribe, unsubscribe } from "./value-enhancer";

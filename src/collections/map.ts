@@ -1,6 +1,6 @@
-import { readonlyVal } from "../readonly-val";
 import type { ReadonlyVal } from "../typings";
 import { strictEqual } from "../utils";
+import { readonlyVal } from "../val";
 
 /**
  * A reactive map inherited from `Map`.
