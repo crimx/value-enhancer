@@ -11,18 +11,12 @@ import type {
  * @deprecated
  * Set the value of a val.
  * It works for both `Val` and `ReadonlyVal` type (if the `ReadonlyVal` is actually a `Val`).
- * Throws error if the val is really `ReadonlyVal`.
+ * Do nothing if the val is really `ReadonlyVal`.
  */
 export const setValue = <TValue>(
   val: ReadonlyVal<TValue>,
   value: TValue
-): void => {
-  try {
-    (val as Val<TValue>).set?.(value);
-  } catch {
-    // ignore
-  }
-};
+): void => (val as Val<TValue>).set?.(value);
 
 /**
  * Subscribe to value changes with immediate emission.

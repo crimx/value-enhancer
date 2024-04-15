@@ -53,7 +53,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   }
 
   public set(this: void, _value: TValue): void {
-    throw new TypeError("Cannot set value to a readonly Val");
+    // do nothing
   }
 
   public get: (this: void) => TValue;
