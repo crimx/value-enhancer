@@ -10,7 +10,7 @@ import type {
 } from "./typings";
 
 import { SubscriberMode, Subscribers } from "./subscribers";
-import { invoke, makeWritable, strictEqual } from "./utils";
+import { attachSetter, invoke, strictEqual } from "./utils";
 
 /**
  * Bare minimum implementation of a readonly val.
@@ -62,7 +62,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public ref(writable?: boolean): ReadonlyVal<TValue> {
     const val$ = new ValRefImpl(this, this.#config);
-    return writable ? makeWritable(val$, this.set) : val$;
+    return writable ? attachSetter(val$, this.set) : val$;
   }
 
   public reaction(
@@ -251,7 +251,7 @@ export function val<TValue = any>(
   config?: ValConfig<TValue>
 ): Val<NoInfer<TValue | undefined>> {
   const [val$, set] = readonlyVal(value, config);
-  return makeWritable(val$, set);
+  return attachSetter(val$, set);
 }
 
 /**

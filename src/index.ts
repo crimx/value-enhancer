@@ -16,6 +16,15 @@ export type {
   ValSubscriber,
   ValVersion,
 } from "./typings";
-export { arrayShallowEqual, identity, isVal, strictEqual } from "./utils";
+export {
+  arrayShallowEqual,
+  attachSetter,
+  identity,
+  isVal,
+  reaction,
+  setValue,
+  strictEqual,
+  subscribe,
+  unsubscribe,
+} from "./utils";
 export { groupVals, readonlyVal, val } from "./val";
-export { reaction, setValue, subscribe, unsubscribe } from "./value-enhancer";
