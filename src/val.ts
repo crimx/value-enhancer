@@ -41,6 +41,8 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   }
 
   public get $version(): ValVersion {
+    // resolve current value for the latest version
+    this.get();
     return this.#subs.version_;
   }
 
@@ -61,7 +63,14 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   public $equal?: (this: void, newValue: TValue, oldValue: TValue) => boolean;
 
   public ref(writable?: boolean): ReadonlyVal<TValue> {
-    const val$ = new ValRefImpl(this, this.#config);
+    const subs = new Subscribers(this.get, () =>
+      this.$valCompute(() => {
+        subs.dirty_ = true;
+        subs.newVersion_(this.#config);
+        subs.notify_();
+      })
+    );
+    const val$ = new ValImpl(subs, this.#config);
     return writable ? attachSetter(val$, this.set) : val$;
   }
 
@@ -129,19 +138,6 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
       | null
       | { toJSON?: (key: string) => unknown };
     return value && value.toJSON ? value.toJSON(key) : value;
-  }
-}
-
-export class ValRefImpl<TValue = any> extends ValImpl<TValue> {
-  public constructor(source$: ValImpl<TValue>, config?: ValConfig<TValue>) {
-    const subs = new Subscribers(source$.get, () =>
-      source$.$valCompute(() => {
-        subs.dirty_ = true;
-        subs.newVersion_(config);
-        subs.notify_();
-      })
-    );
-    super(subs, config);
   }
 }
 
