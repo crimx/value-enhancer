@@ -27,7 +27,7 @@ jobs:
       - name: Build 🔧
         run: |
           pnpm run lint
-          pnpm run test
+          pnpm run test:CI
           pnpm run build
 
       - name: Coveralls
