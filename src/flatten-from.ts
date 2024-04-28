@@ -1,8 +1,14 @@
-import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
+import type {
+  ReadonlyVal,
+  UnwrapVal,
+  ValConfig,
+  ValDisposer,
+  ValVersion,
+} from "./typings";
 
-import { from } from "./from";
-import { isVal, strictEqual } from "./utils";
-import type { ValImpl } from "./val";
+import { AgentStatus, ValAgent } from "./agent";
+import { INIT_VALUE, isVal, strictEqual } from "./utils";
+import { ValImpl } from "./val";
 
 /**
  * Creates a readonly val from a getter function and a listener function.
@@ -38,64 +44,59 @@ export const flattenFrom = <TValOrValue = any>(
   listen: (notify: () => void) => ValDisposer | void | undefined,
   config?: ValConfig<UnwrapVal<TValOrValue>>
 ): ReadonlyVal<UnwrapVal<TValOrValue>> => {
-  const initialEqual = config?.equal;
-  let innerMaybeVal: TValOrValue | undefined;
-  let innerVal: ValImpl<UnwrapVal<TValOrValue>> | undefined | null;
-  let innerDisposer: ValDisposer | undefined | null;
-  let withSubscriber = false;
+  let innerDisposer: ValDisposer | undefined | void;
+  let lastValVersion: ValVersion = INIT_VALUE;
+  let lastMaybeVal: TValOrValue = INIT_VALUE;
+  let dirty = true;
 
-  const computeValue = (): UnwrapVal<TValOrValue> => {
-    if (!withSubscriber) {
-      updateInnerVal();
-    }
-    return innerVal
-      ? innerVal.value
-      : (innerMaybeVal as UnwrapVal<TValOrValue>);
-  };
+  const subs = new ValAgent(
+    () => {
+      if (dirty) {
+        if (subs.subs_.size) {
+          dirty = false;
+        }
 
-  const updateInnerVal = () => {
-    const maybeVal = getValue();
-    if (!strictEqual(maybeVal, innerMaybeVal)) {
-      innerMaybeVal = maybeVal;
-      innerVal = isVal(maybeVal)
-        ? (maybeVal as unknown as ValImpl<UnwrapVal<TValOrValue>>)
-        : null;
-      (val$ as ValImpl).$equal =
-        initialEqual ||
-        (initialEqual === false
-          ? void 0
-          : innerVal
-          ? innerVal.$equal
-          : strictEqual);
-    }
-  };
+        const maybeVal = getValue();
 
-  const updateInnerValCompute = (notify: () => void) => {
-    innerDisposer?.();
-    innerDisposer = innerVal && innerVal.$valCompute(notify);
-  };
+        if (isVal(maybeVal)) {
+          const version = maybeVal.$version;
+          if (strictEqual(maybeVal, lastMaybeVal)) {
+            if (!subs.equal_ && !strictEqual(version, lastValVersion)) {
+              subs.status_ |= AgentStatus.ShouldInvoke;
+            }
+          } else {
+            innerDisposer &&= innerDisposer();
+            if (subs.subs_.size) {
+              innerDisposer = maybeVal.$valCompute(subs.notify_);
+            }
+          }
+          lastValVersion = version;
+        } else {
+          innerDisposer &&= innerDisposer();
+          lastValVersion = INIT_VALUE;
+        }
 
-  const val$ = from(
-    computeValue,
+        lastMaybeVal = maybeVal;
+      }
+
+      return isVal(lastMaybeVal) ? lastMaybeVal.value : lastMaybeVal;
+    },
+    config,
     notify => {
-      withSubscriber = true;
-      updateInnerVal();
-      updateInnerValCompute(notify);
-
       const outerDisposer = listen(() => {
-        updateInnerVal();
-        updateInnerValCompute(notify);
+        dirty = true;
         notify();
       });
-
+      if (!innerDisposer && isVal(lastMaybeVal)) {
+        innerDisposer = lastMaybeVal.$valCompute(notify);
+      }
       return () => {
-        withSubscriber = false;
-        innerDisposer?.();
+        dirty = true;
+        innerDisposer &&= innerDisposer();
         outerDisposer?.();
       };
-    },
-    config
+    }
   );
 
-  return val$;
+  return new ValImpl(subs);
 };

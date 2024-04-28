@@ -1,32 +1,30 @@
-import type { Subscribers } from "./subscribers";
-import { SubscriberMode } from "./subscribers";
-
-export type Task<TValue = any> = (value: TValue) => void;
+export interface Task {
+  runTask_(): void;
+}
 
 const tick = /*#__PURE__*/ Promise.resolve();
-const pendingSubs1 = new Set<Subscribers>();
-const pendingSubs2 = new Set<Subscribers>();
-let pendingSubs = pendingSubs1;
+const pendingTasks1 = new Set<Task>();
+const pendingTasks2 = new Set<Task>();
+let pendingTasks = pendingTasks1;
 let pending: Promise<void> | false;
 
 const flush = () => {
-  const curPendingSubs = pendingSubs;
-  pendingSubs = pendingSubs === pendingSubs1 ? pendingSubs2 : pendingSubs1;
+  const currentPendingTasks = pendingTasks;
+  pendingTasks = pendingTasks === pendingTasks1 ? pendingTasks2 : pendingTasks1;
 
   pending = false;
 
-  for (const subs of curPendingSubs) {
-    subs.exec_(SubscriberMode.Async);
+  for (const subs of currentPendingTasks) {
+    subs.runTask_();
   }
-  curPendingSubs.clear();
+  currentPendingTasks.clear();
 };
 
-export const schedule = <TValue>(subs: Subscribers<TValue>): void => {
-  pendingSubs.add(subs);
+export const schedule = (task: Task): void => {
+  pendingTasks.add(task);
   pending = pending || tick.then(flush);
 };
 
-export const cancelTask = (subs: Subscribers): boolean =>
-  pendingSubs.delete(subs);
+export const cancelTask = (task: Task): boolean => pendingTasks.delete(task);
 
 export const nextTick = (): Promise<void> => tick;

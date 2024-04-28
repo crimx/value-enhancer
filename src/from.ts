@@ -1,6 +1,5 @@
-import { Subscribers } from "./subscribers";
+import { ValAgent } from "./agent";
 import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
-import { INIT_VALUE } from "./utils";
 import { ValImpl } from "./val";
 
 /**
@@ -38,44 +37,5 @@ export const from = <TValue = any>(
   listen: (handler: () => void) => ValDisposer | void | undefined,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> => {
-  let currentValue = INIT_VALUE as TValue;
-  let dirty = false;
-  let notified = false;
-
-  const get = () => {
-    if (currentValue === INIT_VALUE || subs.size_ <= 0) {
-      currentValue = getValue();
-      subs.newVersion_(config, currentValue);
-    } else if (dirty) {
-      const value = getValue();
-      if (!val$.$equal?.(value, currentValue)) {
-        subs.dirty_ = true;
-        subs.newVersion_(config, value, currentValue);
-        currentValue = value;
-      }
-    }
-    dirty = notified = false;
-    return currentValue;
-  };
-
-  const notify = () => {
-    dirty = true;
-    if (!notified) {
-      notified = true;
-      subs.notify_();
-    }
-  };
-
-  const subs = new Subscribers(get, subs => {
-    // attach listener first so that upstream value is resolved
-    const disposer = listen(notify);
-    currentValue = getValue();
-    subs.newVersion_(config, currentValue);
-    dirty = notified = false;
-    return disposer;
-  });
-
-  const val$ = new ValImpl(subs, config);
-
-  return val$;
+  return new ValImpl(new ValAgent(getValue, config, listen));
 };

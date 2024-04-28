@@ -1,12 +1,11 @@
 {
   "add_": "a",
-  "clear_": "c",
-  "dirty_": "d",
-  "exec_": "e",
-  "getValue_": "g",
+  "eager_": "e",
   "notify_": "n",
+  "equal_": "q",
   "remove_": "r",
-  "size_": "s",
-  "version_": "v",
-  "newVersion_": "w"
+  "subs_": "s",
+  "runTask_": "t",
+  "resolveValue_": "u",
+  "version_": "v"
 }

@@ -14,7 +14,7 @@ export interface ReadonlyVal<TValue = any> {
   /**
    * Get current value of the val.
    */
-  get(this: void): TValue;
+  get: () => TValue;
   /**
    * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
    * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)
@@ -65,7 +65,7 @@ export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   /** Current value of the val */
   value: TValue;
   /** Set new value */
-  set: (this: void, value: TValue) => void;
+  set: (value: TValue) => void;
   /**
    * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
    * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)

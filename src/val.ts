@@ -9,8 +9,9 @@ import type {
   ValVersion,
 } from "./typings";
 
-import { SubscriberMode, Subscribers } from "./subscribers";
-import { attachSetter, invoke, strictEqual } from "./utils";
+import type { IValAgent } from "./agent";
+import { RefValAgent, SubMode, ValAgent } from "./agent";
+import { attachSetter, invoke } from "./utils";
 
 /**
  * Bare minimum implementation of a readonly val.
@@ -20,11 +21,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   /**
    * Manage subscribers for a val.
    */
-  readonly #subs: Subscribers<TValue>;
-
-  readonly #config?: ValConfig;
-
-  readonly #eager?: boolean;
+  readonly #agent: IValAgent<TValue>;
 
   /**
    * @param get A pure function that returns the current value of the val.
@@ -32,18 +29,15 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * @param start A function that is called when a val get its first subscriber.
    *        The returned disposer will be called when the last subscriber unsubscribed from the val.
    */
-  public constructor(subs: Subscribers<TValue>, config?: ValConfig<TValue>) {
-    this.#subs = subs;
-    this.get = subs.getValue_;
-    this.#config = config;
-    this.$equal = (config?.equal ?? strictEqual) || void 0;
-    this.#eager = config?.eager;
+  public constructor(agent: IValAgent<TValue>) {
+    this.#agent = agent;
+    this.get = agent.resolveValue_;
   }
 
   public get $version(): ValVersion {
     // resolve current value for the latest version
     this.get();
-    return this.#subs.version_;
+    return this.#agent.version_;
   }
 
   public get value(): TValue {
@@ -60,54 +54,37 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
 
   public get: (this: void) => TValue;
 
-  public $equal?: (this: void, newValue: TValue, oldValue: TValue) => boolean;
-
   public ref(writable?: boolean): ReadonlyVal<TValue> {
-    const subs = new Subscribers(this.get, () =>
-      this.$valCompute(() => {
-        subs.dirty_ = true;
-        subs.newVersion_(this.#config);
-        subs.notify_();
-      })
-    );
-    const val$ = new ValImpl(subs, this.#config);
+    const val$ = new ValImpl(new RefValAgent(this.#agent));
     return writable ? attachSetter(val$, this.set) : val$;
   }
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
-    eager = this.#eager
+    eager = this.#agent.eager_
   ): ValDisposer {
-    return this.#subs.add_(
-      subscriber,
-      eager ? SubscriberMode.Eager : SubscriberMode.Async
-    );
+    return this.#agent.add_(subscriber, eager ? SubMode.Eager : SubMode.Async);
   }
 
   public subscribe(
     subscriber: ValSubscriber<TValue>,
-    eager = this.#eager
+    eager = this.#agent.eager_
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
-    invoke(subscriber, this.value);
-    this.#subs.dirty_ = false;
+    invoke(subscriber, this.get());
     return disposer;
   }
 
   public $valCompute(subscriber: ValSubscriber<void>): ValDisposer {
-    return this.#subs.add_(subscriber, SubscriberMode.Computed);
+    return this.#agent.add_(subscriber, SubMode.Computed);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {
-    if (subscriber) {
-      this.#subs.remove_(subscriber);
-    } else {
-      this.#subs.clear_();
-    }
+    this.#agent.remove_(subscriber);
   }
 
   public dispose(): void {
-    this.#subs.clear_();
+    this.#agent.remove_();
   }
 
   /**
@@ -120,7 +97,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * ```
    */
   public toString(): string {
-    return String(this.value);
+    return String(this.get());
   }
 
   /**
@@ -133,7 +110,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
    * ```
    */
   public toJSON(key: string): unknown {
-    const value = this.value as
+    const value = this.get() as
       | undefined
       | null
       | { toJSON?: (key: string) => unknown };
@@ -197,18 +174,16 @@ export function readonlyVal<TValue = any>(
 
   const get = () => currentValue;
 
-  const subs = new Subscribers(get);
+  const subs = new ValAgent(get, config);
 
   const set = (value: TValue | undefined): void => {
-    if (!val.$equal?.(value, currentValue)) {
-      subs.dirty_ = true;
-      subs.newVersion_(config, value, currentValue);
+    if (!subs.equal_?.(value, currentValue)) {
       currentValue = value;
       subs.notify_();
     }
   };
 
-  const val = new ValImpl(subs, config);
+  const val = new ValImpl(subs);
 
   return [val, set];
 }

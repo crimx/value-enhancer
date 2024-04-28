@@ -1,8 +1,9 @@
 import type { ReadonlyVal, ValSetValue } from "../src";
+import { groupVals } from "../src";
 
 import { describe, expect, it, jest } from "@jest/globals";
-import { groupVals, nextTick, readonlyVal } from "../src";
-import { Subscribers } from "../src/subscribers";
+import { nextTick, readonlyVal } from "../src";
+import { ValAgent } from "../src/agent";
 import { ValImpl } from "../src/val";
 
 describe("ReadonlyVal", () => {
@@ -830,8 +831,8 @@ describe("ValImpl", () => {
   describe("start", () => {
     it("should be called before first subscription", () => {
       const start = jest.fn(() => void 0);
-      const subs = new Subscribers(() => 1, start);
-      const val = new ValImpl(subs);
+      const agent = new ValAgent(() => 1, {}, start);
+      const val = new ValImpl(agent);
       expect(start).toHaveBeenCalledTimes(0);
 
       const sub1 = jest.fn();
@@ -868,8 +869,8 @@ describe("ValImpl", () => {
     it("should trigger disposer after last un-subscription", () => {
       const startDisposer = jest.fn();
       const start = jest.fn(() => startDisposer);
-      const subs = new Subscribers(() => 1, start);
-      const val = new ValImpl(subs);
+      const agent = new ValAgent(() => 1, {}, start);
+      const val = new ValImpl(agent);
       expect(startDisposer).toHaveBeenCalledTimes(0);
 
       const sub1 = jest.fn();

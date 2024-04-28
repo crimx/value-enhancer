@@ -9,6 +9,7 @@ import type {
 
 /**
  * @deprecated
+ * @ignore
  * Set the value of a val.
  * It works for both `Val` and `ReadonlyVal` type (if the `ReadonlyVal` is actually a `Val`).
  * Do nothing if the val is really `ReadonlyVal`.

@@ -570,7 +570,7 @@ describe("flattenFrom", () => {
 
     set(val(3));
 
-    expect(getValueSpy).toBeCalledTimes(1);
+    expect(getValueSpy).toBeCalledTimes(0);
     expect(startSpy).toBeCalledTimes(0);
     expect(spy1).toBeCalledTimes(0);
 
@@ -580,7 +580,7 @@ describe("flattenFrom", () => {
 
     await nextTick();
 
-    expect(getValueSpy).toBeCalledTimes(0);
+    expect(getValueSpy).toBeCalledTimes(1);
     expect(startSpy).toBeCalledTimes(0);
     expect(spy1).toBeCalledTimes(1);
     expect(spy1).lastCalledWith(3);
