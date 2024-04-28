@@ -23,12 +23,6 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
    */
   readonly #agent: IValAgent<TValue>;
 
-  /**
-   * @param get A pure function that returns the current value of the val.
-   * @param config Custom config for the val.
-   * @param start A function that is called when a val get its first subscriber.
-   *        The returned disposer will be called when the last subscriber unsubscribed from the val.
-   */
   public constructor(agent: IValAgent<TValue>) {
     this.#agent = agent;
     this.get = agent.resolveValue_;
