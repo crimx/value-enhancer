@@ -1,5 +1,5 @@
-import type { ReadonlyVal } from "..";
-import { readonlyVal, strictEqual } from "..";
+import type { ReadonlyVal } from "value-enhancer";
+import { readonlyVal, strictEqual } from "value-enhancer";
 
 /**
  * A reactive map inherited from `Map`.

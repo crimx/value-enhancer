@@ -2,13 +2,12 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: {
-    index: "src/index.ts",
     collections: "src/collections/index.ts",
   },
   format: ["cjs", "esm"],
-  splitting: true,
+  splitting: false,
   sourcemap: false,
-  clean: true,
+  clean: false,
   treeshake: true,
   dts: true,
   minify: Boolean(process.env.MINIFY),
@@ -16,4 +15,17 @@ export default defineConfig({
     options.mangleProps = /[^_]_$/;
     options.mangleCache = require("./mangle-cache.json");
   },
+  esbuildPlugins: [
+    {
+      name: "replace-imports",
+      setup(build) {
+        build.onResolve({ filter: /^value-enhancer$/ }, () => {
+          return {
+            path: ".",
+            external: true,
+          };
+        });
+      },
+    },
+  ],
 });

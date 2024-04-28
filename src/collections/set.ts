@@ -1,5 +1,5 @@
-import type { ReadonlyVal } from "..";
-import { readonlyVal } from "..";
+import type { ReadonlyVal } from "value-enhancer";
+import { readonlyVal } from "value-enhancer";
 
 /**
  * A reactive set inherited from `Set`.
