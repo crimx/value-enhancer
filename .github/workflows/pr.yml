@@ -24,8 +24,14 @@ jobs:
           version: 8
           run_install: true
 
-      - name: Build 🔧
+      - name: Lint 🧹
         run: |
           pnpm run lint
+
+      - name: Test 🧪
+        run: |
           pnpm run test:CI
+
+      - name: Build 🔧
+        run: |
           pnpm run build
