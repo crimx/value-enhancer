@@ -18,7 +18,7 @@
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg?maxAge=2592000)](https://conventionalcommits.org)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
-Enhance value with plain and explicit reactive wrapper.
+Enhance value with plain and explicit reactive wrapper. Think of it as hook-style signals.
 
 Docs: <https://value-enhancer.js.org>
 
@@ -197,6 +197,15 @@ effect(() => {
 ```
 
 This issue does not exist in `value-enhancer` because we do not collect dependencies implicitly.
+
+</details>
+
+## Devtools
+
+<details>
+<summary>Custom Formatter</summary>
+
+`value-enhancer` in development mode supports DevTools [custom formatters](https://www.mattzeunert.com/2016/02/19/custom-chrome-devtools-object-formatters.html). You may enable it by checking the "Enable custom formatters" option in the "Console" section of DevTools general settings.
 
 </details>
 

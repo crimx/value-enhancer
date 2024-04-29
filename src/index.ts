@@ -1,3 +1,5 @@
+import { initDev } from "./dev";
+
 export { combine, type CombineValTransform } from "./combine";
 export { derive, type DerivedValTransform } from "./derive";
 export { flatten } from "./flatten";
@@ -28,3 +30,7 @@ export {
   unsubscribe,
 } from "./utils";
 export { groupVals, readonlyVal, val } from "./val";
+
+if (process.env.NODE_ENV !== "production") {
+  initDev();
+}
