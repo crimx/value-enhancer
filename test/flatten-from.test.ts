@@ -653,4 +653,26 @@ describe("flattenFrom", () => {
 
     val$.unsubscribe();
   });
+
+  it("should follow source equal if equal is not provided", async () => {
+    const innerVal = val(1, { equal: false });
+
+    const val$ = flattenFrom(() => innerVal, noop);
+
+    const spyInner = jest.fn();
+    innerVal.reaction(spyInner, true);
+
+    const spyOuter = jest.fn();
+    val$.reaction(spyOuter, true);
+
+    expect(spyInner).toBeCalledTimes(0);
+    expect(spyOuter).toBeCalledTimes(0);
+
+    innerVal.set(1);
+
+    expect(spyInner).toBeCalledTimes(1);
+    expect(spyInner).lastCalledWith(1);
+    expect(spyOuter).toBeCalledTimes(1);
+    expect(spyOuter).lastCalledWith(1);
+  });
 });

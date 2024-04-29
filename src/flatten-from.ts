@@ -45,9 +45,10 @@ export const flattenFrom = <TValOrValue = any>(
   config?: ValConfig<UnwrapVal<TValOrValue>>
 ): ReadonlyVal<UnwrapVal<TValOrValue>> => {
   let innerDisposer: ValDisposer | undefined | void;
-  let lastValVersion: ValVersion = INIT_VALUE;
-  let lastMaybeVal: TValOrValue = INIT_VALUE;
+  let currentValVersion: ValVersion = INIT_VALUE;
+  let currentMaybeVal: TValOrValue = INIT_VALUE;
   let dirty = true;
+  const useDefaultEqual = config?.equal == null;
 
   const subs = new ValAgent(
     () => {
@@ -56,30 +57,35 @@ export const flattenFrom = <TValOrValue = any>(
           dirty = false;
         }
 
-        const maybeVal = getValue();
+        const lastMaybeVal = currentMaybeVal;
+        currentMaybeVal = getValue();
 
-        if (isVal(maybeVal)) {
-          const version = maybeVal.$version;
-          if (strictEqual(maybeVal, lastMaybeVal)) {
-            if (!subs.equal_ && !strictEqual(version, lastValVersion)) {
-              subs.status_ |= AgentStatus.ShouldInvoke;
-            }
-          } else {
+        if (isVal(currentMaybeVal)) {
+          if (!strictEqual(currentMaybeVal, lastMaybeVal)) {
             innerDisposer &&= innerDisposer();
             if (subs.subs_.size) {
-              innerDisposer = maybeVal.$valCompute(subs.notify_);
+              innerDisposer = currentMaybeVal.$valCompute(subs.notify_);
             }
           }
-          lastValVersion = version;
         } else {
           innerDisposer &&= innerDisposer();
-          lastValVersion = INIT_VALUE;
         }
-
-        lastMaybeVal = maybeVal;
       }
 
-      return isVal(lastMaybeVal) ? lastMaybeVal.value : lastMaybeVal;
+      if (isVal(currentMaybeVal)) {
+        const lastValVersion = currentValVersion;
+        currentValVersion = currentMaybeVal.$version;
+        if (
+          useDefaultEqual &&
+          !strictEqual(currentValVersion, lastValVersion)
+        ) {
+          subs.status_ |= AgentStatus.ShouldInvoke;
+        }
+        return currentMaybeVal.value;
+      } else {
+        currentValVersion = INIT_VALUE;
+        return currentMaybeVal;
+      }
     },
     config,
     notify => {
@@ -87,8 +93,8 @@ export const flattenFrom = <TValOrValue = any>(
         dirty = true;
         notify();
       });
-      if (!innerDisposer && isVal(lastMaybeVal)) {
-        innerDisposer = lastMaybeVal.$valCompute(notify);
+      if (!innerDisposer && isVal(currentMaybeVal)) {
+        innerDisposer = currentMaybeVal.$valCompute(notify);
       }
       return () => {
         dirty = true;
