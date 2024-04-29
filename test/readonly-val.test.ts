@@ -505,6 +505,46 @@ describe("ReadonlyVal", () => {
       val.unsubscribe();
     });
 
+    it("should not trigger emission if subscriber is disposed on next tick", async () => {
+      const spy = jest.fn();
+
+      const [val, set] = readonlyVal(1);
+
+      let disposer = val.reaction(spy);
+
+      set(2);
+      set(1);
+
+      expect(spy).toBeCalledTimes(0);
+      await nextTick();
+      expect(spy).toBeCalledTimes(0);
+
+      set(2);
+
+      expect(spy).toBeCalledTimes(0);
+      await nextTick();
+      expect(spy).toBeCalledTimes(1);
+      expect(spy).lastCalledWith(2);
+
+      spy.mockClear();
+
+      set(3);
+      disposer();
+
+      expect(spy).toBeCalledTimes(0);
+      await nextTick();
+      expect(spy).toBeCalledTimes(0);
+
+      disposer = val.reaction(spy);
+      set(3);
+
+      expect(spy).toBeCalledTimes(0);
+      await nextTick();
+      expect(spy).toBeCalledTimes(0);
+
+      disposer();
+    });
+
     it("should support multiple subscribers", async () => {
       const spies = Array(20)
         .fill(0)

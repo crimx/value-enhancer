@@ -1,7 +1,7 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { nextTick, subscribe, val } from "../src";
 
-describe("combine", () => {
+describe("subscribe", () => {
   it("should subscribe", async () => {
     const v = val(1);
     const spy1 = jest.fn();

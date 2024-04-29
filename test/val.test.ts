@@ -414,6 +414,7 @@ describe("Val", () => {
       const ref = v.ref(true);
       expect(ref.value).toBe(1);
       expect(ref.value).toBe(v.value);
+      expect(ref.$version).toBe(v.$version);
     });
 
     it("should create a ref readonly val", () => {
