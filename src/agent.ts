@@ -72,7 +72,6 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     this.status_ |= AgentStatus.ValueDirty;
     if (!(this.status_ & AgentStatus.Notified)) {
       this.status_ |= AgentStatus.Notified;
-      this.#notReadySubscribers.clear();
       if (this[SubMode.Computed]) {
         this.#invoke(SubMode.Computed);
       }
@@ -102,7 +101,6 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     if (currentMode) {
       this[currentMode]--;
     }
-    this.#notReadySubscribers.add(subscriber);
     this.subs_.set(subscriber, mode);
     this[mode]++;
 
@@ -118,7 +116,6 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
 
   public remove_(subscriber?: (...args: any[]) => any): void {
     if (subscriber) {
-      this.#notReadySubscribers.delete(subscriber);
       const mode = this.subs_.get(subscriber);
       if (mode) {
         this.subs_.delete(subscriber);
@@ -126,7 +123,6 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
       }
     } else {
       this.subs_.clear();
-      this.#notReadySubscribers.clear();
       this[SubMode.Async] = this[SubMode.Eager] = this[SubMode.Computed] = 0;
       cancelTask(this);
     }
@@ -171,8 +167,6 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   private [SubMode.Eager] = 0;
   private [SubMode.Computed] = 0;
 
-  readonly #notReadySubscribers = new Set<ValSubscriber<TValue>>();
-
   #numberVersion = 0;
 
   readonly #getValue: () => TValue;
@@ -181,7 +175,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
 
   #invoke(mode: SubMode): void {
     for (const [sub, subMode] of this.subs_) {
-      if (subMode === mode && !this.#notReadySubscribers.has(sub)) {
+      if (subMode === mode) {
         invoke(sub, this.value_);
       }
     }
