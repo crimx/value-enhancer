@@ -126,8 +126,8 @@ export const attachSetter = <TValue>(
 ): Val<TValue> => (((val$ as Val<TValue>).set = set), val$ as Val<TValue>);
 
 interface IsVal {
-  <T extends ReadonlyVal>(val: T): val is T extends ReadonlyVal ? T : never;
-  (val: unknown): val is ReadonlyVal;
+  <T extends ReadonlyVal>(val$: T): val$ is T extends ReadonlyVal ? T : never;
+  (val$: unknown): val$ is ReadonlyVal;
 }
 
 /**
@@ -135,13 +135,13 @@ interface IsVal {
  *
  * @returns `true` if `val` is `ReadonlyVal` or `Val`.
  */
-export const isVal: IsVal = (val: unknown): val is ReadonlyVal =>
-  !!(val as any)?.$valCompute;
+export const isVal: IsVal = (val$: unknown): val$ is ReadonlyVal =>
+  !!(val$ as any)?.$valCompute;
 
 /**
  * Checks if `val` is a writable `Val`.
  * @returns `true` if `val` is a writable `Val`.
  */
 export const isWritable = <TValue>(
-  val: ReadonlyVal<TValue>
-): val is Val<TValue> => !!(val as Val<TValue>)?.set;
+  val$: ReadonlyVal<TValue>
+): val$ is Val<TValue> => !!(val$ as Val)?.set;

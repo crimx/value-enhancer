@@ -23,6 +23,7 @@ export {
   attachSetter,
   identity,
   isVal,
+  isWritable,
   reaction,
   setValue,
   strictEqual,

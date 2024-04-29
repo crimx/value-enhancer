@@ -423,7 +423,7 @@ describe("Val", () => {
       expect(readonlyRef.value).toBe(1);
       expect(readonlyRef.value).toBe(v.value);
       // @ts-expect-error - not set on readonly val
-      readonlyRef.set(4);
+      readonlyRef.set;
       expect(readonlyRef.value).toBe(1);
 
       const ref = v.ref(true);
@@ -431,7 +431,7 @@ describe("Val", () => {
       expect(readonlyREf2.value).toBe(1);
       expect(readonlyREf2.value).toBe(v.value);
       // @ts-expect-error - not set on readonly val
-      readonlyREf2.set();
+      readonlyREf2.set;
       expect(readonlyREf2.value).toBe(1);
     });
 

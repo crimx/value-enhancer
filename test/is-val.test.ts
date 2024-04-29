@@ -2,7 +2,7 @@ import { describe, expect, it } from "@jest/globals";
 import type { Val } from "../src";
 import { combine, derive, flatten, identity, isVal, val } from "../src";
 
-describe("combine", () => {
+describe("isVal", () => {
   it("should check Val", () => {
     const val$ = val(1);
     expect(isVal(val$)).toBe(true);
