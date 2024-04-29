@@ -39,18 +39,16 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   }
 
   public set value(value: TValue) {
-    this.set(value);
+    this.set?.(value);
   }
 
-  public set(this: void, _value: TValue): void {
-    // do nothing
-  }
+  public set?: ValSetValue<TValue>;
 
   public get: (this: void) => TValue;
 
   public ref(writable?: boolean): ReadonlyVal<TValue> {
     const val$ = new ValImpl(new RefValAgent(this.#agent));
-    return writable ? attachSetter(val$, this.set) : val$;
+    return writable && this.set ? attachSetter(val$, this.set) : val$;
   }
 
   public reaction(

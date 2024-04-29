@@ -7,6 +7,8 @@ import type {
   ValVersion,
 } from "./typings";
 
+export const INIT_VALUE: any = {};
+
 /**
  * @deprecated
  * @ignore
@@ -17,7 +19,7 @@ import type {
 export const setValue = <TValue>(
   val: ReadonlyVal<TValue>,
   value: TValue
-): void => (val as Val<TValue>).set?.(value);
+): void => (val as Val<TValue>)?.set?.(value);
 
 /**
  * Subscribe to value changes with immediate emission.
@@ -123,22 +125,23 @@ export const attachSetter = <TValue>(
   set: (this: void, value: TValue) => void
 ): Val<TValue> => (((val$ as Val<TValue>).set = set), val$ as Val<TValue>);
 
-export const INIT_VALUE: any = {};
+interface IsVal {
+  <T extends ReadonlyVal>(val: T): val is T extends ReadonlyVal ? T : never;
+  (val: unknown): val is ReadonlyVal;
+}
 
 /**
  * Checks if `val` is `ReadonlyVal` or `Val`.
  *
  * @returns `true` if `val` is `ReadonlyVal` or `Val`.
  */
-export function isVal<T extends ReadonlyVal>(
-  val: T
-): val is T extends ReadonlyVal ? T : never;
+export const isVal: IsVal = (val: unknown): val is ReadonlyVal =>
+  !!(val as any)?.$valCompute;
+
 /**
- * Checks if `val` is `ReadonlyVal` or `Val`.
- *
- * @returns `true` if `val` is `ReadonlyVal` or `Val`.
+ * Checks if `val` is a writable `Val`.
+ * @returns `true` if `val` is a writable `Val`.
  */
-export function isVal(val: unknown): val is ReadonlyVal;
-export function isVal(val: unknown): val is ReadonlyVal {
-  return !!(val && (val as any).$valCompute);
-}
+export const isWritable = <TValue>(
+  val: ReadonlyVal<TValue>
+): val is Val<TValue> => !!(val as Val<TValue>)?.set;
