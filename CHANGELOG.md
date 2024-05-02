@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.2.0](https://github.com/crimx/value-enhancer/compare/v5.1.3...v5.2.0) (2024-05-02)
+
+
+### Features
+
+* add custom formatter ([fdbca03](https://github.com/crimx/value-enhancer/commit/fdbca03990178fde2209cca12653aa24c56da52d))
+* add isWritable ([e5633ba](https://github.com/crimx/value-enhancer/commit/e5633ba1d95be99a5c3e02b8b6fe5f12666470e6))
+
+
+### Bug Fixes
+
+* **flatten-from:** follow source equal if equal is not provided ([e63308a](https://github.com/crimx/value-enhancer/commit/e63308ae7df26a7acc2e65a5ebf2f3910ce3c72d))
+
 ### [5.1.3](https://github.com/crimx/value-enhancer/compare/v5.1.2...v5.1.3) (2024-04-15)
 
 
