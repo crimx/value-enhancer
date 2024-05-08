@@ -21,7 +21,10 @@ export default defineConfig({
       setup(build) {
         build.onResolve({ filter: /^value-enhancer$/ }, () => {
           return {
-            path: ".",
+            path:
+              build.initialOptions.define?.TSUP_FORMAT === '"cjs"'
+                ? "."
+                : "./index.mjs",
             external: true,
           };
         });
