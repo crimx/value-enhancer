@@ -2,7 +2,7 @@
   "name": "value-enhancer",
   "version": "5.3.0",
   "private": false,
-  "description": "A tiny library to enhance value with reactive wrapper.",
+  "description": "Enhance value with plain and explicit reactive wrapper. Think of it as hook-style signals.",
   "license": "MIT",
   "author": "CRIMX <straybugs@gmail.com> (https://github.com/crimx/)",
   "repository": "crimx/value-enhancer",

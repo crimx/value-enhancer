@@ -289,6 +289,33 @@ const derived$ = derive(count$, count => count * 3);
 console.log(derived$.value); // 6
 ```
 
+Pipe-able style with functional lib like `rubico`:
+
+<https://codesandbox.io/p/sandbox/value-enhancer-derive-functional-with-rubico-t7d4gm?file=%2Fsrc%2Findex.ts%3A15%2C1>
+
+```ts
+import { derive, val } from "value-enhancer";
+import { pipe, map, filter } from "rubico";
+
+const isOdd = (number: number) => number % 2 == 1;
+
+const square = (number: number) => number ** 2;
+
+const numbers$ = val([1, 2, 3, 4, 5]);
+
+const derived$ = derive(numbers$, pipe([filter(isOdd), map(square)]));
+
+console.log(derived$.value); // [1, 9, 25]
+
+derived$.reaction(numbers => {
+  console.log("reaction", numbers);
+});
+
+numbers$.set([6, 7, 8, 9, 10]);
+
+// `reaction [49, 81]`
+```
+
 ## Combine Val
 
 `combine` multiple Vals into a new Val.
@@ -360,7 +387,9 @@ const isSameXYZPosition = (p1, p2) =>
   p1.x === p2.x && p1.y === p2.y && p1.z === p2.z;
 
 const xyzPosition$ = val({ x: 0, y: 0, z: 0 }, { equal: isSameXYZPosition });
-const xyPosition$ = derive(xyPosition, { equal: isSameXYPosition });
+const xyPosition$ = derive(xyzPosition$, ({ x, y }) => ({ x, y }), {
+  equal: isSameXYPosition,
+});
 
 xyPosition$.set({ x: 0, y: 0, z: 0 }); // nothing happened
 ```
