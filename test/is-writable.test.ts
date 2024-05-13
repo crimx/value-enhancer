@@ -4,23 +4,23 @@ import { combine, flatten, isWritable, readonlyVal, val } from "../src";
 
 describe("isWritable", () => {
   it("should return true for val", () => {
-    const val$ = val(1);
-    expect(isWritable(val$)).toBe(true);
+    const v$ = val(1);
+    expect(isWritable(v$)).toBe(true);
   });
 
   it("should return false for readonly val", () => {
-    const [val$] = readonlyVal(1);
-    expect(isWritable(val$)).toBe(false);
+    const [v$] = readonlyVal(1);
+    expect(isWritable(v$)).toBe(false);
   });
 
   it("should return false for combined val", () => {
-    const val$ = combine([val(1)]);
-    expect(isWritable(val$)).toBe(false);
+    const v$ = combine([val(1)]);
+    expect(isWritable(v$)).toBe(false);
   });
 
   it("should return false for flatten val", () => {
-    const val$ = flatten(val(val(1)));
-    expect(isWritable(val$)).toBe(false);
+    const v$ = flatten(val(val(1)));
+    expect(isWritable(v$)).toBe(false);
   });
 
   it("should type error if param is not val", () => {
@@ -31,12 +31,12 @@ describe("isWritable", () => {
 
   it("should narrow types", () => {
     const createVal = (): ReadonlyVal<number> => val(1);
-    const val$ = createVal();
+    const v$ = createVal();
     // @ts-expect-error ReadonlyVal does not have `set`
-    val$.set;
-    if (isWritable(val$)) {
-      val$.set(2);
+    v$.set;
+    if (isWritable(v$)) {
+      v$.set(2);
     }
-    expect(val$.value).toBe(2);
+    expect(v$.value).toBe(2);
   });
 });

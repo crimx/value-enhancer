@@ -44,7 +44,7 @@ export function flatten<TValOrValue = any>(
  */
 export function flatten<TSrcValue = any, TValOrValue = any>(
   val: ReadonlyVal<TSrcValue>,
-  get: (value: TSrcValue) => TValOrValue,
+  get?: (value: TSrcValue) => TValOrValue,
   config?: ValConfig<UnwrapVal<TValOrValue>>
 ): ReadonlyVal<UnwrapVal<TValOrValue>>;
 export function flatten<

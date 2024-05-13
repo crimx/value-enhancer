@@ -6,7 +6,7 @@ import { ValImpl } from "./val";
  * Creates a readonly val from a getter function and a listener function.
  *
  * @param getValue A function that returns the current value.
- * @param listen A function that takes a notify function and returns a disposer.
+ * @param onChange A function that takes a notify function and returns a disposer.
  *        The notify function should be called when the value changes.
  * @param config custom config for the val.
  * @returns A readonly val.
@@ -34,8 +34,6 @@ import { ValImpl } from "./val";
  */
 export const from = <TValue = any>(
   getValue: () => TValue,
-  listen: (handler: () => void) => ValDisposer | void | undefined,
+  onChange: (notify: () => void) => ValDisposer | void | undefined,
   config?: ValConfig<TValue>
-): ReadonlyVal<TValue> => {
-  return new ValImpl(new ValAgent(getValue, config, listen));
-};
+): ReadonlyVal<TValue> => new ValImpl(new ValAgent(getValue, config, onChange));

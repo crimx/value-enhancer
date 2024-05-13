@@ -10,8 +10,6 @@ import type {
 export const INIT_VALUE: any = {};
 
 /**
- * @deprecated
- * @ignore
  * Set the value of a val.
  * It works for both `Val` and `ReadonlyVal` type (if the `ReadonlyVal` is actually a `Val`).
  * Do nothing if the val is really `ReadonlyVal`.
@@ -103,9 +101,14 @@ export const getValues = <TValInputs extends readonly ReadonlyVal[]>(
 
 export const getValVersion = (val$: ReadonlyVal): ValVersion => val$.$version;
 
-export const invoke = <TValue>(
-  fn: (value: TValue) => void,
-  value: TValue
+export interface Invoke {
+  (fn: () => void): void;
+  <TValue>(fn: (value: TValue) => void, value: TValue): void;
+}
+
+export const invoke: Invoke = <TValue>(
+  fn: (value?: TValue) => void,
+  value?: TValue
 ): void => {
   try {
     fn(value);

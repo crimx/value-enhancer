@@ -53,243 +53,251 @@ describe("flatten", () => {
     inner$.set(2);
 
     expect(inner$.value).toBe(2);
-    expect(flattened$.value).toBe(2);
+    // flatten transform returns null last time so inner value is not subscribed
+    expect(flattened$.value).toBe(null);
 
     outer$.set({ inner: val(3) });
 
     expect(inner$.value).toBe(2);
     expect(flattened$.value).toBe(null);
+
+    outer$.set({ inner: val(4) });
+
+    expect(inner$.value).toBe(2);
+    expect(flattened$.value).toBe(4);
   });
 
   it("should subscribe", async () => {
-    const spy = jest.fn();
-    const val1 = val(1);
-    const val2 = val(val1);
-    const val3 = val(val2);
-    const val4 = val(val3);
+    const spySubscribe = jest.fn();
+    const v1$ = val(1);
+    const v2$ = val(v1$);
+    const v3$ = val(v2$);
+    const v4$ = val(v3$);
 
-    const flattened = flatten(flatten(flatten(val4)));
+    const flattened$ = flatten(flatten(flatten(v4$)));
 
-    flattened.subscribe(spy);
+    flattened$.subscribe(spySubscribe);
 
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).lastCalledWith(1);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(1);
 
-    spy.mockClear();
+    spySubscribe.mockClear();
 
-    val1.set(1);
+    v1$.set(1);
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await nextTick();
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
-    val1.set(2);
+    v1$.set(2);
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await nextTick();
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).lastCalledWith(2);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(2);
 
-    spy.mockClear();
+    spySubscribe.mockClear();
 
-    val1.set(3);
+    v1$.set(3);
 
-    expect(spy).toHaveBeenCalledTimes(0);
-
-    await nextTick();
-
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).lastCalledWith(3);
-
-    spy.mockClear();
-
-    val4.set(val(val(val(9))));
-
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await nextTick();
 
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).lastCalledWith(9);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(3);
 
-    flattened.unsubscribe();
+    spySubscribe.mockClear();
+
+    v4$.set(val(val(val(9))));
+
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
+
+    await nextTick();
+
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(9);
+
+    flattened$.unsubscribe();
   });
 
   it("should subscribe if first emitted value is normal value", async () => {
-    const spy = jest.fn();
+    const spySubscribe = jest.fn();
     const inner$ = val("inner");
     const outer$ = val(1);
     const flattened$ = flatten(outer$, outer =>
       outer % 2 === 0 ? inner$ : null
     );
 
-    flattened$.subscribe(spy);
+    flattened$.subscribe(spySubscribe);
 
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).lastCalledWith(null);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(null);
 
-    spy.mockClear();
+    spySubscribe.mockClear();
 
     outer$.set(1);
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await nextTick();
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     outer$.set(3);
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await nextTick();
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     outer$.set(2);
 
-    expect(spy).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await new Promise(resolve => setTimeout(resolve, 100));
 
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(spy).lastCalledWith("inner");
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith("inner");
 
     flattened$.unsubscribe();
   });
 
   it("should perform custom equal", async () => {
-    const val1 = val({ code: 2 });
-    const val2 = val(val1);
-    const flattened = flatten(val2, identity, {
+    const v1$ = val({ code: 2 });
+    const v2$ = val(v1$);
+    const flattened$ = flatten(v2$, identity, {
       equal: (a, b) => a.code === b.code,
     });
 
-    const sub = jest.fn();
-    flattened.subscribe(sub);
+    const spySubscribe = jest.fn();
+    flattened$.subscribe(spySubscribe);
 
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith({ code: 2 });
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ code: 2 });
 
-    sub.mockClear();
+    spySubscribe.mockClear();
 
-    const sub1 = jest.fn();
-    val1.reaction(sub1);
-    expect(sub1).toBeCalledTimes(0);
+    const spyReaction = jest.fn();
+    v1$.reaction(spyReaction);
+    expect(spyReaction).toBeCalledTimes(0);
 
-    val1.set({ code: 2 });
-    expect(sub1).toBeCalledTimes(0);
-    expect(sub).toBeCalledTimes(0);
+    v1$.set({ code: 2 });
+    expect(spyReaction).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(sub).toBeCalledTimes(0);
-    expect(sub1).toBeCalledTimes(1);
-    expect(sub1).lastCalledWith({ code: 2 });
+    expect(spySubscribe).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(1);
+    expect(spyReaction).lastCalledWith({ code: 2 });
 
-    sub.mockClear();
-    sub1.mockClear();
+    spySubscribe.mockClear();
+    spyReaction.mockClear();
 
-    val1.set({ code: 3 });
+    v1$.set({ code: 3 });
     await nextTick();
-    expect(sub).toBeCalledTimes(1);
-    expect(sub1).toBeCalledTimes(1);
-    expect(sub).lastCalledWith({ code: 3 });
-    expect(sub1).lastCalledWith({ code: 3 });
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spyReaction).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ code: 3 });
+    expect(spyReaction).lastCalledWith({ code: 3 });
 
-    flattened.unsubscribe();
+    flattened$.unsubscribe();
   });
 
   it("should update value if changed before first subscription", () => {
-    const val1 = val(1);
-    const val2 = val(val1);
-    const flattened = flatten(val2);
+    const v1$ = val(1);
+    const v2$ = val(v1$);
+    const flattened$ = flatten(v2$);
 
-    expect(flattened.value).toBe(1);
+    expect(flattened$.value).toBe(1);
 
-    val1.set(2);
+    v1$.set(2);
 
-    const spy = jest.fn();
-    flattened.subscribe(spy);
+    const spySubscribe = jest.fn();
+    flattened$.subscribe(spySubscribe);
 
-    expect(spy).lastCalledWith(2);
-    expect(flattened.value).toEqual(2);
+    expect(spySubscribe).lastCalledWith(2);
+    expect(flattened$.value).toEqual(2);
 
-    flattened.unsubscribe();
+    flattened$.unsubscribe();
   });
 
   it("should reaction derived value if changed before first subscription", async () => {
-    const val1 = val(1);
-    const val2 = val(val1);
-    const flattened = flatten(val2);
+    const v1$ = val(1);
+    const v2$ = val(v1$);
+    const flattened$ = flatten(v2$);
 
-    expect(flattened.value).toBe(1);
+    expect(flattened$.value).toBe(1);
 
-    const spy = jest.fn();
-    flattened.reaction(spy);
+    const spyReaction = jest.fn();
+    flattened$.reaction(spyReaction);
 
-    val1.set(2);
+    v1$.set(2);
 
-    expect(spy).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(spy).lastCalledWith(2);
-    expect(flattened.value).toEqual(2);
+    expect(spyReaction).lastCalledWith(2);
+    expect(flattened$.value).toEqual(2);
 
-    flattened.unsubscribe();
+    flattened$.unsubscribe();
   });
 
   it("should trigger subscribers after dirty value is cleared", async () => {
-    const val1 = val(1);
-    const val2 = derive(val1, v => val(v + 1));
-    const val3 = derive(val2, v => val(v));
-    const flattened = flatten(flatten(val3));
+    const v1$ = val(1);
+    const v2$ = derive(v1$, v => val(v + 1));
+    const v3$ = derive(v2$, v => val(v));
+    const flattened$ = flatten(flatten(v3$));
 
-    const spy = jest.fn();
-    flattened.reaction(spy);
+    const spyReaction = jest.fn();
+    flattened$.reaction(spyReaction);
 
-    spy.mockClear();
+    spyReaction.mockClear();
 
-    val1.set(2);
-    expect(flattened.value).toBe(3);
-    val1.set(4);
-    expect(flattened.value).toBe(5);
+    v1$.set(2);
+    expect(flattened$.value).toBe(3);
+    v1$.set(4);
+    expect(flattened$.value).toBe(5);
 
     await nextTick();
 
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).lastCalledWith(5);
+    expect(spyReaction).toBeCalledTimes(1);
+    expect(spyReaction).lastCalledWith(5);
   });
 
   it("should flatten combined val", async () => {
     const vals = [val(1), val(2), val(3)];
-    const signal = val(null, { equal: () => false });
-    const countSpy = jest.fn();
-    const flattened = flatten(signal, () => {
-      countSpy();
+    const signal$ = val(null, { equal: () => false });
+    const spyTransform = jest.fn();
+    const flattened$ = flatten(signal$, () => {
+      spyTransform();
       return combine([...vals]);
     });
 
-    expect(countSpy).toHaveBeenCalledTimes(0);
+    expect(spyTransform).toHaveBeenCalledTimes(1);
 
-    const spy = jest.fn();
-    flattened.subscribe(spy, true);
-    expect(spy).toHaveBeenCalledTimes(1);
-    expect(countSpy).toHaveBeenCalledTimes(1);
+    spyTransform.mockClear();
+
+    const spySubscribe = jest.fn();
+    flattened$.subscribe(spySubscribe, true);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spyTransform).toHaveBeenCalledTimes(0);
 
     vals[0].set(4);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spySubscribe).toHaveBeenCalledTimes(2);
 
     vals[0].set(5);
-    expect(spy).toHaveBeenCalledTimes(3);
+    expect(spySubscribe).toHaveBeenCalledTimes(3);
 
-    expect(countSpy).toHaveBeenCalledTimes(1);
+    expect(spyTransform).toHaveBeenCalledTimes(0);
   });
 });

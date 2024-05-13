@@ -6,59 +6,86 @@ const noop = () => void 0;
 
 describe("flattenFrom", () => {
   it("should flatten inner val", () => {
-    const startSpy = jest.fn(noop);
+    let notify: (() => void) | undefined;
+
+    const spyOnChange = jest.fn((_notify: () => void) => {
+      notify = _notify;
+    });
     let currentVal = val(1);
 
-    const val$ = flattenFrom(() => currentVal, startSpy);
+    const v$ = flattenFrom(() => currentVal, spyOnChange);
 
-    expect(startSpy).toBeCalledTimes(0);
-    expect(val$.value).toBe(1);
+    expect(spyOnChange).toBeCalledTimes(1);
+    expect(v$.value).toBe(1);
+
+    spyOnChange.mockClear();
 
     currentVal = val(2);
 
-    expect(startSpy).toBeCalledTimes(0);
-    expect(val$.value).toEqual(2);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(v$.value).toBe(1);
 
-    expect(startSpy).toBeCalledTimes(0);
+    notify?.();
+
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(v$.value).toEqual(2);
+
+    expect(spyOnChange).toBeCalledTimes(0);
   });
 
   it("should resolve correct version", () => {
     let currentVal = val(1);
+    let notify: (() => void) | undefined;
 
-    const val$ = flattenFrom(() => currentVal, noop);
+    const v$ = flattenFrom(
+      () => currentVal,
+      _notify => (notify = _notify)
+    );
 
-    const version = val$.$version;
+    const version = v$.$version;
 
     currentVal = val(1);
 
-    expect(val$.$version).toBe(version);
+    expect(v$.$version).toBe(version);
 
     currentVal = val(2);
-    expect(val$.$version).not.toBe(version);
+    expect(v$.$version).toBe(version);
+
+    notify?.();
+    expect(v$.$version).not.toBe(version);
   });
 
   it("should flatten inner normal value", () => {
-    const startSpy = jest.fn(noop);
+    let notify: (() => void) | undefined;
+
+    const spyOnChange = jest.fn((_notify: () => void) => {
+      notify = _notify;
+    });
     let currentValue: ReadonlyVal<number> | number = 1;
 
-    const val$ = flattenFrom(() => currentValue, startSpy);
+    const v$ = flattenFrom(() => currentValue, spyOnChange);
 
-    expect(startSpy).toBeCalledTimes(0);
-    expect(val$.value).toBe(1);
+    expect(spyOnChange).toBeCalledTimes(1);
+    expect(v$.value).toBe(1);
+
+    spyOnChange.mockClear();
 
     currentValue = 2;
 
-    expect(val$.value).toEqual(2);
+    expect(v$.value).toEqual(1);
 
     currentValue = val(3);
-    expect(val$.value).toEqual(3);
+    expect(v$.value).toEqual(1);
 
-    expect(startSpy).toBeCalledTimes(0);
+    notify?.();
+    expect(v$.value).toEqual(3);
+
+    expect(spyOnChange).toBeCalledTimes(0);
   });
 
   it("should subscribe", async () => {
-    const sub = jest.fn();
-    const startSpy = jest.fn();
+    const spySubscribe = jest.fn();
+    const spyOnChange = jest.fn();
 
     let currentValue: ReadonlyVal<number> | number = val(1);
     let onChange: (() => void) | undefined;
@@ -67,10 +94,10 @@ describe("flattenFrom", () => {
       onChange?.();
     };
 
-    const val$ = flattenFrom(
+    const v$ = flattenFrom(
       () => currentValue,
       notify => {
-        startSpy();
+        spyOnChange();
         onChange = notify;
         return () => {
           onChange = undefined;
@@ -78,49 +105,51 @@ describe("flattenFrom", () => {
       }
     );
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(1);
 
-    val$.subscribe(sub);
+    spyOnChange.mockClear();
 
-    expect(startSpy).toBeCalledTimes(1);
-    expect(sub).toHaveBeenCalledTimes(1);
-    expect(sub).lastCalledWith(1);
+    v$.subscribe(spySubscribe);
 
-    sub.mockClear();
-    startSpy.mockClear();
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(1);
+
+    spySubscribe.mockClear();
+    spyOnChange.mockClear();
 
     set(val(1));
 
-    expect(sub).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     set(2);
 
-    expect(sub).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await nextTick();
 
-    expect(sub).toHaveBeenCalledTimes(1);
-    expect(sub).lastCalledWith(2);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(2);
 
-    sub.mockClear();
+    spySubscribe.mockClear();
 
     set(val(3));
 
-    expect(sub).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     await nextTick();
 
-    expect(sub).toHaveBeenCalledTimes(1);
-    expect(sub).lastCalledWith(3);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(3);
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should trigger subscription synchronously by default if eager is true", async () => {
-    const sub = jest.fn();
-    const startSpy = jest.fn();
+    const spySubscribe = jest.fn();
+    const spyOnChange = jest.fn();
 
     let currentValue: ReadonlyVal<number> | number = val(1);
     let onChange: (() => void) | undefined;
@@ -129,10 +158,10 @@ describe("flattenFrom", () => {
       onChange?.();
     };
 
-    const val$ = flattenFrom(
+    const v$ = flattenFrom(
       () => currentValue,
       notify => {
-        startSpy();
+        spyOnChange();
         onChange = notify;
         return () => {
           onChange = undefined;
@@ -141,40 +170,42 @@ describe("flattenFrom", () => {
       { eager: true }
     );
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(1);
 
-    val$.subscribe(sub);
+    spyOnChange.mockClear();
 
-    expect(startSpy).toBeCalledTimes(1);
-    expect(sub).toHaveBeenCalledTimes(1);
-    expect(sub).lastCalledWith(1);
+    v$.subscribe(spySubscribe);
 
-    sub.mockClear();
-    startSpy.mockClear();
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(1);
+
+    spySubscribe.mockClear();
+    spyOnChange.mockClear();
 
     set(val(1));
 
-    expect(sub).toHaveBeenCalledTimes(0);
+    expect(spySubscribe).toHaveBeenCalledTimes(0);
 
     set(2);
 
-    expect(sub).toHaveBeenCalledTimes(1);
-    expect(sub).lastCalledWith(2);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(2);
 
-    sub.mockClear();
+    spySubscribe.mockClear();
 
     set(val(3));
 
-    expect(sub).toHaveBeenCalledTimes(1);
-    expect(sub).lastCalledWith(3);
+    expect(spySubscribe).toHaveBeenCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(3);
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should not trigger reaction if value not changed", async () => {
-    const sub = jest.fn();
+    const spyReaction = jest.fn();
 
     let currentValue: ReadonlyVal<string> | string = "c";
     let onChange: (() => void) | undefined;
@@ -183,7 +214,7 @@ describe("flattenFrom", () => {
       onChange?.();
     };
 
-    const val$ = flattenFrom(
+    const v$ = flattenFrom(
       () => currentValue,
       notify => {
         onChange = notify;
@@ -193,34 +224,34 @@ describe("flattenFrom", () => {
       }
     );
 
-    expect(val$.value).toBe("c");
+    expect(v$.value).toBe("c");
 
     // triggers equal check
     set("f");
-    expect(val$.value).toBe("f");
+    expect(v$.value).toBe("f");
 
     // set it back to c
     set(val("c"));
-    expect(val$.value).toBe("c");
+    expect(v$.value).toBe("c");
 
-    val$.reaction(sub);
+    v$.reaction(spyReaction);
 
-    expect(sub).not.toHaveBeenCalled();
+    expect(spyReaction).not.toHaveBeenCalled();
     await nextTick();
-    expect(sub).not.toHaveBeenCalled();
+    expect(spyReaction).not.toHaveBeenCalled();
 
     set("c");
 
-    expect(sub).not.toHaveBeenCalled();
+    expect(spyReaction).not.toHaveBeenCalled();
     await nextTick();
-    expect(sub).not.toHaveBeenCalled();
+    expect(spyReaction).not.toHaveBeenCalled();
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should perform custom equal", async () => {
-    const sub = jest.fn();
-    const startSpy = jest.fn();
+    const spySubscribe = jest.fn();
+    const spyOnChange = jest.fn();
 
     let currentValue = val({ content: 1 });
     let onChange: (() => void) | undefined;
@@ -229,10 +260,10 @@ describe("flattenFrom", () => {
       onChange?.();
     };
 
-    const val$ = flattenFrom(
+    const v$ = flattenFrom(
       () => currentValue,
       notify => {
-        startSpy();
+        spyOnChange();
         onChange = notify;
         return () => {
           onChange = undefined;
@@ -243,41 +274,42 @@ describe("flattenFrom", () => {
       }
     );
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(1);
+    spyOnChange.mockClear();
 
-    val$.subscribe(sub);
+    v$.subscribe(spySubscribe);
 
-    expect(startSpy).toBeCalledTimes(1);
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith({ content: 1 });
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ content: 1 });
 
-    sub.mockClear();
-    startSpy.mockClear();
+    spySubscribe.mockClear();
+    spyOnChange.mockClear();
 
     set(val({ content: 1 }));
-    expect(sub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(sub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
-    sub.mockClear();
+    spySubscribe.mockClear();
 
     set(val({ content: 2 }));
-    expect(sub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith({ content: 2 });
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ content: 2 });
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should disable equality check if equal is false", async () => {
-    const sub = jest.fn();
-    const startSpy = jest.fn();
+    const spySubscribe = jest.fn();
+    const spyOnChange = jest.fn();
 
     const source$ = val({ content: 1 });
     let onChange: (() => void) | undefined;
@@ -285,10 +317,10 @@ describe("flattenFrom", () => {
       onChange?.();
     };
 
-    const val$ = flattenFrom(
+    const v$ = flattenFrom(
       () => source$,
       notify => {
-        startSpy();
+        spyOnChange();
         onChange = notify;
         return () => {
           onChange = undefined;
@@ -299,41 +331,42 @@ describe("flattenFrom", () => {
       }
     );
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(1);
+    spyOnChange.mockClear();
 
-    val$.subscribe(sub);
+    v$.subscribe(spySubscribe);
 
-    expect(startSpy).toBeCalledTimes(1);
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith(source$.value);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(source$.value);
 
-    sub.mockClear();
-    startSpy.mockClear();
+    spySubscribe.mockClear();
+    spyOnChange.mockClear();
 
     notify();
-    expect(sub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith(source$.value);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(source$.value);
 
-    sub.mockClear();
+    spySubscribe.mockClear();
 
     notify();
-    expect(sub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith(source$.value);
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(source$.value);
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should not trigger async subscribers if not changed", async () => {
-    const startSpy = jest.fn();
+    const spyOnChange = jest.fn();
 
     let currentValue = val({ content: 1 });
     let onChange: (() => void) | undefined;
@@ -342,10 +375,10 @@ describe("flattenFrom", () => {
       onChange?.();
     };
 
-    const val$ = flattenFrom(
+    const v$ = flattenFrom(
       () => currentValue,
       notify => {
-        startSpy();
+        spyOnChange();
         onChange = notify;
         return () => {
           onChange = undefined;
@@ -356,44 +389,46 @@ describe("flattenFrom", () => {
       }
     );
 
-    const spySub = jest.fn();
-    expect(startSpy).toBeCalledTimes(0);
+    const spySubscribe = jest.fn();
+    expect(spyOnChange).toBeCalledTimes(1);
 
-    val$.subscribe(spySub);
+    spyOnChange.mockClear();
 
-    expect(startSpy).toBeCalledTimes(1);
-    expect(spySub).toBeCalledTimes(1);
-    expect(spySub).lastCalledWith({ content: 1 });
+    v$.subscribe(spySubscribe);
 
-    spySub.mockClear();
-    startSpy.mockClear();
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ content: 1 });
+
+    spySubscribe.mockClear();
+    spyOnChange.mockClear();
 
     set(val({ content: 2 }));
 
-    expect(spySub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(spySub).toBeCalledTimes(1);
-    expect(spySub).lastCalledWith({ content: 2 });
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ content: 2 });
 
-    spySub.mockClear();
+    spySubscribe.mockClear();
 
     set(val({ content: 3 }));
 
-    expect(spySub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(spySub).toBeCalledTimes(1);
-    expect(spySub).lastCalledWith({ content: 3 });
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ content: 3 });
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should not trigger eager subscribers if not changed", async () => {
-    const startSpy = jest.fn();
+    const spyOnChange = jest.fn();
 
     let currentValue = val({ content: 1 });
     let onChange: (() => void) | undefined;
@@ -402,10 +437,10 @@ describe("flattenFrom", () => {
       onChange?.();
     };
 
-    const val$ = flattenFrom(
+    const v$ = flattenFrom(
       () => currentValue,
       notify => {
-        startSpy();
+        spyOnChange();
         onChange = notify;
         return () => {
           onChange = undefined;
@@ -418,261 +453,218 @@ describe("flattenFrom", () => {
 
     set(val({ content: 2 }));
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(1);
 
-    const sub = jest.fn();
-    val$.subscribe(sub, true);
+    spyOnChange.mockClear();
 
-    expect(startSpy).toBeCalledTimes(1);
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith({ content: 2 });
+    const spySubscribe = jest.fn();
+    v$.subscribe(spySubscribe, true);
 
-    sub.mockClear();
-    startSpy.mockClear();
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ content: 2 });
+
+    spySubscribe.mockClear();
+    spyOnChange.mockClear();
 
     set(val({ content: 2 }));
 
-    expect(sub).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
     set(val({ content: 3 }));
 
-    expect(sub).toBeCalledTimes(1);
-    expect(sub).lastCalledWith({ content: 3 });
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith({ content: 3 });
 
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    val$.unsubscribe();
-  });
-
-  it("should invoke start on first subscriber and dispose after last subscriber unsubscribes", () => {
-    const disposeSpy = jest.fn();
-    const startSpy = jest.fn(() => disposeSpy);
-
-    const val$ = flattenFrom(() => val(1), startSpy);
-
-    expect(startSpy).toBeCalledTimes(0);
-
-    const sub1 = jest.fn();
-    val$.subscribe(sub1);
-
-    expect(startSpy).toBeCalledTimes(1);
-    expect(disposeSpy).toBeCalledTimes(0);
-    expect(sub1).toBeCalledTimes(1);
-
-    startSpy.mockClear();
-    disposeSpy.mockClear();
-    sub1.mockClear();
-
-    const sub2 = jest.fn();
-    val$.subscribe(sub2);
-
-    expect(startSpy).toBeCalledTimes(0);
-    expect(disposeSpy).toBeCalledTimes(0);
-    expect(sub1).toBeCalledTimes(0);
-    expect(sub2).toBeCalledTimes(1);
-
-    startSpy.mockClear();
-    disposeSpy.mockClear();
-    sub1.mockClear();
-    sub2.mockClear();
-
-    val$.unsubscribe(sub1);
-
-    expect(startSpy).toBeCalledTimes(0);
-    expect(disposeSpy).toBeCalledTimes(0);
-    expect(sub1).toBeCalledTimes(0);
-    expect(sub2).toBeCalledTimes(0);
-
-    val$.unsubscribe(sub2);
-
-    expect(startSpy).toBeCalledTimes(0);
-    expect(disposeSpy).toBeCalledTimes(1);
-    expect(sub1).toBeCalledTimes(0);
-    expect(sub2).toBeCalledTimes(0);
-
-    startSpy.mockClear();
-    disposeSpy.mockClear();
-    sub1.mockClear();
-    sub2.mockClear();
-
-    val$.reaction(sub1);
-
-    expect(startSpy).toBeCalledTimes(1);
-    expect(disposeSpy).toBeCalledTimes(0);
-    expect(sub1).toBeCalledTimes(0);
-    expect(sub2).toBeCalledTimes(0);
-
-    startSpy.mockClear();
-    disposeSpy.mockClear();
-    sub1.mockClear();
-    sub2.mockClear();
-
-    val$.reaction(sub2);
-
-    expect(startSpy).toBeCalledTimes(0);
-    expect(disposeSpy).toBeCalledTimes(0);
-    expect(sub1).toBeCalledTimes(0);
-    expect(sub2).toBeCalledTimes(0);
-
-    val$.unsubscribe();
-
-    expect(startSpy).toBeCalledTimes(0);
-    expect(disposeSpy).toBeCalledTimes(1);
-    expect(sub1).toBeCalledTimes(0);
-    expect(sub2).toBeCalledTimes(0);
+    v$.unsubscribe();
   });
 
   it("should getValue only once for async subscribers", async () => {
     let currentValue = val(1);
     let onChange: (() => void) | undefined;
 
-    const startSpy = jest.fn(noop);
-    const getValueSpy = jest.fn(() => currentValue);
+    const spyOnChange = jest.fn(noop);
+    const spyGetValue = jest.fn(() => currentValue);
 
     const set = (value: typeof currentValue) => {
       currentValue = value;
       onChange?.();
     };
 
-    const val$ = flattenFrom(getValueSpy, notify => {
-      startSpy();
+    const v$ = flattenFrom(spyGetValue, notify => {
+      spyOnChange();
       onChange = notify;
       return () => {
         onChange = undefined;
       };
     });
 
-    expect(getValueSpy).toBeCalledTimes(0);
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyOnChange).toBeCalledTimes(1);
 
-    expect(val$.value).toBe(1);
-    expect(getValueSpy).toBeCalledTimes(1);
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
 
-    getValueSpy.mockClear();
-    startSpy.mockClear();
+    expect(v$.value).toBe(1);
+    expect(spyGetValue).toBeCalledTimes(0);
+
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
 
     set(val(2));
 
-    expect(getValueSpy).toBeCalledTimes(0);
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyGetValue).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    const spy1 = jest.fn();
-    val$.subscribe(spy1);
+    const spySubscribe = jest.fn();
+    v$.subscribe(spySubscribe);
 
-    expect(getValueSpy).toBeCalledTimes(1);
-    expect(startSpy).toBeCalledTimes(1);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy1).lastCalledWith(2);
+    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(2);
 
-    getValueSpy.mockClear();
-    startSpy.mockClear();
-    spy1.mockClear();
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
+    spySubscribe.mockClear();
 
     set(val(3));
 
-    expect(getValueSpy).toBeCalledTimes(0);
-    expect(startSpy).toBeCalledTimes(0);
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyGetValue).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
-    getValueSpy.mockClear();
-    startSpy.mockClear();
-    spy1.mockClear();
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
+    spySubscribe.mockClear();
 
     await nextTick();
 
-    expect(getValueSpy).toBeCalledTimes(1);
-    expect(startSpy).toBeCalledTimes(0);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy1).lastCalledWith(3);
+    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(3);
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should getValue only once for eager subscribers", async () => {
     let currentValue = val(1);
     let onChange: (() => void) | undefined;
 
-    const startSpy = jest.fn(noop);
-    const getValueSpy = jest.fn(() => currentValue);
+    const spyGetValue = jest.fn(() => currentValue);
+    const spyOnChange = jest.fn(noop);
 
     const set = (value: typeof currentValue) => {
       currentValue = value;
       onChange?.();
     };
 
-    const val$ = flattenFrom(getValueSpy, notify => {
-      startSpy();
+    const v$ = flattenFrom(spyGetValue, notify => {
+      spyOnChange();
       onChange = notify;
       return () => {
         onChange = undefined;
       };
     });
 
-    expect(getValueSpy).toBeCalledTimes(0);
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyOnChange).toBeCalledTimes(1);
 
-    expect(val$.value).toBe(1);
-    expect(getValueSpy).toBeCalledTimes(1);
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
 
-    getValueSpy.mockClear();
-    startSpy.mockClear();
+    expect(v$.value).toBe(1);
+    expect(spyGetValue).toBeCalledTimes(0);
+
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
 
     set(val(2));
 
-    expect(getValueSpy).toBeCalledTimes(0);
-    expect(startSpy).toBeCalledTimes(0);
+    expect(spyGetValue).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(0);
 
-    const spy1 = jest.fn();
-    val$.subscribe(spy1, true);
+    const spySubscribe = jest.fn();
+    v$.subscribe(spySubscribe, true);
 
-    expect(getValueSpy).toBeCalledTimes(1);
-    expect(startSpy).toBeCalledTimes(1);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy1).lastCalledWith(2);
+    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(2);
 
-    getValueSpy.mockClear();
-    startSpy.mockClear();
-    spy1.mockClear();
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
+    spySubscribe.mockClear();
 
     set(val(3));
 
-    expect(getValueSpy).toBeCalledTimes(1);
-    expect(startSpy).toBeCalledTimes(0);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy1).lastCalledWith(3);
+    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith(3);
 
-    getValueSpy.mockClear();
-    startSpy.mockClear();
-    spy1.mockClear();
+    spyGetValue.mockClear();
+    spyOnChange.mockClear();
+    spySubscribe.mockClear();
 
     await nextTick();
 
-    expect(getValueSpy).toBeCalledTimes(0);
-    expect(startSpy).toBeCalledTimes(0);
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyGetValue).toBeCalledTimes(0);
+    expect(spyOnChange).toBeCalledTimes(0);
+    expect(spySubscribe).toBeCalledTimes(0);
 
-    val$.unsubscribe();
+    v$.unsubscribe();
   });
 
   it("should follow source equal if equal is not provided", async () => {
-    const innerVal = val(1, { equal: false });
+    const innerV$ = val(1, { equal: false });
 
-    const val$ = flattenFrom(() => innerVal, noop);
+    const v$ = flattenFrom(() => innerV$, noop);
 
-    const spyInner = jest.fn();
-    innerVal.reaction(spyInner, true);
+    const spyInnerReaction = jest.fn();
+    innerV$.reaction(spyInnerReaction, true);
 
-    const spyOuter = jest.fn();
-    val$.reaction(spyOuter, true);
+    const spyOuterReaction = jest.fn();
+    v$.reaction(spyOuterReaction, true);
 
-    expect(spyInner).toBeCalledTimes(0);
-    expect(spyOuter).toBeCalledTimes(0);
+    expect(spyInnerReaction).toBeCalledTimes(0);
+    expect(spyOuterReaction).toBeCalledTimes(0);
 
-    innerVal.set(1);
+    innerV$.set(1);
 
-    expect(spyInner).toBeCalledTimes(1);
-    expect(spyInner).lastCalledWith(1);
-    expect(spyOuter).toBeCalledTimes(1);
-    expect(spyOuter).lastCalledWith(1);
+    expect(spyInnerReaction).toBeCalledTimes(1);
+    expect(spyInnerReaction).lastCalledWith(1);
+    expect(spyOuterReaction).toBeCalledTimes(1);
+    expect(spyOuterReaction).lastCalledWith(1);
+  });
+
+  it("should dispose", () => {
+    let notify: (() => void) | undefined;
+
+    const spyOnChange = jest.fn((_notify: () => void) => {
+      notify = _notify;
+    });
+    let currentVal = val(1);
+
+    const v$ = flattenFrom(() => currentVal, spyOnChange);
+
+    expect(spyOnChange).toBeCalledTimes(1);
+
+    spyOnChange.mockClear();
+
+    v$.dispose();
+
+    expect(spyOnChange).toBeCalledTimes(0);
+
+    currentVal = val(2);
+
+    expect(spyOnChange).toBeCalledTimes(0);
+
+    notify?.();
+
+    expect(spyOnChange).toBeCalledTimes(0);
   });
 });

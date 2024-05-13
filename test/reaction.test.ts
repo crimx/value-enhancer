@@ -3,60 +3,60 @@ import { nextTick, reaction, val } from "../src";
 
 describe("reaction", () => {
   it("should reaction", async () => {
-    const v = val(1);
-    const spy1 = jest.fn();
-    const disposer = reaction(v, spy1);
+    const v$ = val(1);
+    const spyReaction = jest.fn();
+    const disposer = reaction(v$, spyReaction);
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
-    v.set(2);
+    v$.set(2);
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy1).toBeCalledWith(2);
+    expect(spyReaction).toBeCalledTimes(1);
+    expect(spyReaction).toBeCalledWith(2);
 
-    spy1.mockClear();
+    spyReaction.mockClear();
 
     disposer();
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
-    v.set(2);
+    v$.set(2);
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
   });
 
   it("should reaction eager", async () => {
-    const v = val(1);
-    const spy1 = jest.fn();
-    const disposer = reaction(v, spy1, true);
+    const v$ = val(1);
+    const spyReaction = jest.fn();
+    const disposer = reaction(v$, spyReaction, true);
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
-    v.set(2);
+    v$.set(2);
 
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy1).toBeCalledWith(2);
+    expect(spyReaction).toBeCalledTimes(1);
+    expect(spyReaction).toBeCalledWith(2);
 
-    spy1.mockClear();
+    spyReaction.mockClear();
 
     disposer();
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
-    v.set(2);
+    v$.set(2);
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
 
     await nextTick();
 
-    expect(spy1).toBeCalledTimes(0);
+    expect(spyReaction).toBeCalledTimes(0);
   });
 });

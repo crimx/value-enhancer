@@ -1,7 +1,7 @@
 import type { ReadonlyVal, ValConfig } from "./typings";
 
 import { from } from "./from";
-import { INIT_VALUE, identity, strictEqual } from "./utils";
+import { identity, INIT_VALUE, strictEqual } from "./utils";
 
 export type DerivedValTransform<TValue = any, TDerivedValue = any> = (
   newValue: TValue

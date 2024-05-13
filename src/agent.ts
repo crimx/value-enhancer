@@ -8,6 +8,8 @@ import type {
 } from "./typings";
 import { INIT_VALUE, invoke, strictEqual } from "./utils";
 
+const registry = /* @__PURE__ */ new FinalizationRegistry<() => void>(invoke);
+
 export enum SubMode {
   Async = 1,
   Eager = 2,
@@ -15,11 +17,9 @@ export enum SubMode {
 }
 
 export enum AgentStatus {
-  Notified = 1 << 0,
-  ValueDirty = 1 << 1,
-  ShouldInvokeEager = 1 << 2,
-  ShouldInvokeAsync = 1 << 3,
-  ShouldInvoke = AgentStatus.ShouldInvokeEager | AgentStatus.ShouldInvokeAsync,
+  Notifying = 1 << 0,
+  ValueChanged = 1 << 1,
+  NeedResolveValue = 1 << 2,
 }
 
 export interface IValAgent<TValue = any> {
@@ -30,86 +30,91 @@ export interface IValAgent<TValue = any> {
   notify_: () => void;
   add_(subscriber: ValSubscriber, mode: SubMode): () => void;
   remove_(subscriber?: (...args: any[]) => any): void;
+  dispose_(): void;
 }
 
 export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   public constructor(
     getValue: () => TValue,
     config?: ValConfig<TValue>,
-    onStart?: (notify: () => void) => ValDisposer | void | undefined
+    onChange?: (notify: () => void) => ValDisposer | void | undefined
   ) {
-    this.#onStart = onStart;
     this.#getValue = getValue;
     this.equal_ = (config?.equal ?? strictEqual) || void 0;
     this.eager_ = config?.eager;
+
+    if (onChange) {
+      const ref = new WeakRef(this);
+      const disposeEffect = () => {
+        if (disposeListen) {
+          // prevent infinite recursion if user returns the notify function
+          const dispose = disposeListen;
+          disposeListen = void 0;
+          dispose();
+        }
+      };
+      let disposeListen = onChange(() => {
+        const agent = ref.deref();
+        if (agent) {
+          agent.notify_();
+        } else {
+          disposeEffect();
+        }
+      });
+      if (disposeListen) {
+        registry.register(this, (this.#disposeEffect = disposeEffect));
+      }
+    }
   }
 
   public readonly subs_ = new Map<ValSubscriber<TValue>, SubMode>();
-  public status_: number = AgentStatus.ValueDirty;
-  public version_: ValVersion = INIT_VALUE;
+  public status_ = AgentStatus.NeedResolveValue;
+  public version_: ValVersion;
   public value_: TValue = INIT_VALUE;
   public equal_?: (newValue: TValue, oldValue: TValue) => boolean;
   public eager_?: boolean;
 
   public resolveValue_ = (): TValue => {
-    if (this.status_ & AgentStatus.ValueDirty) {
+    if (this.status_ & AgentStatus.NeedResolveValue) {
+      this.status_ &= ~AgentStatus.NeedResolveValue;
       const newValue = this.#getValue();
       if (this.value_ === INIT_VALUE) {
         this._bumpVersion_(newValue);
       } else if (!this.equal_?.(newValue, this.value_)) {
         this._bumpVersion_(newValue);
-        this.status_ |= AgentStatus.ShouldInvoke;
-      }
-      if (this.subs_.size) {
-        this.status_ &= ~AgentStatus.ValueDirty;
+        if (this.status_ & AgentStatus.Notifying) {
+          this.status_ |= AgentStatus.ValueChanged;
+        }
       }
     }
-    this.status_ &= ~AgentStatus.Notified;
     return this.value_;
   };
 
   public notify_ = (): void => {
-    this.status_ |= AgentStatus.ValueDirty;
-    if (!(this.status_ & AgentStatus.Notified)) {
-      this.status_ |= AgentStatus.Notified;
+    this.status_ |= AgentStatus.NeedResolveValue;
+    if (this.subs_.size) {
+      this.status_ |= AgentStatus.Notifying;
       if (this[SubMode.Computed]) {
         this.#invoke(SubMode.Computed);
       }
       if (this[SubMode.Eager]) {
         this.resolveValue_();
-        if (this.status_ & AgentStatus.ShouldInvokeEager) {
-          this.status_ &= ~AgentStatus.ShouldInvokeEager;
+        if (this.status_ & AgentStatus.ValueChanged) {
           this.#invoke(SubMode.Eager);
-        } else {
-          this.status_ &= ~AgentStatus.ShouldInvoke;
-          return;
         }
-      } else {
-        this.status_ &= ~AgentStatus.ShouldInvokeEager;
       }
-      if (this[SubMode.Async]) {
-        schedule(this);
-      } else {
-        this.status_ &= ~AgentStatus.ShouldInvokeAsync;
-      }
+      // always schedule an async task for cleaning the Notifying status
+      schedule(this);
     }
   };
 
   public add_(subscriber: ValSubscriber, mode: SubMode): () => void {
-    const oldSize = this.subs_.size;
     const currentMode = this.subs_.get(subscriber);
     if (currentMode) {
       this[currentMode]--;
     }
     this.subs_.set(subscriber, mode);
     this[mode]++;
-
-    if (!oldSize) {
-      this.resolveValue_();
-      this.status_ &= ~AgentStatus.ShouldInvoke;
-      this.#onStartDisposer?.();
-      this.#onStartDisposer = this.#onStart?.(this.notify_);
-    }
 
     return () => this.remove_(subscriber);
   }
@@ -126,25 +131,22 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
       this[SubMode.Async] = this[SubMode.Eager] = this[SubMode.Computed] = 0;
       cancelTask(this);
     }
-    if (!this.subs_.size) {
-      this.status_ |= AgentStatus.ValueDirty;
-      if (this.#onStartDisposer) {
-        this.#onStartDisposer();
-        this.#onStartDisposer = null;
-      }
-    }
   }
 
   public runTask_(): void {
     if (this[SubMode.Async]) {
       this.resolveValue_();
-      if (this.status_ & AgentStatus.ShouldInvokeAsync) {
-        this.status_ &= ~AgentStatus.ShouldInvokeAsync;
+      if (this.status_ & AgentStatus.ValueChanged) {
         this.#invoke(SubMode.Async);
       }
-    } else {
-      this.status_ &= ~AgentStatus.ShouldInvokeAsync;
     }
+    this.status_ &= ~(AgentStatus.Notifying | AgentStatus.ValueChanged);
+  }
+
+  public dispose_(): void {
+    this.remove_();
+    registry.unregister(this);
+    this.#disposeEffect?.();
   }
 
   private _bumpVersion_(value: TValue): void {
@@ -168,10 +170,9 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   private [SubMode.Computed] = 0;
 
   #numberVersion = 0;
+  #disposeEffect?: () => void;
 
   readonly #getValue: () => TValue;
-  readonly #onStart?: (notify: () => void) => ValDisposer | void | undefined;
-  #onStartDisposer?: ValDisposer | void | null;
 
   #invoke(mode: SubMode): void {
     for (const [sub, subMode] of this.subs_) {
@@ -219,5 +220,9 @@ export class RefValAgent<TValue = any> implements IValAgent {
         this.remove_(sub);
       }
     }
+  }
+
+  public dispose_(): void {
+    this.remove_();
   }
 }

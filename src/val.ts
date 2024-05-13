@@ -26,6 +26,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   public constructor(agent: IValAgent<TValue>) {
     this.#agent = agent;
     this.get = agent.resolveValue_;
+    agent.resolveValue_();
   }
 
   public get $version(): ValVersion {
@@ -76,7 +77,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   }
 
   public dispose(): void {
-    this.#agent.remove_();
+    this.#agent.dispose_();
   }
 
   /**

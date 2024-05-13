@@ -4,23 +4,23 @@ import { combine, derive, flatten, identity, isVal, val } from "../src";
 
 describe("isVal", () => {
   it("should check Val", () => {
-    const val$ = val(1);
-    expect(isVal(val$)).toBe(true);
+    const v$ = val(1);
+    expect(isVal(v$)).toBe(true);
   });
 
   it("should check DerivedVal", () => {
-    const val$ = derive(val(1), identity);
-    expect(isVal(val$)).toBe(true);
+    const v$ = derive(val(1), identity);
+    expect(isVal(v$)).toBe(true);
   });
 
   it("should check CombinedVal", () => {
-    const val$ = combine([val(1)]);
-    expect(isVal(val$)).toBe(true);
+    const v$ = combine([val(1)]);
+    expect(isVal(v$)).toBe(true);
   });
 
   it("should check FlattenedVal", () => {
-    const val$ = flatten(val(val(1)));
-    expect(isVal(val$)).toBe(true);
+    const v$ = flatten(val(val(1)));
+    expect(isVal(v$)).toBe(true);
   });
 
   it("should return false if not val", () => {
@@ -30,13 +30,13 @@ describe("isVal", () => {
 
   it("should narrow types", () => {
     const createVal = (): Val<number> | Val<string> | undefined => val(1);
-    const val$: Val<number> | Val<string> | undefined = createVal();
-    expect(isVal(val$)).toBe(true);
-    if (isVal(val$)) {
+    const v$: Val<number> | Val<string> | undefined = createVal();
+    expect(isVal(v$)).toBe(true);
+    if (isVal(v$)) {
       // @ts-expect-error string and number
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _value: string = val$.value;
-      const value: number | string = val$.value;
+      const _value: string = v$.value;
+      const value: number | string = v$.value;
       expect(value).toBe(1);
     }
   });

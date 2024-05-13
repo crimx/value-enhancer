@@ -16,56 +16,34 @@ import { ValImpl } from "./val";
  *
  * @param getValue A function that returns the current value.
  *        If the value is a val, it will be auto-flattened.
- * @param listen A function that takes a notify function and returns a disposer.
- *        The notify function should be called when the value changes.
- * @param config custom config for the val.
- * @returns A readonly val with value of inner val.
- */
-// export const flattenFrom2 = <TValOrValue = any>(
-//   getValue: () => TValOrValue,
-//   listen: (notify: () => void) => ValDisposer | void | undefined,
-//   config?: ValConfig<UnwrapVal<TValOrValue>>
-// ): ReadonlyVal<UnwrapVal<TValOrValue>> =>
-//   new FlattenFromImpl(getValue, listen, config);
-
-/**
- * Creates a readonly val from a getter function and a listener function.
- * If the value is a val, it will be auto-flattened.
- *
- * @param getValue A function that returns the current value.
- *        If the value is a val, it will be auto-flattened.
- * @param listen A function that takes a notify function and returns a disposer.
+ * @param onChange A function that takes a notify function and returns a disposer.
  *        The notify function should be called when the value changes.
  * @param config custom config for the val.
  * @returns A readonly val with value of inner val.
  */
 export const flattenFrom = <TValOrValue = any>(
   getValue: () => TValOrValue,
-  listen: (notify: () => void) => ValDisposer | void | undefined,
+  onChange: (notify: () => void) => ValDisposer | void | undefined,
   config?: ValConfig<UnwrapVal<TValOrValue>>
 ): ReadonlyVal<UnwrapVal<TValOrValue>> => {
   let innerDisposer: ValDisposer | undefined | void;
   let currentValVersion: ValVersion = INIT_VALUE;
   let currentMaybeVal: TValOrValue = INIT_VALUE;
-  let dirty = true;
+  let needCheckOuterVal = true;
   const useDefaultEqual = config?.equal == null;
 
-  const subs = new ValAgent(
+  const agent = new ValAgent(
     () => {
-      if (dirty) {
-        if (subs.subs_.size) {
-          dirty = false;
-        }
+      if (needCheckOuterVal) {
+        needCheckOuterVal = false;
 
         const lastMaybeVal = currentMaybeVal;
         currentMaybeVal = getValue();
 
         if (isVal(currentMaybeVal)) {
           if (!strictEqual(currentMaybeVal, lastMaybeVal)) {
-            innerDisposer &&= innerDisposer();
-            if (subs.subs_.size) {
-              innerDisposer = currentMaybeVal.$valCompute(subs.notify_);
-            }
+            innerDisposer?.();
+            innerDisposer = currentMaybeVal.$valCompute(agent.notify_);
           }
         } else {
           innerDisposer &&= innerDisposer();
@@ -77,9 +55,10 @@ export const flattenFrom = <TValOrValue = any>(
         currentValVersion = currentMaybeVal.$version;
         if (
           useDefaultEqual &&
+          agent.status_ & AgentStatus.Notifying &&
           !strictEqual(currentValVersion, lastValVersion)
         ) {
-          subs.status_ |= AgentStatus.ShouldInvoke;
+          agent.status_ |= AgentStatus.ValueChanged;
         }
         return currentMaybeVal.value;
       } else {
@@ -89,20 +68,16 @@ export const flattenFrom = <TValOrValue = any>(
     },
     config,
     notify => {
-      const outerDisposer = listen(() => {
-        dirty = true;
+      const outerDisposer = onChange(() => {
+        needCheckOuterVal = true;
         notify();
       });
-      if (!innerDisposer && isVal(currentMaybeVal)) {
-        innerDisposer = currentMaybeVal.$valCompute(notify);
-      }
       return () => {
-        dirty = true;
         innerDisposer &&= innerDisposer();
         outerDisposer?.();
       };
     }
   );
 
-  return new ValImpl(subs);
+  return new ValImpl(agent);
 };

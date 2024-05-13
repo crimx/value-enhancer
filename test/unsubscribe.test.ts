@@ -3,96 +3,96 @@ import { nextTick, unsubscribe, val } from "../src";
 
 describe("unsubscribe", () => {
   it("should unsubscribe a subscribe callback", async () => {
-    const spy1 = jest.fn();
-    const spy2 = jest.fn();
-    const val1 = val<number>(1);
+    const spySubscribe1 = jest.fn();
+    const spySubscribe2 = jest.fn();
+    const v$ = val<number>(1);
 
-    val1.subscribe(function sub1(...args) {
-      unsubscribe(val1, sub1);
-      spy1(...args);
+    v$.subscribe(function sub1(...args) {
+      unsubscribe(v$, sub1);
+      spySubscribe1(...args);
     });
-    val1.subscribe(spy2);
+    v$.subscribe(spySubscribe2);
 
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
+    expect(spySubscribe1).toBeCalledTimes(1);
+    expect(spySubscribe2).toBeCalledTimes(1);
 
-    expect(spy1).lastCalledWith(1);
-    expect(spy2).lastCalledWith(1);
+    expect(spySubscribe1).lastCalledWith(1);
+    expect(spySubscribe2).lastCalledWith(1);
 
-    val1.set(2);
+    v$.set(2);
     await nextTick();
-    expect(val1.value).toBe(2);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(2);
-    expect(spy1).lastCalledWith(1);
-    expect(spy2).lastCalledWith(2);
+    expect(v$.value).toBe(2);
+    expect(spySubscribe1).toBeCalledTimes(1);
+    expect(spySubscribe2).toBeCalledTimes(2);
+    expect(spySubscribe1).lastCalledWith(1);
+    expect(spySubscribe2).lastCalledWith(2);
 
-    unsubscribe(val1);
+    unsubscribe(v$);
   });
 
   it("should unsubscribe a reaction callback", async () => {
-    const spy1 = jest.fn();
-    const spy2 = jest.fn();
-    const val1 = val<number>(1);
+    const spySubscribe1 = jest.fn();
+    const spySubscribe2 = jest.fn();
+    const v$ = val<number>(1);
 
-    val1.reaction(function sub1(...args) {
-      unsubscribe(val1, sub1);
-      spy1(...args);
+    v$.reaction(function sub1(...args) {
+      unsubscribe(v$, sub1);
+      spySubscribe1(...args);
     });
-    val1.reaction(spy2);
+    v$.reaction(spySubscribe2);
 
-    expect(spy1).toBeCalledTimes(0);
-    expect(spy2).toBeCalledTimes(0);
+    expect(spySubscribe1).toBeCalledTimes(0);
+    expect(spySubscribe2).toBeCalledTimes(0);
 
-    val1.set(2);
+    v$.set(2);
     await nextTick();
-    expect(val1.value).toBe(2);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy1).lastCalledWith(2);
-    expect(spy2).lastCalledWith(2);
+    expect(v$.value).toBe(2);
+    expect(spySubscribe1).toBeCalledTimes(1);
+    expect(spySubscribe2).toBeCalledTimes(1);
+    expect(spySubscribe1).lastCalledWith(2);
+    expect(spySubscribe2).lastCalledWith(2);
 
-    val1.set(3);
+    v$.set(3);
     await nextTick();
-    expect(val1.value).toBe(3);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(2);
-    expect(spy1).lastCalledWith(2);
-    expect(spy2).lastCalledWith(3);
+    expect(v$.value).toBe(3);
+    expect(spySubscribe1).toBeCalledTimes(1);
+    expect(spySubscribe2).toBeCalledTimes(2);
+    expect(spySubscribe1).lastCalledWith(2);
+    expect(spySubscribe2).lastCalledWith(3);
 
-    unsubscribe(val1);
+    unsubscribe(v$);
   });
 
   it("should unsubscribe all callbacks", async () => {
-    const spy1 = jest.fn();
-    const spy2 = jest.fn();
-    const val1 = val<number>(1);
+    const spySubscribe1 = jest.fn();
+    const spySubscribe2 = jest.fn();
+    const v$ = val<number>(1);
 
-    val1.reaction(function sub1(...args) {
-      unsubscribe(val1, sub1);
-      spy1(...args);
+    v$.reaction(function sub1(...args) {
+      unsubscribe(v$, sub1);
+      spySubscribe1(...args);
     });
-    val1.reaction(spy2);
+    v$.reaction(spySubscribe2);
 
-    expect(spy1).toBeCalledTimes(0);
-    expect(spy2).toBeCalledTimes(0);
+    expect(spySubscribe1).toBeCalledTimes(0);
+    expect(spySubscribe2).toBeCalledTimes(0);
 
-    val1.set(2);
+    v$.set(2);
     await nextTick();
-    expect(val1.value).toBe(2);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy1).lastCalledWith(2);
-    expect(spy2).lastCalledWith(2);
+    expect(v$.value).toBe(2);
+    expect(spySubscribe1).toBeCalledTimes(1);
+    expect(spySubscribe2).toBeCalledTimes(1);
+    expect(spySubscribe1).lastCalledWith(2);
+    expect(spySubscribe2).lastCalledWith(2);
 
-    unsubscribe(val1);
+    unsubscribe(v$);
 
-    val1.set(3);
+    v$.set(3);
     await nextTick();
-    expect(val1.value).toBe(3);
-    expect(spy1).toBeCalledTimes(1);
-    expect(spy2).toBeCalledTimes(1);
-    expect(spy1).lastCalledWith(2);
-    expect(spy2).lastCalledWith(2);
+    expect(v$.value).toBe(3);
+    expect(spySubscribe1).toBeCalledTimes(1);
+    expect(spySubscribe2).toBeCalledTimes(1);
+    expect(spySubscribe1).lastCalledWith(2);
+    expect(spySubscribe2).lastCalledWith(2);
   });
 });

@@ -44,8 +44,8 @@
   "scripts": {
     "prepublishOnly": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check . && tsc --noEmit",
-    "test": "jest",
-    "test:CI": "tsc --noEmit -p ./test/tsconfig.json && jest --collect-coverage",
+    "test": "node --expose-gc ./node_modules/jest/bin/jest.js",
+    "test:CI": "tsc --noEmit -p ./test/tsconfig.json && node --expose-gc ./node_modules/jest/bin/jest.js --collect-coverage",
     "docs": "typedoc --options typedoc.json",
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
     "build:index": "tsup --config tsup-config/index.tsup.config.ts",
