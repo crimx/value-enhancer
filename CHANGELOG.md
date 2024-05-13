@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.3.0](https://github.com/crimx/value-enhancer/compare/v5.2.1...v5.3.0) (2024-05-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* `onChange`(`listen`) is called immediately on val creation instead of on first subscriber.
+
+### Features
+
+* implement with FinalizationRegistry ([5b9c02a](https://github.com/crimx/value-enhancer/commit/5b9c02a8818a6844eeef19fd4ea0dc5498b404e1))
+
 ### [5.2.1](https://github.com/crimx/value-enhancer/compare/v5.2.0...v5.2.1) (2024-05-08)
 
 ## [5.2.0](https://github.com/crimx/value-enhancer/compare/v5.1.3...v5.2.0) (2024-05-02)
