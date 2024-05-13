@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file. See [standa
 ### ⚠ BREAKING CHANGES
 
 * `onChange`(`listen`) is called immediately on val creation instead of on first subscriber.
+  No action is needed if the callback timing is insignificant(which should be the case in most scenarios).
 
 ### Features
 
