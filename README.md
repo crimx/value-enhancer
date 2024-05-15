@@ -455,7 +455,7 @@ console.log(item$.value); // "someValue2"
 
 ### Use in Class with different types.
 
-With this pattern, Writable `Val` properties are exposed as `$` and `ReadonlyVal` properties are exposed as `$$`.
+With this pattern, Writable `Val` properties are exposed as `$$` and `ReadonlyVal` properties are exposed as `$`.
 
 Note that they are all Writable `Val` under the hood. The difference is just the type.
 
@@ -477,7 +477,7 @@ export type MyClass$$ = {
 
 export class MyClass {
   public readonly $: MyClass$;
-  public readonly $$: MyClassSet$;
+  public readonly $$: MyClass$$;
 
   public constructor() {
     this.$ = this.$$ = {
@@ -518,7 +518,7 @@ export type MyClassSet$ = {
 
 export class MyClass {
   public readonly $: MyClass$;
-  public readonly set$: MyClass$$;
+  public readonly set$: MyClassSet$;
 
   public constructor() {
     const [a$, setA] = readonlyVal(1);
@@ -554,21 +554,21 @@ export interface Foo$ {
 
 export class Foo {
   public readonly $: Foo$;
-  private setVals: { [K in keyof Foo$]: ValSetValue<UnwrapVal<Foo$[K]>> };
+  private readonly set$: { [K in keyof Foo$]: ValSetValue<UnwrapVal<Foo$[K]>> };
 
   public constructor() {
-    const [vals, setVals] = groupVals({
+    const [vals, set$] = groupVals({
       a: readonlyVal(1),
       b: readonlyVal(2),
       c: readonlyVal("3"),
     });
     this.$ = vals;
-    this.setVals = setVals;
+    this.set$ = set$;
   }
 
   public myMethod() {
-    this.setVals.a(2);
-    this.setVals.c("4");
+    this.set$.a(2);
+    this.set$.c("4");
   }
 }
 
@@ -613,7 +613,7 @@ To share writable vals to other classes, use a `.ref(true)`.
 
 It creates a new Val referencing the value of the current Val as source.
 All ref Vals share the same value from the source Val.
-The act of setting a value on the ref Val is essentially setting the value on the source Val.
+The act of setting a value on the ref Val is essentially setting the value to the source Val.
 
 The ref Vals can be safely disposed without affecting the source Val and other ref Vals.
 
