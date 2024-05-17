@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.4.0](https://github.com/crimx/value-enhancer/compare/v5.3.0...v5.4.0) (2024-05-17)
+
+
+### Features
+
+* add compute ([dcdfbd3](https://github.com/crimx/value-enhancer/commit/dcdfbd33c0797ca38389b0629322269476067f17))
+
 ## [5.3.0](https://github.com/crimx/value-enhancer/compare/v5.2.1...v5.3.0) (2024-05-13)
 
 
