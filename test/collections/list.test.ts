@@ -831,15 +831,25 @@ describe("ReactiveList", () => {
 
   describe("dispose", () => {
     it("should dispose all watchers", () => {
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
       const list = reactiveList<number>();
       const mockNotify1 = jest.fn();
       const mockNotify2 = jest.fn();
       list.$.reaction(mockNotify1, true);
       list.$.reaction(mockNotify2, true);
+
+      expect(consoleErrorMock).not.toBeCalled();
+
       list.dispose();
       list.push(1);
       expect(mockNotify1).not.toHaveBeenCalled();
       expect(mockNotify2).not.toHaveBeenCalled();
+
+      expect(consoleErrorMock).toBeCalled();
+      consoleErrorMock.mockClear();
     });
 
     it("should clear", () => {

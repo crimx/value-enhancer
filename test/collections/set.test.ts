@@ -268,15 +268,25 @@ describe("ReactiveSet", () => {
 
   describe("dispose", () => {
     it("should dispose all watchers", () => {
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
       const set = reactiveSet<number>();
       const mockNotify1 = jest.fn();
       const mockNotify2 = jest.fn();
       set.$.reaction(mockNotify1, true);
       set.$.reaction(mockNotify2, true);
+
+      expect(consoleErrorMock).not.toBeCalled();
+
       set.dispose();
       set.add(1);
       expect(mockNotify1).not.toHaveBeenCalled();
       expect(mockNotify2).not.toHaveBeenCalled();
+
+      expect(consoleErrorMock).toBeCalled();
+      consoleErrorMock.mockRestore();
     });
 
     it("should clear", () => {

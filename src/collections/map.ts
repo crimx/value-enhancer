@@ -116,6 +116,18 @@ class ReactiveMapImpl<TKey, TValue>
     return super.delete(key);
   }
 
+  #clear(): void {
+    if (this.#onDeleted) {
+      const deleted = [...this];
+      super.clear();
+      for (const [key, value] of deleted) {
+        this.#onDeleted(value, key);
+      }
+    } else {
+      super.clear();
+    }
+  }
+
   public override delete(key: TKey): boolean {
     const deleted = this.#delete(key);
     if (deleted) {
@@ -137,15 +149,7 @@ class ReactiveMapImpl<TKey, TValue>
 
   public override clear(): void {
     if (this.size > 0) {
-      if (this.#onDeleted) {
-        const deleted = [...this];
-        super.clear();
-        for (const [key, value] of deleted) {
-          this.#onDeleted(value, key);
-        }
-      } else {
-        super.clear();
-      }
+      this.#clear();
       this.#notify();
     }
   }
@@ -226,7 +230,9 @@ class ReactiveMapImpl<TKey, TValue>
 
   public dispose(): void {
     this.$.dispose();
-    this.clear();
+    if (this.size > 0) {
+      this.#clear();
+    }
   }
 }
 

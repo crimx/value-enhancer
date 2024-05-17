@@ -394,15 +394,25 @@ describe("ReactiveMap", () => {
 
   describe("dispose", () => {
     it("should dispose all watchers", () => {
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
       const map = reactiveMap<string, number>();
       const mockNotify1 = jest.fn();
       const mockNotify2 = jest.fn();
       map.$.reaction(mockNotify1, true);
       map.$.reaction(mockNotify2, true);
+
+      expect(consoleErrorMock).not.toBeCalled();
+
       map.dispose();
       map.set("foo", 1);
       expect(mockNotify1).not.toHaveBeenCalled();
       expect(mockNotify2).not.toHaveBeenCalled();
+
+      expect(consoleErrorMock).toBeCalled();
+      consoleErrorMock.mockRestore();
     });
   });
 

@@ -420,7 +420,7 @@ class ReactiveListImpl<TValue> implements ReactiveList<TValue> {
 
   public dispose(): void {
     this.$.dispose();
-    this.clear();
+    (this.array as TValue[]).length = 0;
   }
 }
 

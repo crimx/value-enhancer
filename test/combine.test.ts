@@ -518,27 +518,31 @@ describe("combine", () => {
     const combined$ = combine([v1$, v2$]);
 
     const spySubscribe = jest.fn();
-    combined$.subscribe(() => {
+    combined$.subscribe(v => {
       v1$.set(999);
-      spySubscribe();
+      spySubscribe(v);
     });
 
     expect(spySubscribe).toBeCalledTimes(1);
+    expect(spySubscribe).lastCalledWith([1, 2]);
 
     await nextTick();
     expect(spySubscribe).toBeCalledTimes(2);
+    expect(spySubscribe).lastCalledWith([999, 2]);
 
     v1$.set(2);
     v2$.set(3);
 
     await nextTick();
     expect(spySubscribe).toBeCalledTimes(3);
+    expect(spySubscribe).lastCalledWith([2, 3]);
 
     v1$.set(3);
     v2$.set(4);
 
     await nextTick();
     expect(spySubscribe).toBeCalledTimes(4);
+    expect(spySubscribe).lastCalledWith([3, 4]);
   });
 
   it("should dispose onChange disposer", () => {

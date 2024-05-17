@@ -378,6 +378,10 @@ describe.each(eachItem)("$name", ({ createVal }) => {
     });
 
     it("should remove all subscribers on unsubscribe", async () => {
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
       const spySubscribes = Array(20)
         .fill(0)
         .map(() => jest.fn());
@@ -393,6 +397,8 @@ describe.each(eachItem)("$name", ({ createVal }) => {
         expect(spy).toBeCalledTimes(1);
       });
 
+      expect(consoleErrorMock).not.toBeCalled();
+
       v$.dispose();
 
       set(2);
@@ -400,6 +406,10 @@ describe.each(eachItem)("$name", ({ createVal }) => {
       spySubscribes.forEach(spy => {
         expect(spy).toBeCalledTimes(1);
       });
+
+      expect(consoleErrorMock).toBeCalled();
+
+      consoleErrorMock.mockRestore();
     });
 
     it("should remove original if adding two same subscribes", async () => {
@@ -437,13 +447,12 @@ describe.each(eachItem)("$name", ({ createVal }) => {
     });
 
     it("should log subscriber error", async () => {
-      const [v$, set] = createVal(1);
-
       const consoleErrorMock = jest
         .spyOn(console, "error")
         .mockImplementation(() => void 0);
-
       expect(consoleErrorMock).toBeCalledTimes(0);
+
+      const [v$, set] = createVal(1);
 
       const error = new Error("Hello");
       v$.subscribe(() => {
@@ -650,6 +659,10 @@ describe.each(eachItem)("$name", ({ createVal }) => {
     });
 
     it("should remove all subscribers on unsubscribe", async () => {
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
       const spyReactions = Array(20)
         .fill(0)
         .map(() => jest.fn());
@@ -665,6 +678,8 @@ describe.each(eachItem)("$name", ({ createVal }) => {
         expect(spy).toBeCalledTimes(0);
       });
 
+      expect(consoleErrorMock).not.toBeCalled();
+
       v$.dispose();
 
       set(2);
@@ -674,6 +689,10 @@ describe.each(eachItem)("$name", ({ createVal }) => {
       });
 
       v$.dispose();
+
+      expect(consoleErrorMock).toBeCalled();
+
+      consoleErrorMock.mockRestore();
     });
   });
 
@@ -740,6 +759,10 @@ describe.each(eachItem)("$name", ({ createVal }) => {
     });
 
     it("should unsubscribe all callbacks", async () => {
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
       const spySubscribe = jest.fn();
       const spyReaction = jest.fn();
       const [v$, set] = createVal<number>(1);
@@ -766,11 +789,16 @@ describe.each(eachItem)("$name", ({ createVal }) => {
       spySubscribe.mockClear();
       spyReaction.mockClear();
 
+      expect(consoleErrorMock).not.toBeCalled();
+
       set(3);
       await nextTick();
       expect(v$.value).toBe(3);
       expect(spySubscribe).toBeCalledTimes(0);
       expect(spyReaction).toBeCalledTimes(0);
+
+      expect(consoleErrorMock).toBeCalled();
+      consoleErrorMock.mockRestore();
     });
   });
 
@@ -974,6 +1002,10 @@ describe.each(eachItem)("$name", ({ createVal }) => {
 
   describe("dispose", () => {
     it("should unsubscribe all callbacks", async () => {
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
       const spySubscribe = jest.fn();
       const spyReaction = jest.fn();
       const [v$, set] = createVal<number>(1);
@@ -995,6 +1027,8 @@ describe.each(eachItem)("$name", ({ createVal }) => {
       expect(spySubscribe).lastCalledWith(2);
       expect(spyReaction).lastCalledWith(2);
 
+      expect(consoleErrorMock).not.toBeCalled();
+
       v$.dispose();
 
       spySubscribe.mockClear();
@@ -1005,6 +1039,10 @@ describe.each(eachItem)("$name", ({ createVal }) => {
       expect(v$.value).toBe(3);
       expect(spySubscribe).toBeCalledTimes(0);
       expect(spyReaction).toBeCalledTimes(0);
+
+      expect(consoleErrorMock).toBeCalled();
+
+      consoleErrorMock.mockRestore();
     });
   });
 

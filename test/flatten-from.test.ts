@@ -642,6 +642,10 @@ describe("flattenFrom", () => {
   });
 
   it("should dispose", () => {
+    const consoleErrorMock = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => void 0);
+
     let notify: (() => void) | undefined;
 
     const spyOnChange = jest.fn((_notify: () => void) => {
@@ -655,6 +659,8 @@ describe("flattenFrom", () => {
 
     spyOnChange.mockClear();
 
+    expect(consoleErrorMock).not.toBeCalled();
+
     v$.dispose();
 
     expect(spyOnChange).toBeCalledTimes(0);
@@ -666,5 +672,8 @@ describe("flattenFrom", () => {
     notify?.();
 
     expect(spyOnChange).toBeCalledTimes(0);
+
+    expect(consoleErrorMock).toBeCalled();
+    consoleErrorMock.mockClear();
   });
 });

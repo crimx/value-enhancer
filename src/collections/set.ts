@@ -108,6 +108,18 @@ class ReactiveSetImpl<TValue>
     return deleted;
   }
 
+  #clear(): void {
+    if (this.#onDeleted) {
+      const deleted = [...this];
+      super.clear();
+      for (const value of deleted) {
+        this.#onDeleted(value);
+      }
+    } else {
+      super.clear();
+    }
+  }
+
   public override delete(value: TValue): boolean {
     const deleted = this.#delete(value);
     if (deleted) {
@@ -129,15 +141,7 @@ class ReactiveSetImpl<TValue>
 
   public override clear(): void {
     if (this.size > 0) {
-      if (this.#onDeleted) {
-        const deleted = [...this];
-        super.clear();
-        for (const value of deleted) {
-          this.#onDeleted(value);
-        }
-      } else {
-        super.clear();
-      }
+      this.#clear();
       this.#notify();
     }
   }
@@ -164,7 +168,9 @@ class ReactiveSetImpl<TValue>
 
   public dispose(): void {
     this.$.dispose();
-    this.clear();
+    if (this.size > 0) {
+      this.#clear();
+    }
   }
 
   public replace(items: Iterable<TValue>): Iterable<TValue> {

@@ -91,6 +91,12 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   };
 
   public notify_ = (): void => {
+    if (process.env.NODE_ENV !== "production") {
+      if ((this as any)._valDisposed_) {
+        console.error(new Error("[val-dev] Updating a disposed val."));
+        console.error((this as any)._valDisposed_);
+      }
+    }
     this.status_ |= AgentStatus.NeedResolveValue;
     if (this.subs_.size) {
       this.status_ |= AgentStatus.Notifying;
@@ -147,6 +153,9 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     this.remove_();
     registry.unregister(this);
     this.#disposeEffect?.();
+    if (process.env.NODE_ENV !== "production") {
+      (this as any)._valDisposed_ = new Error("[val-dev] Val disposed at:");
+    }
   }
 
   private _bumpVersion_(value: TValue): void {
