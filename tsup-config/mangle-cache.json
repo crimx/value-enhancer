@@ -1,12 +1,16 @@
 {
   "add_": "a",
+  "subs_": "b",
   "dispose_": "d",
   "eager_": "e",
   "notify_": "n",
   "equal_": "q",
   "remove_": "r",
-  "subs_": "s",
+  "status_": "s",
   "runTask_": "t",
   "resolveValue_": "u",
-  "version_": "v"
+  "version_": "v",
+  "_bumpVersion_": "w",
+  "_bumpVersionByNumber_": "x",
+  "_bumpVersionByValue_": "y"
 }
