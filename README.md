@@ -196,7 +196,21 @@ effect(() => {
 });
 ```
 
-This issue does not exist in `value-enhancer` because we do not collect dependencies implicitly.
+This issue does not exist in `value-enhancer` because we do not collect dependencies implicitly by default.
+
+In case of subscribing to flexible dynamic dependencies are needed, `value-enhancer` does offer a simple `compute` API which is similar to Jotai.
+
+```ts
+import { val, compute } from "value-enhancer";
+
+const count$ = val(0);
+const a$ = val("a");
+const b$ = val("b");
+
+const s$ = compute(get => {
+  return get(count$) % 2 === 0 ? get(a$) : get(b$);
+});
+```
 
 </details>
 
@@ -351,6 +365,26 @@ console.log(firstItem$.value); // 1
 itemList$.set([val(4), val(5), val(6)]);
 
 console.log(firstItem$.value); // 4
+```
+
+## Compute
+
+`compute` is useful for subscribing to flexible dynamic dependencies.
+
+The `get` function passed to the effect callback can be used to get the current value of a Val and subscribe to it.
+The effect callback will be re-evaluated whenever the dependencies change.
+Stale dependencies are unsubscribed automatically.
+
+```js
+import { val, compute } from "value-enhancer";
+
+const count$ = val(0);
+const a$ = val("a");
+const b$ = val("b");
+
+const s$ = compute(get => {
+  return get(count$) % 2 === 0 ? get(a$) : get(b$);
+});
 ```
 
 ## From

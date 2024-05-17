@@ -1,6 +1,7 @@
 import { initDev } from "./dev";
 
 export { combine, type CombineValTransform } from "./combine";
+export { compute } from "./compute";
 export { derive, type DerivedValTransform } from "./derive";
 export { flatten } from "./flatten";
 export { flattenFrom } from "./flatten-from";
