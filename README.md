@@ -26,10 +26,6 @@ Docs: <https://value-enhancer.js.org>
 npm add value-enhancer
 ```
 
-## Docs
-
-<https://value-enhancer.js.org/>
-
 ## Features
 
 - Plain reactivity.  
