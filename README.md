@@ -8,8 +8,6 @@
 [![npm-version](https://img.shields.io/npm/v/value-enhancer.svg)](https://www.npmjs.com/package/value-enhancer)
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/value-enhancer/main)](https://coveralls.io/github/crimx/value-enhancer?branch=main)
 
-[![full-size](https://img.shields.io/bundlephobia/minzip/value-enhancer)](https://bundlejs.com/?q=value-enhancer)
-[![core-size](https://img.shields.io/bundlejs/size/value-enhancer?exports=val&label=core%20size)](https://bundlejs.com/?q=value-enhancer&treeshake=%5B%7Bval%7D%5D)
 [![tree-shakable](https://img.shields.io/badge/%20tree-shakable-success)](https://bundlejs.com/?q=value-enhancer)
 [![no-dependencies](https://img.shields.io/badge/dependencies-none-success)](https://bundlejs.com/?q=value-enhancer)
 [![side-effect-free](https://img.shields.io/badge/%20side--effect-free-success)](https://bundlejs.com/?q=value-enhancer)
@@ -46,6 +44,26 @@ npm add value-enhancer
   Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy/Signal implementations.
 - Simple DX.  
   Designed with ergonomics in mind. No hidden rules for getting or setting values. What you see is what you get.
+
+## Size
+
+<!-- size-section-start -->
+
+| import             | size(brotli) |
+| ------------------ | ------------ |
+| `*`                | 1.78 kB      |
+| `{ val }`          | 1.03 kB      |
+| `{ from }`         | 26 B         |
+| `{ derive }`       | 72 B         |
+| `{ combine }`      | 207 B        |
+| `{ compute }`      | 192 B        |
+| `{ flattenFrom }`  | 227 B        |
+| `{ flatten }`      | 39 B         |
+| `{ reactiveMap }`  | 479 B        |
+| `{ reactiveSet }`  | 359 B        |
+| `{ reactiveList }` | 527 B        |
+
+<!-- size-section-end -->
 
 ## Quick Q&A
 

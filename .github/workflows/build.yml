@@ -30,7 +30,7 @@ jobs:
 
       - name: Test 🧪
         run: |
-          pnpm run test:CI
+          pnpm run test:coverage
 
       - name: Build 🔧
         run: |
