@@ -316,9 +316,7 @@ const derived$ = derive(count$, count => count * 3);
 console.log(derived$.value); // 6
 ```
 
-Pipe-able style with functional lib like `rubico`:
-
-<https://codesandbox.io/p/sandbox/value-enhancer-derive-functional-with-rubico-t7d4gm?file=%2Fsrc%2Findex.ts%3A15%2C1>
+Pipe-able style with functional lib like `rubico`: [(CodeSandbox)](https://codesandbox.io/p/sandbox/value-enhancer-derive-functional-with-rubico-t7d4gm?file=%2Fsrc%2Findex.ts%3A15%2C1)
 
 ```ts
 import { derive, val } from "value-enhancer";
