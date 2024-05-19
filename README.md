@@ -7,7 +7,6 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/crimx/value-enhancer/build.yml)](https://github.com/crimx/value-enhancer/actions/workflows/build.yml)
 [![npm-version](https://img.shields.io/npm/v/value-enhancer.svg)](https://www.npmjs.com/package/value-enhancer)
 [![Coverage Status](https://img.shields.io/coveralls/github/crimx/value-enhancer/main)](https://coveralls.io/github/crimx/value-enhancer?branch=main)
-
 [![tree-shakable](https://img.shields.io/badge/%20tree-shakable-success)](https://bundlejs.com/?q=value-enhancer)
 [![no-dependencies](https://img.shields.io/badge/dependencies-none-success)](https://bundlejs.com/?q=value-enhancer)
 [![side-effect-free](https://img.shields.io/badge/%20side--effect-free-success)](https://bundlejs.com/?q=value-enhancer)
@@ -33,15 +32,15 @@ npm add value-enhancer
 - Single-layer shallow reactivity.  
   It does not convert the value with `Object.defineProperty` nor `Proxy`. Keeping everything as plain JavaScript value makes it easier to work with other libraries and easier for the JavaScript engine to optimize.
 - Safe and fast lazy computation.  
-  It solves multi-level derivation issue (like in Svelte Stores) with smart lazy value evaluation.
-- Side effect free.  
-  `Val`s are created without side effects, which means you can create and access derived `Val.value` without worrying about memory leaks. Disposers returned by subscriptions can be easily managed with libraries like [`@wopjs/disposable`](https://github.com/wopjs/disposable).
+  It solves multi-level derivation issue (like in [Svelte Stores](<(https://svelte.dev/repl/6218ae0ecf5c455195b4a76d7f0cff9f?version=3.49.0)>)) with smart lazy value evaluation.
+- Weak side effects.  
+  `Val`s are managed with `FinalizationRegistry` and `WeakRef` which means you can create and access derived `Val.value` without worrying about memory leaks. Disposers returned by subscriptions can also be easily managed with libraries like [`@wopjs/disposable`](https://github.com/wopjs/disposable).
 - Explicit.  
   Reactive objects are easy to tell since their types are different from normal objects. Subscription also requires explicit dependency declaration which reduce the work of repetitive dynamic dependency collection in Proxy/Signal implementations.
 - Simple DX.  
   Designed with ergonomics in mind. No hidden rules for getting or setting values. What you see is what you get.
 
-## Size
+## Sizes
 
 <!-- size-section-start -->
 
