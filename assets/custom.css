@@ -1,9 +1,9 @@
-.tsd-panel > .tsd-signatures > .tsd-signature {
-  margin-top: 60px;
+.tsd-panel:not(.tsd-member) > .tsd-signatures > .tsd-signature {
+  margin-top: 4rem;
 }
 
-.tsd-panel > .tsd-signatures > .tsd-signature:first-of-type {
-  margin-top: 40px;
+.tsd-panel:not(.tsd-member) > .tsd-signatures > .tsd-signature:first-of-type {
+  margin-top: 2rem;
 }
 
 .tsd-signature {
