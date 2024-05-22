@@ -19,32 +19,33 @@ export type CombineValTransform<
   TValues extends readonly any[] = any[]
 > = (newValues: TValues) => TCombinedValue;
 
-/**
- * Combines an array of vals into a single val with the array of values.
- * @param valInputs An array of vals to combine.
- * @returns A readonly val with the combined values.
- */
-export function combine<
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]
->(
-  valInputs: readonly [...TValInputs]
-): ReadonlyVal<[...ValInputsValueTuple<TValInputs>]>;
-/**
- * Combines an array of vals into a single val with transformed value.
- * @param valInputs An array of vals to combine.
- * @param transform A pure function that takes an array of values and returns a new value.
- * @param config custom config for the combined val.
- * @returns A readonly val with the transformed values.
- */
-export function combine<
-  TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
-  TValue = any
->(
-  valInputs: readonly [...TValInputs],
-  transform: CombineValTransform<TValue, [...ValInputsValueTuple<TValInputs>]>,
-  config?: ValConfig<TValue>
-): ReadonlyVal<TValue>;
-export function combine<
+export interface Combine {
+  /**
+   * Combines an array of vals into a single val with the array of values.
+   * @param valInputs An array of vals to combine.
+   * @returns A readonly val with the combined values.
+   */
+  <TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[]>(
+    valInputs: readonly [...TValInputs]
+  ): ReadonlyVal<[...ValInputsValueTuple<TValInputs>]>;
+  /**
+   * Combines an array of vals into a single val with transformed value.
+   * @param valInputs An array of vals to combine.
+   * @param transform A pure function that takes an array of values and returns a new value.
+   * @param config custom config for the combined val.
+   * @returns A readonly val with the transformed values.
+   */
+  <TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[], TValue = any>(
+    valInputs: readonly [...TValInputs],
+    transform: CombineValTransform<
+      TValue,
+      [...ValInputsValueTuple<TValInputs>]
+    >,
+    config?: ValConfig<TValue>
+  ): ReadonlyVal<TValue>;
+}
+
+export const combine: Combine = <
   TValInputs extends readonly ReadonlyVal[] = ReadonlyVal[],
   TValue = any
 >(
@@ -57,7 +58,7 @@ export function combine<
     [...ValInputsValueTuple<TValInputs>]
   >,
   config?: ValConfig<TValue>
-): ReadonlyVal<TValue> {
+): ReadonlyVal<TValue> => {
   let cachedValue: TValue;
   let cachedSrcVersions: readonly ValVersion[] | undefined;
 
@@ -79,4 +80,4 @@ export function combine<
     },
     config
   );
-}
+};

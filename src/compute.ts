@@ -27,7 +27,7 @@ import { ValImpl } from "./val";
 export const compute = <TValue = any>(
   effect: (get: <T = any>(val$: ReadonlyVal<T>) => T) => TValue,
   config?: ValConfig<TValue>
-) => {
+): ReadonlyVal<TValue> => {
   let scopeLevel = 0;
 
   let currentDisposers = new Map<ReadonlyVal, ValDisposer>();

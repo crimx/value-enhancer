@@ -46,14 +46,14 @@ npm add value-enhancer
 
 | import                        | size(brotli) |
 | ----------------------------- | ------------ |
-| `*`                           | 1.78 kB      |
-| `{ readonlyVal, val }` (core) | 1.03 kB      |
+| `*`                           | 1.77 kB      |
+| `{ readonlyVal, val }` (core) | 1.02 kB      |
 | `{ from }`                    | 26 B         |
-| `{ derive }`                  | 72 B         |
-| `{ combine }`                 | 207 B        |
+| `{ derive }`                  | 93 B         |
+| `{ combine }`                 | 204 B        |
 | `{ compute }`                 | 192 B        |
 | `{ flattenFrom }`             | 227 B        |
-| `{ flatten }`                 | 39 B         |
+| `{ flatten }`                 | 36 B         |
 | `{ reactiveMap }`             | 479 B        |
 | `{ reactiveSet }`             | 359 B        |
 | `{ reactiveList }`            | 528 B        |

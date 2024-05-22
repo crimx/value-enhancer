@@ -133,15 +133,25 @@ export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
 
 export type FlattenVal<T> = ReadonlyVal<UnwrapVal<UnwrapVal<T>>>;
 
-/** @internal */
+/**
+ * @internal
+ * @ignore
+ */
 export type ValInputsValueTuple<TValInputs extends readonly ReadonlyVal[]> =
   Readonly<{
     [K in keyof TValInputs]: ExtractValValue<TValInputs[K]>;
   }>;
 
-/** @internal */
+/**
+ * @internal
+ * @ignore
+ */
 export type ExtractValValue<TVal> = TVal extends ReadonlyVal<infer TValue>
   ? TValue
   : never;
 
+/**
+ * @internal
+ * @ignore
+ */
 export type NoInfer<T> = [T][T extends any ? 0 : never];

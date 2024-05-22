@@ -111,58 +111,58 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   }
 }
 
-/**
- * Creates a readonly val with the given value.
- *
- * @returns A tuple with the readonly val and a function to set the value.
- */
-export function readonlyVal<TValue = any>(): [
-  ReadonlyVal<NoInfer<TValue> | undefined>,
-  ValSetValue<NoInfer<TValue> | undefined>
-];
-/**
- * Creates a readonly val with the given value.
- *
- * @param value Value for the val
- * @param config Optional custom config for the val.
- * @returns A tuple with the readonly val and a function to set the value.
- */
-export function readonlyVal(
-  value: [],
-  config?: ValConfig<any[]>
-): [ReadonlyVal<any[]>, ValSetValue<any[]>];
-/**
- * Creates a readonly val with the given value.
- *
- * @param value Value for the val
- * @param config Optional custom config for the val.
- * @returns A tuple with the readonly val and a function to set the value.
- */
-export function readonlyVal<TValue = any>(
-  value: TValue,
-  config?: ValConfig<TValue>
-): [ReadonlyVal<NoInfer<TValue>>, ValSetValue<NoInfer<TValue>>];
-/**
- * Creates a readonly val with the given value.
- *
- * @param value Optional value for the val
- * @param config Optional custom config for the val.
- * @returns A tuple with the readonly val and a function to set the value.
- */
-export function readonlyVal<TValue = any>(
-  value?: TValue,
-  config?: ValConfig<TValue>
-): [
-  ReadonlyVal<NoInfer<TValue | undefined>>,
-  ValSetValue<NoInfer<TValue | undefined>>
-];
-export function readonlyVal<TValue = any>(
+interface CreateReadonlyVal {
+  /**
+   * Creates a readonly val with the given value.
+   *
+   * @returns A tuple with the readonly val and a function to set the value.
+   */
+  <TValue = any>(): [
+    ReadonlyVal<NoInfer<TValue> | undefined>,
+    ValSetValue<NoInfer<TValue> | undefined>
+  ];
+  /**
+   * Creates a readonly val with the given value.
+   *
+   * @param value Value for the val
+   * @param config Optional custom config for the val.
+   * @returns A tuple with the readonly val and a function to set the value.
+   */
+  (value: [], config?: ValConfig<any[]>): [
+    ReadonlyVal<any[]>,
+    ValSetValue<any[]>
+  ];
+  /**
+   * Creates a readonly val with the given value.
+   *
+   * @param value Value for the val
+   * @param config Optional custom config for the val.
+   * @returns A tuple with the readonly val and a function to set the value.
+   */
+  <TValue = any>(value: TValue, config?: ValConfig<TValue>): [
+    ReadonlyVal<NoInfer<TValue>>,
+    ValSetValue<NoInfer<TValue>>
+  ];
+  /**
+   * Creates a readonly val with the given value.
+   *
+   * @param value Optional value for the val
+   * @param config Optional custom config for the val.
+   * @returns A tuple with the readonly val and a function to set the value.
+   */
+  <TValue = any>(value?: TValue, config?: ValConfig<TValue>): [
+    ReadonlyVal<NoInfer<TValue | undefined>>,
+    ValSetValue<NoInfer<TValue | undefined>>
+  ];
+}
+
+export const readonlyVal: CreateReadonlyVal = <TValue = any>(
   value?: TValue,
   config?: ValConfig<TValue | undefined>
 ): [
   ReadonlyVal<NoInfer<TValue> | undefined>,
   ValSetValue<NoInfer<TValue> | undefined>
-] {
+] => {
   let currentValue = value;
 
   const get = () => currentValue;
@@ -179,44 +179,43 @@ export function readonlyVal<TValue = any>(
   const val = new ValImpl(subs);
 
   return [val, set];
+};
+
+interface CreateVal {
+  /**
+   * Creates a writable val.
+   * @returns A val with undefined value.
+   */
+  <TValue = any>(): Val<NoInfer<TValue> | undefined>;
+  /**
+   * Creates a writable val.
+   * @param value Initial value.
+   * @param config Optional custom config.
+   */
+  (value: [], config?: ValConfig<any[]>): Val<any[]>;
+  /**
+   * Creates a writable val.
+   * @param value Initial value.
+   * @param config Optional custom config.
+   */
+  <TValue = any>(value: TValue, config?: ValConfig<TValue>): Val<
+    NoInfer<TValue>
+  >;
+  /**
+   * Creates a writable val.
+   * @param value Initial value.
+   * @param config Optional custom config.
+   */
+  <TValue = any>(value?: TValue, config?: ValConfig<TValue | undefined>): Val<
+    NoInfer<TValue>
+  >;
 }
 
-/**
- * Creates a writable val.
- * @returns A val with undefined value.
- */
-export function val<TValue = any>(): Val<NoInfer<TValue> | undefined>;
-/**
- * Creates a writable val.
- * @param value Initial value.
- * @param config Optional custom config.
- */
-export function val(value: [], config?: ValConfig<any[]>): Val<any[]>;
-/**
- * Creates a writable val.
- * @param value Initial value.
- * @param config Optional custom config.
- */
-export function val<TValue = any>(
-  value: TValue,
-  config?: ValConfig<TValue>
-): Val<NoInfer<TValue>>;
-/**
- * Creates a writable val.
- * @param value Initial value.
- * @param config Optional custom config.
- */
-export function val<TValue = any>(
-  value?: TValue,
-  config?: ValConfig<TValue | undefined>
-): Val<NoInfer<TValue>>;
-export function val<TValue = any>(
+export const val: CreateVal = <TValue = any>(
   value?: TValue,
   config?: ValConfig<TValue>
-): Val<NoInfer<TValue | undefined>> {
-  const [val$, set] = readonlyVal(value, config);
-  return attachSetter(val$, set);
-}
+): Val<NoInfer<TValue | undefined>> =>
+  attachSetter(...readonlyVal(value, config));
 
 /**
  * Takes an object of key-value pairs containing `ReadonlyVal` instances and their corresponding `ValSetValue` functions,

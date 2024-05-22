@@ -22,15 +22,6 @@ import { ValImpl } from "./val";
  *   },
  * );
  * ```
- *
- * @example An implementation of the `derive` function:
- * ```ts
- * const derive = (val, transform, config) => from(
- *   () => transform(val.value),
- *   notify => val.subscribe(notify),
- *   config,
- * );
- * ```
  */
 export const from = <TValue = any>(
   getValue: () => TValue,
