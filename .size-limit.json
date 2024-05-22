@@ -5,7 +5,7 @@
     "import": "*"
   },
   {
-    "name": "`{ val }`",
+    "name": "`{ readonlyVal, val }` (core)",
     "path": "src/index.ts",
     "import": "{ val }"
   },
