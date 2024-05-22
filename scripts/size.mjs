@@ -69,7 +69,7 @@ function genSizes(sizes) {
 
 function printResult(sizes) {
   sizes = sizes.map(({ name, size }) => ({
-    name: name.replace(/^`(.*)`$/, (_, p1) => p1),
+    name: name.replace(/`/g, ""),
     size: prettyBytes(size),
   }));
   const maxNameLength = Math.max(...sizes.map(({ name }) => name.length));
