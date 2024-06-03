@@ -109,8 +109,11 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
           this.#invoke(SubMode.Eager);
         }
       }
-      // always schedule an async task for cleaning the Notifying status
-      schedule(this);
+      if (this[SubMode.Async]) {
+        schedule(this);
+      } else {
+        this.status_ &= ~(AgentStatus.Notifying | AgentStatus.ValueChanged);
+      }
     }
   };
 
