@@ -164,13 +164,13 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   private _bumpVersion_(value: TValue): void {
     this._bumpVersion_ = this.equal_?.(value, value)
       ? this._bumpVersionByValue_
-      : this._bumpVersionByNumber_;
+      : this._bumpVersionBySymbol_;
     this._bumpVersion_(value);
   }
 
-  private _bumpVersionByNumber_(value: TValue): void {
+  private _bumpVersionBySymbol_(value: TValue): void {
     this.value_ = value;
-    this.version_ = this.#numberVersion++ | 0;
+    this.version_ = Symbol();
   }
 
   private _bumpVersionByValue_(value: TValue): void {
@@ -181,7 +181,6 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   private [SubMode.Eager] = 0;
   private [SubMode.Computed] = 0;
 
-  #numberVersion = 0;
   #disposeEffect?: () => void;
 
   readonly #getValue: () => TValue;
