@@ -59,7 +59,7 @@ export type ReadonlyReactiveMap<TKey, TValue> = Pick<
   readonly $: ReadonlyVal<ReadonlyReactiveMap<TKey, TValue>>;
 };
 
-export interface ReactiveMapConfig<TKey, TValue> {
+export interface ReactiveMapConfig<TValue> {
   /**
    * A callback function that will be called when an entry is deleted.
    *
@@ -69,7 +69,7 @@ export interface ReactiveMapConfig<TKey, TValue> {
    * - `map.clear()` is called.
    * - `map.dispose()` is called.
    */
-  onDeleted?: (value: TValue, key: TKey) => void;
+  onDeleted?: (value: TValue) => void;
 }
 
 class ReactiveMapImpl<TKey, TValue>
@@ -78,7 +78,7 @@ class ReactiveMapImpl<TKey, TValue>
 {
   public constructor(
     entries?: Iterable<readonly [TKey, TValue]> | null,
-    config?: ReactiveMapConfig<TKey, TValue>
+    config?: ReactiveMapConfig<TValue>
   ) {
     super();
 
@@ -101,14 +101,14 @@ class ReactiveMapImpl<TKey, TValue>
 
   #notify: () => void;
 
-  #onDeleted?: (value: TValue, key: TKey) => void;
+  #onDeleted?: (value: TValue) => void;
 
   #delete(key: TKey): boolean {
     if (this.#onDeleted) {
       if (super.has(key)) {
         const value = super.get(key)!;
         super.delete(key);
-        this.#onDeleted(value, key);
+        this.#onDeleted(value);
         return true;
       }
       return false;
@@ -118,10 +118,10 @@ class ReactiveMapImpl<TKey, TValue>
 
   #clear(): void {
     if (this.#onDeleted) {
-      const deleted = [...this];
+      const deleted = new Set(this.values());
       super.clear();
-      for (const [key, value] of deleted) {
-        this.#onDeleted(value, key);
+      for (const value of deleted) {
+        this.#onDeleted(value);
       }
     } else {
       super.clear();
@@ -162,7 +162,7 @@ class ReactiveMapImpl<TKey, TValue>
       }
       super.set(key, value);
       if (this.#onDeleted) {
-        this.#onDeleted(oldValue, key);
+        this.#onDeleted(oldValue);
       }
     } else {
       super.set(key, value);
@@ -190,21 +190,21 @@ class ReactiveMapImpl<TKey, TValue>
 
   public replace(entries: Iterable<readonly [TKey, TValue]>): Iterable<TValue> {
     const oldMap = new Map(this);
-    const deleted = new Map<TKey, TValue>(this);
-    let isDirty = false;
+    const deleted = new Set<TValue>(this.values());
+    let hasNewValue = false;
     super.clear();
 
     for (const [key, value] of entries) {
-      isDirty =
-        isDirty || !oldMap.has(key) || !Object.is(oldMap.get(key), value);
       super.set(key, value);
-      deleted.delete(key);
+      deleted.delete(value);
+      hasNewValue =
+        hasNewValue || !oldMap.has(key) || !Object.is(oldMap.get(key), value);
     }
 
-    if (isDirty || deleted.size > 0) {
+    if (hasNewValue || deleted.size > 0) {
       if (this.#onDeleted) {
-        for (const [key, value] of deleted) {
-          this.#onDeleted(value, key);
+        for (const value of deleted) {
+          this.#onDeleted(value);
         }
       }
       this.#notify();
@@ -257,5 +257,5 @@ class ReactiveMapImpl<TKey, TValue>
  */
 export const reactiveMap = <TKey, TValue>(
   entries?: Iterable<readonly [TKey, TValue]> | null,
-  config?: ReactiveMapConfig<TKey, TValue>
+  config?: ReactiveMapConfig<TValue>
 ): ReactiveMap<TKey, TValue> => new ReactiveMapImpl(entries, config);

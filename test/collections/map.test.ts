@@ -212,6 +212,12 @@ describe("ReactiveMap", () => {
       expect(map.get("baz")).toEqual(3);
     });
 
+    it("should return deleted same key entries", () => {
+      const map = reactiveMap(Object.entries({ foo: 1, bar: 2 }));
+      const deleted = map.replace(Object.entries({ foo: 3, bar: 4 }));
+      expect([...deleted]).toHaveLength(2);
+    });
+
     it("should notify on replace", () => {
       const map = reactiveMap<string, number>();
       const mockNotify = jest.fn();
@@ -379,6 +385,17 @@ describe("ReactiveMap", () => {
       map.dispose();
       expect(map.size).toBe(0);
       expect(spy).toHaveBeenCalledTimes(1);
+    });
+
+    it("should trigger one onDelete for same value different keys", () => {
+      const spy = jest.fn();
+      const map = reactiveMap(Object.entries({ foo: 2, bar: 2 }), {
+        onDeleted: spy,
+      });
+      const deleted = map.replace(Object.entries({ foo: 3, bar: 4 }));
+      expect([...deleted]).toHaveLength(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(2);
     });
   });
 

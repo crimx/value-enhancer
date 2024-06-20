@@ -54,7 +54,7 @@ npm add value-enhancer
 | `{ compute }`                 | 192 B        |
 | `{ flattenFrom }`             | 227 B        |
 | `{ flatten }`                 | 36 B         |
-| `{ reactiveMap }`             | 479 B        |
+| `{ reactiveMap }`             | 464 B        |
 | `{ reactiveSet }`             | 359 B        |
 | `{ reactiveList }`            | 528 B        |
 
