@@ -20,6 +20,8 @@
   ],
   "sideEffects": false,
   "main": "./dist/index.js",
+  "unpkg": "./dist/index.umd.js",
+  "jsDelivr": "./dist/index.umd.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -54,8 +56,8 @@
     "types": "cross-env NODE_ENV=production tsc --declaration --emitDeclarationOnly --jsx react --esModuleInterop --outDir dist",
     "build:index": "tsup --config tsup-config/index.tsup.config.ts",
     "build:collections": "tsup --config tsup-config/collections.tsup.config.ts",
-    "build": "cross-env NODE_ENV=production pnpm run build:index && cross-env NODE_ENV=production pnpm run build:collections && node scripts/size.mjs",
-    "build:min": "cross-env NODE_ENV=production MINIFY=true pnpm run build:index && cross-env NODE_ENV=production MINIFY=true pnpm run build:collections && node scripts/size.mjs",
+    "build": "cross-env NODE_ENV=production pnpm run build:index && cross-env NODE_ENV=production pnpm run build:collections && node scripts/build-umd.mjs && node scripts/size.mjs",
+    "build:min": "cross-env NODE_ENV=production MINIFY=true pnpm run build:index && cross-env NODE_ENV=production MINIFY=true pnpm run build:collections && node scripts/build-umd.mjs && node scripts/size.mjs",
     "release": "standard-version"
   },
   "devDependencies": {
@@ -71,6 +73,7 @@
     "jest": "^29.5.0",
     "prettier": "^2.8.4",
     "pretty-bytes": "^6.1.0",
+    "rollup": "^3.20.2",
     "size-limit": "^11.1.4",
     "standard-version": "^9.5.0",
     "ts-jest": "^29.1.2",
