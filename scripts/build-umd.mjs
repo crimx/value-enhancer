@@ -4,12 +4,12 @@ import { rollup } from "rollup";
 import { bold, green } from "yoctocolors";
 
 fs.writeFileSync(
-  "dist/dummy.mjs",
+  "dist/temp.mjs",
   `export * from './index.mjs'; export * from './collections.mjs';`
 );
 
 const bundle = await rollup({
-  input: "dist/dummy.mjs",
+  input: "dist/temp.mjs",
 });
 
 const { output } = await bundle.write({
@@ -18,7 +18,7 @@ const { output } = await bundle.write({
   name: "valueEnhancer",
 });
 
-fs.rmSync("dist/dummy.mjs");
+fs.rmSync("dist/temp.mjs");
 
 console.log(
   green("UMD"),
