@@ -1,6 +1,6 @@
 {
   "name": "value-enhancer",
-  "version": "5.4.3",
+  "version": "5.4.4",
   "private": false,
   "description": "Enhance value with plain and explicit reactive wrapper. Think of it as hook-style signals.",
   "license": "MIT",
