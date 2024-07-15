@@ -1,7 +1,16 @@
 import { ValAgent } from "./agent";
-import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
-import { invoke } from "./utils";
+import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
+import { invoke, isVal } from "./utils";
 import { ValImpl } from "./val";
+
+export interface ComputeGet {
+  <T = any>(val$: ReadonlyVal<T>): T;
+  <T = any>(val$?: ReadonlyVal<T>): T | undefined;
+  <T = any>(val$: { $: ReadonlyVal<T> }): T;
+  <T = any>(val$?: { $: ReadonlyVal<T> }): T | undefined;
+  <T = any>(val$: T): UnwrapVal<T>;
+  <T = any>(val$?: T): UnwrapVal<T> | undefined;
+}
 
 /**
  * Create a computed val that subscribes to other vals dynamically.
@@ -25,7 +34,7 @@ import { ValImpl } from "./val";
  * ```
  */
 export const compute = <TValue = any>(
-  effect: (get: <T = any>(val$: ReadonlyVal<T>) => T) => TValue,
+  effect: (get: ComputeGet) => TValue,
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> => {
   let scopeLevel = 0;
@@ -33,17 +42,28 @@ export const compute = <TValue = any>(
   let currentDisposers = new Map<ReadonlyVal, ValDisposer>();
   let oldDisposers = new Map<ReadonlyVal, ValDisposer>();
 
-  const get = <T>(val$: ReadonlyVal<T>): T => {
-    if (!currentDisposers.has(val$)) {
-      let disposer = oldDisposers.get(val$);
-      if (disposer) {
-        oldDisposers.delete(val$);
-      } else {
-        disposer = val$.$valCompute(agent.notify_);
+  const get = <T = any>(
+    maybeVal$?: T | ReadonlyVal<T> | { $: ReadonlyVal<T> }
+  ): T | undefined => {
+    const val$ = isVal(maybeVal$)
+      ? maybeVal$
+      : isVal((maybeVal$ as { $: ReadonlyVal<T> } | undefined)?.$)
+      ? (maybeVal$ as { $: ReadonlyVal<T> }).$
+      : (maybeVal$ as T | undefined);
+
+    if (isVal(val$)) {
+      if (!currentDisposers.has(val$)) {
+        let disposer = oldDisposers.get(val$);
+        if (disposer) {
+          oldDisposers.delete(val$);
+        } else {
+          disposer = val$.$valCompute(agent.notify_);
+        }
+        currentDisposers.set(val$, disposer);
       }
-      currentDisposers.set(val$, disposer);
+      return val$.value;
     }
-    return val$.value;
+    return val$;
   };
 
   const agent = new ValAgent(
