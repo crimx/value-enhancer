@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.4.3](https://github.com/crimx/value-enhancer/compare/v5.4.2...v5.4.3) (2024-07-15)
+
 ### [5.4.2](https://github.com/crimx/value-enhancer/compare/v5.4.1...v5.4.2) (2024-06-20)
 
 
