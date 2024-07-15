@@ -7,7 +7,9 @@
     "source.addMissingImports": "explicit",
     "source.organizeImports": "explicit"
   },
+  "eslint.enable": true,
   "eslint.validate": ["javascript", "javascriptreact", "html", "vue", "svelte"],
+  "prettier.enable": true,
   "typescript.tsdk": "node_modules/typescript/lib",
   "[html]": {
     "editor.formatOnSave": true,
