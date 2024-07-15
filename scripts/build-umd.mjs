@@ -15,7 +15,7 @@ const bundle = await rollup({
 const { output } = await bundle.write({
   format: "umd",
   file: "dist/index.umd.js",
-  name: "valueEnhancer",
+  name: "ValueEnhancer",
 });
 
 fs.rmSync("dist/temp.mjs");
