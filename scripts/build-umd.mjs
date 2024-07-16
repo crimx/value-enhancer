@@ -1,3 +1,4 @@
+import replace from "@rollup/plugin-replace";
 import fs from "node:fs";
 import prettyBytes from "pretty-bytes";
 import { rollup } from "rollup";
@@ -10,6 +11,14 @@ fs.writeFileSync(
 
 const bundle = await rollup({
   input: "dist/temp.mjs",
+  plugins: [
+    replace({
+      preventAssignment: true,
+      values: {
+        "process.env.NODE_ENV": '"production"',
+      },
+    }),
+  ],
 });
 
 const { output } = await bundle.write({

@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
+    "@rollup/plugin-replace": "^5.0.7",
     "@size-limit/esbuild": "^11.1.4",
     "@size-limit/file": "^11.1.4",
     "@types/node": "^18.15.0",
