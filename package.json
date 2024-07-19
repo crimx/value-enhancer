@@ -21,7 +21,7 @@
   "sideEffects": false,
   "main": "./dist/index.js",
   "unpkg": "./dist/index.umd.js",
-  "jsDelivr": "./dist/index.umd.js",
+  "jsdelivr": "./dist/index.umd.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
