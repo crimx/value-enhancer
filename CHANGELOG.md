@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.4.6](https://github.com/crimx/value-enhancer/compare/v5.4.5...v5.4.6) (2024-07-19)
+
+
+### Bug Fixes
+
+* use lowercase `jsdelivr` ([#3](https://github.com/crimx/value-enhancer/issues/3)) ([b839826](https://github.com/crimx/value-enhancer/commit/b839826b14e336e5ec7317816fb6873c75b9278d))
+
 ### [5.4.5](https://github.com/crimx/value-enhancer/compare/v5.4.4...v5.4.5) (2024-07-16)
 
 ### [5.4.4](https://github.com/crimx/value-enhancer/compare/v5.4.3...v5.4.4) (2024-07-15)
