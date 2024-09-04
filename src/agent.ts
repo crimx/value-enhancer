@@ -199,12 +199,12 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
 export class RefValAgent<TValue = any> implements IValAgent {
   readonly #subs = new WeakSet<ValSubscriber<TValue>>();
 
-  public constructor(subs: IValAgent<TValue>) {
-    this.sourceAgent_ = subs.sourceAgent_;
-    this.eager_ = subs.eager_;
-    this.resolveValue_ = subs.resolveValue_;
-    this.notify_ = subs.notify_;
-    this.subs_ = subs.subs_;
+  public constructor(agent: IValAgent<TValue>) {
+    this.sourceAgent_ = agent.sourceAgent_;
+    this.eager_ = agent.eager_;
+    this.resolveValue_ = agent.resolveValue_;
+    this.notify_ = agent.notify_;
+    this.subs_ = agent.subs_;
   }
 
   public get version_(): ValVersion {

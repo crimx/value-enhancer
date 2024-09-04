@@ -48,7 +48,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   public get: (this: void) => TValue;
 
   public ref(writable?: boolean): ReadonlyVal<TValue> {
-    const val$ = new ValImpl(new RefValAgent(this.#agent.sourceAgent_));
+    const val$ = new ValImpl(new RefValAgent(this.#agent));
     return writable && this.set ? attachSetter(val$, this.set) : val$;
   }
 
