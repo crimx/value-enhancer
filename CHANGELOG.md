@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.5.0](https://github.com/crimx/value-enhancer/compare/v5.4.6...v5.5.0) (2024-09-04)
+
+
+### Features
+
+* **reactive-map:** add rename ([a7080de](https://github.com/crimx/value-enhancer/commit/a7080de84968323ff253774506a990ded4e5a69a))
+
 ### [5.4.6](https://github.com/crimx/value-enhancer/compare/v5.4.5...v5.4.6) (2024-07-19)
 
 
