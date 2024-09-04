@@ -43,32 +43,30 @@ export const compute = <TValue = any>(
   let oldDisposers = new Map<ReadonlyVal, ValDisposer>();
 
   const get = <T = any>(
-    maybeVal$?: T | ReadonlyVal<T> | { $: ReadonlyVal<T> }
+    val$?: T | ReadonlyVal<T> | { $: ReadonlyVal<T> }
   ): T | undefined => {
-    const val$ = isVal(maybeVal$)
-      ? maybeVal$
-      : isVal((maybeVal$ as { $: ReadonlyVal<T> } | undefined)?.$)
-      ? (maybeVal$ as { $: ReadonlyVal<T> }).$
-      : (maybeVal$ as T | undefined);
-
-    if (isVal(val$)) {
-      if (!currentDisposers.has(val$)) {
-        let disposer = oldDisposers.get(val$);
-        if (disposer) {
-          oldDisposers.delete(val$);
-        } else {
-          disposer = val$.$valCompute(agent.notify_);
-        }
-        currentDisposers.set(val$, disposer);
+    if (!isVal(val$)) {
+      if (!isVal((val$ as { $: ReadonlyVal<T> } | undefined)?.$)) {
+        return val$ as T | undefined;
       }
-      return val$.value;
+      val$ = (val$ as { $: ReadonlyVal<T> }).$;
     }
-    return val$;
+
+    if (!currentDisposers.has(val$)) {
+      let disposer = oldDisposers.get(val$);
+      if (disposer) {
+        oldDisposers.delete(val$);
+      } else {
+        disposer = val$.$valCompute(agent.notify_);
+      }
+      currentDisposers.set(val$, disposer);
+    }
+    return val$.value;
   };
 
   const agent = new ValAgent(
     () => {
-      if (++scopeLevel === 1) {
+      if (!scopeLevel++) {
         const tmp = currentDisposers;
         currentDisposers = oldDisposers;
         oldDisposers = tmp;
@@ -76,7 +74,7 @@ export const compute = <TValue = any>(
 
       const value = effect(get);
 
-      if (--scopeLevel === 0 && oldDisposers.size) {
+      if (!--scopeLevel && oldDisposers.size) {
         oldDisposers.forEach(invoke);
         oldDisposers.clear();
       }
