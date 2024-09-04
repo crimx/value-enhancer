@@ -48,7 +48,7 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   public get: (this: void) => TValue;
 
   public ref(writable?: boolean): ReadonlyVal<TValue> {
-    const val$ = new ValImpl(new RefValAgent(this.#agent));
+    const val$ = new ValImpl(new RefValAgent(this.#agent.sourceAgent_));
     return writable && this.set ? attachSetter(val$, this.set) : val$;
   }
 
@@ -186,7 +186,7 @@ interface CreateVal {
    * Creates a writable val.
    * @returns A val with undefined value.
    */
-  <TValue = any>(): Val<NoInfer<TValue> | undefined>;
+  <TValue = any>(): Val<TValue | undefined>;
   /**
    * Creates a writable val.
    * @param value Initial value.

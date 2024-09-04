@@ -26,6 +26,7 @@ export interface IValAgent<TValue = any> {
   subs_: Map<ValSubscriber<TValue>, SubMode>;
   version_: ValVersion;
   eager_?: boolean;
+  sourceAgent_: IValAgent;
   resolveValue_: () => TValue;
   notify_: () => void;
   add_(subscriber: ValSubscriber, mode: SubMode): () => void;
@@ -67,6 +68,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     }
   }
 
+  public readonly sourceAgent_: IValAgent<TValue> = this;
   public readonly subs_ = new Map<ValSubscriber<TValue>, SubMode>();
   public status_ = AgentStatus.NeedResolveValue;
   public version_: ValVersion;
@@ -195,11 +197,10 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
 }
 
 export class RefValAgent<TValue = any> implements IValAgent {
-  readonly #agent: IValAgent<TValue>;
   readonly #subs = new WeakSet<ValSubscriber<TValue>>();
 
   public constructor(subs: IValAgent<TValue>) {
-    this.#agent = subs;
+    this.sourceAgent_ = subs.sourceAgent_;
     this.eager_ = subs.eager_;
     this.resolveValue_ = subs.resolveValue_;
     this.notify_ = subs.notify_;
@@ -207,9 +208,10 @@ export class RefValAgent<TValue = any> implements IValAgent {
   }
 
   public get version_(): ValVersion {
-    return this.#agent.version_;
+    return this.sourceAgent_.version_;
   }
 
+  public readonly sourceAgent_: IValAgent<TValue>;
   public readonly subs_: Map<ValSubscriber<TValue>, SubMode>;
   public eager_?: boolean | undefined;
   public resolveValue_: () => any;
@@ -217,17 +219,17 @@ export class RefValAgent<TValue = any> implements IValAgent {
 
   public add_(subscriber: ValSubscriber<any>, mode: SubMode): () => void {
     this.#subs.add(subscriber);
-    return this.#agent.add_(subscriber, mode);
+    return this.sourceAgent_.add_(subscriber, mode);
   }
 
   public remove_(subscriber?: ((...args: any[]) => any) | undefined): void {
     if (subscriber) {
       if (this.#subs.has(subscriber)) {
         this.#subs.delete(subscriber);
-        this.#agent.remove_(subscriber);
+        this.sourceAgent_.remove_(subscriber);
       }
     } else {
-      for (const sub of this.#agent.subs_.keys()) {
+      for (const sub of this.sourceAgent_.subs_.keys()) {
         this.remove_(sub);
       }
     }
