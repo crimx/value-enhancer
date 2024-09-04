@@ -201,6 +201,64 @@ describe("ReactiveMap", () => {
     });
   });
 
+  describe("rename", () => {
+    it("should rename a key", () => {
+      const map = reactiveMap<string, number>();
+      map.set("foo", 1);
+      map.rename("foo", "bar");
+      expect(map.get("foo")).toBeUndefined();
+      expect(map.get("bar")).toBe(1);
+    });
+
+    it("should notify on rename", () => {
+      const map = reactiveMap<string, number>();
+      map.set("foo", 1);
+      const mockNotify = jest.fn();
+      const dispose = map.$.reaction(mockNotify, true);
+
+      map.rename("foo", "bar");
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(mockNotify).toHaveBeenCalledWith(map);
+
+      dispose();
+    });
+
+    it("should not notify on rename if the element does not exist.", () => {
+      const map = reactiveMap<string, number>();
+      const mockNotify = jest.fn();
+      const dispose = map.$.reaction(mockNotify, true);
+
+      map.rename("foo", "bar");
+      expect(mockNotify).not.toHaveBeenCalled();
+
+      dispose();
+    });
+
+    it("should not notify on rename if the key is the same.", () => {
+      const map = reactiveMap<string, number>();
+      map.set("foo", 1);
+      const mockNotify = jest.fn();
+      const dispose = map.$.reaction(mockNotify, true);
+
+      map.rename("foo", "foo");
+      expect(mockNotify).not.toHaveBeenCalled();
+
+      dispose();
+    });
+
+    it("should overwrite the value if the new key already exists", () => {
+      const spy = jest.fn();
+      const map = reactiveMap<string, number>(null, { onDeleted: spy });
+      map.set("foo", 1);
+      map.set("bar", 2);
+      map.rename("foo", "bar");
+      expect(map.get("foo")).toBeUndefined();
+      expect(map.get("bar")).toBe(1);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).lastCalledWith(2);
+    });
+  });
+
   describe("replace", () => {
     it("should replace all entries", () => {
       const map = reactiveMap<string, number>();

@@ -24,7 +24,16 @@ export interface ReactiveMap<TKey, TValue> extends Map<TKey, TValue> {
   batchSet(entries: Iterable<readonly [TKey, TValue]>): this;
 
   /**
-   * Replace all entries in the Map.
+   * Rename a key in the Map. Will not trigger `onDeleted` callback for the old key.
+   *
+   * If the oldKey does not exist, this method does nothing. If the newKey already exists, it will be overwritten.
+   *
+   * @returns `true` if oldKey exists.
+   */
+  rename(oldKey: TKey, newKey: TKey): boolean;
+
+  /**
+   * Replace all entries in the Map. Will not trigger `onDeleted` callback for values that stay in the map.
    *
    * @returns Deleted values.
    */
@@ -186,6 +195,17 @@ class ReactiveMapImpl<TKey, TValue>
       this.#notify();
     }
     return this;
+  }
+
+  public rename(oldKey: TKey, newKey: TKey): boolean {
+    if (!strictEqual(oldKey, newKey)) {
+      const value = this.get(oldKey);
+      if (super.delete(oldKey)) {
+        this.set(newKey, value!);
+        return true;
+      }
+    }
+    return false;
   }
 
   public replace(entries: Iterable<readonly [TKey, TValue]>): Iterable<TValue> {
