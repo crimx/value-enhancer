@@ -34,4 +34,4 @@ jobs:
 
       - name: Build 🔧
         run: |
-          pnpm run build
+          pnpm run build:min

@@ -9,9 +9,9 @@ import type {
   ValVersion,
 } from "./typings";
 
-import type { IValAgent } from "./agent";
-import { RefValAgent, SubMode, ValAgent } from "./agent";
 import { attachSetter, invoke } from "./utils";
+import type { V } from "./v";
+import { RefV, RootV, SubMode } from "./v";
 
 /**
  * Bare minimum implementation of a readonly val.
@@ -21,18 +21,17 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   /**
    * Manage subscribers for a val.
    */
-  readonly #agent: IValAgent<TValue>;
+  readonly #v: V<TValue>;
 
-  public constructor(agent: IValAgent<TValue>) {
-    this.#agent = agent;
-    this.get = agent.resolveValue_;
-    agent.resolveValue_();
+  public constructor(v: V<TValue>) {
+    this.#v = v;
+    this.get = v.resolveValue_;
   }
 
   public get $version(): ValVersion {
     // resolve current value for the latest version
     this.get();
-    return this.#agent.version_;
+    return this.#v.version_;
   }
 
   public get value(): TValue {
@@ -48,20 +47,20 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   public get: (this: void) => TValue;
 
   public ref(writable?: boolean): ReadonlyVal<TValue> {
-    const val$ = new ValImpl(new RefValAgent(this.#agent));
+    const val$ = new ValImpl(new RefV(this.#v.rootV_));
     return writable && this.set ? attachSetter(val$, this.set) : val$;
   }
 
   public reaction(
     subscriber: ValSubscriber<TValue>,
-    eager = this.#agent.eager_
+    eager = this.#v.eager_
   ): ValDisposer {
-    return this.#agent.add_(subscriber, eager ? SubMode.Eager : SubMode.Async);
+    return this.#v.add_(subscriber, eager ? SubMode.Eager : SubMode.Async);
   }
 
   public subscribe(
     subscriber: ValSubscriber<TValue>,
-    eager = this.#agent.eager_
+    eager = this.#v.eager_
   ): ValDisposer {
     const disposer = this.reaction(subscriber, eager);
     invoke(subscriber, this.get());
@@ -69,15 +68,15 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
   }
 
   public $valCompute(subscriber: ValSubscriber<void>): ValDisposer {
-    return this.#agent.add_(subscriber, SubMode.Computed);
+    return this.#v.add_(subscriber, SubMode.Computed);
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {
-    this.#agent.remove_(subscriber);
+    this.#v.remove_(subscriber);
   }
 
   public dispose(): void {
-    this.#agent.dispose_();
+    this.#v.dispose_();
   }
 
   /**
@@ -167,7 +166,7 @@ export const readonlyVal: CreateReadonlyVal = <TValue = any>(
 
   const get = () => currentValue;
 
-  const subs = new ValAgent(get, config);
+  const subs = new RootV(get, config);
 
   const set = (value: TValue | undefined): void => {
     if (!subs.equal_?.(value, currentValue)) {

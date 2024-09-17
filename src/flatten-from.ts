@@ -6,8 +6,8 @@ import type {
   ValVersion,
 } from "./typings";
 
-import { AgentStatus, ValAgent } from "./agent";
 import { INIT_VALUE, isVal, strictEqual } from "./utils";
+import { RootV } from "./v";
 import { ValImpl } from "./val";
 
 /**
@@ -32,7 +32,7 @@ export const flattenFrom = <TValOrValue = any>(
   let needCheckOuterVal = true;
   const useDefaultEqual = config?.equal == null;
 
-  const agent = new ValAgent(
+  const v = new RootV(
     () => {
       if (needCheckOuterVal) {
         needCheckOuterVal = false;
@@ -43,7 +43,7 @@ export const flattenFrom = <TValOrValue = any>(
         if (isVal(currentMaybeVal)) {
           if (!strictEqual(currentMaybeVal, lastMaybeVal)) {
             innerDisposer?.();
-            innerDisposer = currentMaybeVal.$valCompute(agent.notify_);
+            innerDisposer = currentMaybeVal.$valCompute(v.notify_);
           }
         } else {
           innerDisposer &&= innerDisposer();
@@ -53,13 +53,13 @@ export const flattenFrom = <TValOrValue = any>(
       if (isVal(currentMaybeVal)) {
         const lastValVersion = currentValVersion;
         currentValVersion = currentMaybeVal.$version;
-        if (
-          useDefaultEqual &&
-          agent.status_ & AgentStatus.Notifying &&
-          !strictEqual(currentValVersion, lastValVersion)
-        ) {
-          agent.status_ |= AgentStatus.ValueChanged;
-        }
+        // if (
+        //   useDefaultEqual &&
+        //   agent.status_ & AgentStatus.Notifying &&
+        //   !strictEqual(currentValVersion, lastValVersion)
+        // ) {
+        //   agent.status_ |= AgentStatus.ValueChanged;
+        // }
         return currentMaybeVal.value;
       } else {
         currentValVersion = INIT_VALUE;
@@ -79,5 +79,5 @@ export const flattenFrom = <TValOrValue = any>(
     }
   );
 
-  return new ValImpl(agent);
+  return new ValImpl(v);
 };

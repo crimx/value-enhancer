@@ -1,49 +1,49 @@
 [
   {
     "name": "`*`",
-    "path": "src/index.ts",
+    "path": "dist/index.mjs",
     "import": "*"
   },
   {
     "name": "`{ readonlyVal, val }` (core)",
-    "path": "src/index.ts",
-    "import": "{ val }"
+    "path": "dist/index.mjs",
+    "import": "{ readonlyVal, val }"
   },
   {
     "name": "`{ from }`",
     "path": "src/from.ts",
     "import": "{ from }",
-    "ignore": ["./val", "./agent"]
+    "ignore": ["./val", "./v"]
   },
   {
     "name": "`{ derive }`",
     "path": "src/derive.ts",
     "import": "{ derive }",
-    "ignore": ["./val", "./agent", "./from"]
+    "ignore": ["./val", "./v", "./from"]
   },
   {
     "name": "`{ combine }`",
     "path": "src/combine.ts",
     "import": "{ combine }",
-    "ignore": ["./val", "./agent", "./from"]
+    "ignore": ["./val", "./v", "./from"]
   },
   {
     "name": "`{ compute }`",
     "path": "src/compute.ts",
     "import": "{ compute }",
-    "ignore": ["./val", "./agent", "./from"]
+    "ignore": ["./val", "./v", "./from"]
   },
   {
     "name": "`{ flattenFrom }`",
     "path": "src/flatten-from.ts",
     "import": "{ flattenFrom }",
-    "ignore": ["./val", "./agent"]
+    "ignore": ["./val", "./v"]
   },
   {
     "name": "`{ flatten }`",
     "path": "src/flatten.ts",
     "import": "{ flatten }",
-    "ignore": ["./val", "./agent", "./flatten-from"]
+    "ignore": ["./val", "./v", "./flatten-from"]
   },
   {
     "name": "`{ reactiveMap }`",

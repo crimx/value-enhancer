@@ -49,7 +49,6 @@
   "scripts": {
     "prepublishOnly": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check . && tsc --noEmit",
-    "size-limit": "size-limit",
     "test": "node --expose-gc ./node_modules/jest/bin/jest.js --runInBand",
     "test:coverage": "tsc --noEmit -p ./test/tsconfig.json && node --expose-gc ./node_modules/jest/bin/jest.js --collect-coverage",
     "docs": "typedoc --options typedoc.json",
@@ -57,7 +56,7 @@
     "build:index": "tsup --config tsup-config/index.tsup.config.ts",
     "build:collections": "tsup --config tsup-config/collections.tsup.config.ts",
     "build": "cross-env NODE_ENV=production pnpm run build:index && cross-env NODE_ENV=production pnpm run build:collections && node scripts/build-umd.mjs && node scripts/size.mjs",
-    "build:min": "cross-env NODE_ENV=production MINIFY=true pnpm run build:index && cross-env NODE_ENV=production MINIFY=true pnpm run build:collections && node scripts/build-umd.mjs && node scripts/size.mjs",
+    "build:min": "cross-env NODE_ENV=production MINIFY=true pnpm run build:index && cross-env NODE_ENV=production MINIFY=true pnpm run build:collections && node scripts/build-umd.mjs && cross-env WRITE_FILE=true node scripts/size.mjs --write",
     "release": "standard-version"
   },
   "devDependencies": {

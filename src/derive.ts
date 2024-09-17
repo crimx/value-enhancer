@@ -1,4 +1,4 @@
-import type { ReadonlyVal, ValConfig } from "./typings";
+import type { ReadonlyVal, ValConfig, ValVersion } from "./typings";
 
 import { from } from "./from";
 import { identity, INIT_VALUE, strictEqual } from "./utils";
@@ -43,7 +43,7 @@ export const derive: Derive = <
   config?: ValConfig<TValue>
 ): ReadonlyVal<TValue> => {
   let cachedValue: TValue;
-  let cachedSrcVersion: TSrcValue = INIT_VALUE;
+  let cachedSrcVersion: ValVersion = INIT_VALUE;
 
   return from(
     () => {

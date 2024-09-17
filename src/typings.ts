@@ -127,7 +127,7 @@ export interface ValConfig<TValue = any> {
   readonly eager?: boolean;
 }
 
-export type ValVersion = any;
+export type ValVersion = unknown;
 
 export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
 

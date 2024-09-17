@@ -1,5 +1,5 @@
-import { ValAgent } from "./agent";
 import type { ReadonlyVal, ValConfig, ValDisposer } from "./typings";
+import { RootV } from "./v";
 import { ValImpl } from "./val";
 
 /**
@@ -27,4 +27,4 @@ export const from = <TValue = any>(
   getValue: () => TValue,
   onChange: (notify: () => void) => ValDisposer | void | undefined,
   config?: ValConfig<TValue>
-): ReadonlyVal<TValue> => new ValImpl(new ValAgent(getValue, config, onChange));
+): ReadonlyVal<TValue> => new ValImpl(new RootV(getValue, config, onChange));

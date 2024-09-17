@@ -19,6 +19,12 @@ async function main() {
 
   const sizes = JSON.parse(result.output.join("\n"));
 
+  printResult(sizes);
+
+  if (!process.env.WRITE_FILE) {
+    return;
+  }
+
   const readmePath = join(__dirname, "..", "README.md");
 
   const readmeOrigin = readFileSync(readmePath, "utf8");
@@ -46,8 +52,6 @@ async function main() {
   }
 
   writeFileSync(readmePath, readme, "utf8");
-
-  printResult(sizes);
 }
 
 async function formatMarkdown(source, path) {

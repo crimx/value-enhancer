@@ -1,6 +1,11 @@
-import { ValAgent } from "./agent";
-import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
-import { invoke, isVal } from "./utils";
+import type {
+  ReadonlyVal,
+  UnwrapVal,
+  ValConfig,
+  ValSubscriber,
+} from "./typings";
+import { isVal } from "./utils";
+import { RootV } from "./v";
 import { ValImpl } from "./val";
 
 export interface ComputeGet {
@@ -39,8 +44,8 @@ export const compute = <TValue = any>(
 ): ReadonlyVal<TValue> => {
   let scopeLevel = 0;
 
-  let currentDisposers = new Map<ReadonlyVal, ValDisposer>();
-  let oldDisposers = new Map<ReadonlyVal, ValDisposer>();
+  let currentDisposers = new Set<ReadonlyVal>();
+  let oldDisposers = new Set<ReadonlyVal>();
 
   const get = <T = any>(
     val$?: T | ReadonlyVal<T> | { $: ReadonlyVal<T> }
@@ -53,18 +58,18 @@ export const compute = <TValue = any>(
     }
 
     if (!currentDisposers.has(val$)) {
-      let disposer = oldDisposers.get(val$);
-      if (disposer) {
+      if (oldDisposers.has(val$)) {
         oldDisposers.delete(val$);
       } else {
-        disposer = val$.$valCompute(agent.notify_);
+        val$.$valCompute(v.notify_);
       }
-      currentDisposers.set(val$, disposer);
+      currentDisposers.add(val$);
     }
+
     return val$.value;
   };
 
-  const agent = new ValAgent(
+  const v: RootV<TValue> = new RootV(
     () => {
       if (!scopeLevel++) {
         const tmp = currentDisposers;
@@ -74,21 +79,22 @@ export const compute = <TValue = any>(
 
       const value = effect(get);
 
-      if (!--scopeLevel && oldDisposers.size) {
-        oldDisposers.forEach(invoke);
-        oldDisposers.clear();
+      if (!--scopeLevel) {
+        clear(oldDisposers, v.notify_);
       }
 
       return value;
     },
     config,
-    () => () => {
-      if (currentDisposers.size) {
-        currentDisposers.forEach(invoke);
-        currentDisposers.clear();
-      }
-    }
+    () => () => clear(currentDisposers, v.notify_)
   );
 
-  return new ValImpl(agent);
+  return new ValImpl(v);
+};
+
+const clear = (vals: Set<ReadonlyVal>, fn: ValSubscriber<void>) => {
+  for (const $ of vals) {
+    $.unsubscribe(fn);
+  }
+  vals.clear();
 };

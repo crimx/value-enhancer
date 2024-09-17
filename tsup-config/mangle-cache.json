@@ -3,15 +3,13 @@
   "subs_": "b",
   "dispose_": "d",
   "eager_": "e",
-  "sourceAgent_": "g",
+  "_getVersion_": "g",
   "notify_": "n",
+  "rootV_": "o",
   "equal_": "q",
   "remove_": "r",
   "status_": "s",
   "runTask_": "t",
   "resolveValue_": "u",
-  "version_": "v",
-  "_bumpVersion_": "w",
-  "_bumpVersionBySymbol_": "x",
-  "_bumpVersionByValue_": "y"
+  "version_": "v"
 }

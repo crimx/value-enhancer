@@ -1,5 +1,7 @@
 import { defineConfig } from "tsup";
 
+const minify = Boolean(process.env.MINIFY);
+
 export default defineConfig({
   entry: {
     collections: "src/collections/index.ts",
@@ -10,7 +12,8 @@ export default defineConfig({
   clean: false,
   treeshake: true,
   dts: true,
-  minify: Boolean(process.env.MINIFY),
+  minify,
+  define: minify ? { "process.env.NODE_ENV": '"production"' } : void 0,
   esbuildOptions: options => {
     options.mangleProps = /[^_]_$/;
     options.mangleCache = require("./mangle-cache.json");

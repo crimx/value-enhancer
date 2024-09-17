@@ -330,7 +330,7 @@ describe("from", () => {
       };
     });
 
-    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyGetValue).toBeCalledTimes(0);
     expect(spyOnChange).toBeCalledTimes(1);
 
     expect(v$.value).toBe(1);
@@ -392,14 +392,17 @@ describe("from", () => {
       };
     });
 
-    expect(spyGetValue).toBeCalledTimes(1);
+    expect(spyGetValue).toBeCalledTimes(0);
     expect(spyListen).toBeCalledTimes(1);
 
     spyGetValue.mockClear();
     spyListen.mockClear();
 
     expect(v$.value).toBe(1);
-    expect(spyGetValue).toBeCalledTimes(0);
+    expect(spyGetValue).toBeCalledTimes(1);
+
+    spyGetValue.mockClear();
+    spyListen.mockClear();
 
     set(2);
 
