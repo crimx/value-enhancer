@@ -1,6 +1,6 @@
 import { ValAgent } from "./agent";
-import type { ReadonlyVal, UnwrapVal, ValConfig, ValDisposer } from "./typings";
-import { invoke, isVal } from "./utils";
+import type { ReadonlyVal, UnwrapVal, ValConfig, ValVersion } from "./typings";
+import { INIT_VALUE, isVal, strictEqual } from "./utils";
 import { ValImpl } from "./val";
 
 export interface ComputeGet {
@@ -39,8 +39,8 @@ export const compute = <TValue = any>(
 ): ReadonlyVal<TValue> => {
   let scopeLevel = 0;
 
-  let currentDisposers = new Map<ReadonlyVal, ValDisposer>();
-  let oldDisposers = new Map<ReadonlyVal, ValDisposer>();
+  let currentDeps = new Map<ReadonlyVal, ValVersion>();
+  let oldDeps = new Map<ReadonlyVal, ValVersion>();
 
   const get = <T = any>(
     val$?: T | ReadonlyVal<T> | { $: ReadonlyVal<T> }
@@ -52,40 +52,61 @@ export const compute = <TValue = any>(
       val$ = (val$ as { $: ReadonlyVal<T> }).$;
     }
 
-    if (!currentDisposers.has(val$)) {
-      let disposer = oldDisposers.get(val$);
-      if (disposer) {
-        oldDisposers.delete(val$);
-      } else {
-        disposer = val$.$valCompute(agent.notify_);
+    if (currentDeps.has(val$)) {
+      if (!strictEqual(val$.$version, currentDeps.get(val$))) {
+        // depends on multiple versions of the same val
+        // so we set a unique version here
+        currentDeps.set(val$, INIT_VALUE);
       }
-      currentDisposers.set(val$, disposer);
+    } else {
+      if (!oldDeps.delete(val$)) {
+        val$.$valCompute(agent.notify_);
+      }
+      currentDeps.set(val$, val$.$version);
     }
+
     return val$.value;
   };
 
+  let currentValue: TValue;
   const agent = new ValAgent(
     () => {
-      if (!scopeLevel++) {
-        const tmp = currentDisposers;
-        currentDisposers = oldDisposers;
-        oldDisposers = tmp;
+      if (!scopeLevel) {
+        if (currentDeps.size) {
+          x: {
+            for (const [dep, version] of currentDeps) {
+              if (!strictEqual(dep.$version, version)) {
+                break x;
+              }
+            }
+            return currentValue;
+          }
+        }
+
+        const tmp = currentDeps;
+        currentDeps = oldDeps;
+        oldDeps = tmp;
+        scopeLevel++;
       }
 
-      const value = effect(get);
+      currentValue = effect(get);
 
-      if (!--scopeLevel && oldDisposers.size) {
-        oldDisposers.forEach(invoke);
-        oldDisposers.clear();
+      if (!--scopeLevel && oldDeps.size) {
+        for (const dep of oldDeps.keys()) {
+          dep.unsubscribe(agent.notify_);
+        }
+        oldDeps.clear();
       }
 
-      return value;
+      return currentValue;
     },
     config,
     () => () => {
-      if (currentDisposers.size) {
-        currentDisposers.forEach(invoke);
-        currentDisposers.clear();
+      if (currentDeps.size) {
+        for (const dep of currentDeps.keys()) {
+          dep.unsubscribe(agent.notify_);
+        }
+        currentDeps.clear();
       }
     }
   );

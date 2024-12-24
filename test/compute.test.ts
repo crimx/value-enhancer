@@ -100,4 +100,36 @@ describe("compute", () => {
 
     s$.dispose();
   });
+
+  it("should check deps before compute", async () => {
+    const a = val(0);
+
+    const spyB = jest.fn();
+    const b = compute(get => {
+      spyB();
+      return get(a) > 10;
+    });
+
+    const spyC = jest.fn();
+    const c = compute(get => {
+      spyC();
+      return get(b) + "";
+    });
+
+    const spySub = jest.fn();
+    c.reaction(spySub, true);
+
+    expect(spyB).toBeCalledTimes(1);
+    expect(spyC).toBeCalledTimes(1);
+    expect(spySub).toBeCalledTimes(0);
+
+    spyB.mockClear();
+    spyC.mockClear();
+
+    a.set(2);
+
+    expect(spyB).toBeCalledTimes(1);
+    expect(spyC).toBeCalledTimes(0);
+    expect(spySub).toBeCalledTimes(0);
+  });
 });
