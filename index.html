@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html class="default" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="IE=edge" />
+    <title>value-enhancer - v5.5.1</title>
+    <meta name="description" content="Documentation for value-enhancer" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="assets/style.css" />
+    <link rel="stylesheet" href="assets/highlight.css" />
+    <link rel="stylesheet" href="assets/custom.css" />
+    <script defer src="assets/main.js"></script>
+    <script async src="assets/icons.js" id="tsd-icons-script"></script>
+    <script async src="assets/search.js" id="tsd-search-script"></script>
+    <script async src="assets/navigation.js" id="tsd-nav-script"></script>
+  </head>
+  <body>
+    <script>
+      document.documentElement.dataset.theme =
+        localStorage.getItem("tsd-theme") || "os";
+      document.body.style.display = "none";
+      setTimeout(
+        () =>
+          app ? app.showPage() : document.body.style.removeProperty("display"),
+        500
+      );
+    </script>
+    <header class="tsd-page-toolbar">
+      <div class="tsd-toolbar-contents container">
+        <div class="table-cell" id="tsd-search" data-base=".">
+          <div class="field">
+            <label
+              for="tsd-search-field"
+              class="tsd-widget tsd-toolbar-icon search no-caption"
+              ><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <use href="assets/icons.svg#icon-search"></use></svg></label
+            ><input type="text" id="tsd-search-field" aria-label="Search" />
+          </div>
+          <div class="field"><div id="tsd-toolbar-links"></div></div>
+          <ul class="results">
+            <li class="state loading">Preparing search index...</li>
+            <li class="state failure">The search index is not available</li>
+          </ul>
+          <a href="index.html" class="title">value-enhancer - v5.5.1</a>
+        </div>
+        <div class="table-cell" id="tsd-widgets">
+          <a
+            href="#"
+            class="tsd-widget tsd-toolbar-icon menu no-caption"
+            data-toggle="menu"
+            aria-label="Menu"
+            ><svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <use href="assets/icons.svg#icon-menu"></use></svg
+          ></a>
+        </div>
+      </div>
+    </header>
+    <div class="container container-main">
+      <div class="col-content">
+        <div class="tsd-page-title"><h2>value-enhancer - v5.5.1</h2></div>
+        <div class="tsd-panel tsd-typography">
+          <a id="md:value-enhancer" class="tsd-anchor"></a>
+          <h1>
+            <a href="#md:value-enhancer"
+              ><a href="https://github.com/crimx/value-enhancer"
+                >value-enhancer</a
+              ></a
+            >
+          </h1>
+          <p align="center">
+            <img
+              width="200"
+              src="https://raw.githubusercontent.com/crimx/value-enhancer/main/assets/value-enhancer.svg"
+            />
+          </p>
+
+          <p>
+            <a
+              href="https://github.com/crimx/value-enhancer/actions/workflows/build.yml"
+              ><img
+                src="https://img.shields.io/github/actions/workflow/status/crimx/value-enhancer/build.yml"
+                alt="Build Status"
+            /></a>
+            <a href="https://www.npmjs.com/package/value-enhancer"
+              ><img
+                src="https://img.shields.io/npm/v/value-enhancer.svg"
+                alt="npm-version"
+            /></a>
+            <a
+              href="https://coveralls.io/github/crimx/value-enhancer?branch=main"
+              ><img
+                src="https://img.shields.io/coveralls/github/crimx/value-enhancer/main"
+                alt="Coverage Status"
+            /></a>
+            <a href="https://bundlejs.com/?q=value-enhancer"
+              ><img
+                src="https://img.shields.io/badge/%20tree-shakable-success"
+                alt="tree-shakable"
+            /></a>
+            <a href="https://bundlejs.com/?q=value-enhancer"
+              ><img
+                src="https://img.shields.io/badge/dependencies-none-success"
+                alt="no-dependencies"
+            /></a>
+            <a href="https://bundlejs.com/?q=value-enhancer"
+              ><img
+                src="https://img.shields.io/badge/%20side--effect-free-success"
+                alt="side-effect-free"
+            /></a>
+          </p>
+          <p>
+            <a href="http://commitizen.github.io/cz-cli/"
+              ><img
+                src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?maxAge=2592000"
+                alt="Commitizen friendly"
+            /></a>
+            <a href="https://conventionalcommits.org"
+              ><img
+                src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-brightgreen.svg?maxAge=2592000"
+                alt="Conventional Commits"
+            /></a>
+            <a href="https://github.com/prettier/prettier"
+              ><img
+                src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square"
+                alt="code style: prettier"
+            /></a>
+          </p>
+          <p>
+            Enhance value with plain and explicit reactive wrapper. Think of it
+            as hook-style signals.
+          </p>
+          <p>
+            Docs:
+            <a href="https://value-enhancer.js.org"
+              >https://value-enhancer.js.org</a
+            >
+          </p>
+          <a id="md:install" class="tsd-anchor"></a>
+          <h2><a href="#md:install">Install</a></h2>
+          <pre><code class="language-bash"><span class="hl-0">npm</span><span class="hl-1"> </span><span class="hl-2">add</span><span class="hl-1"> </span><span class="hl-2">value-enhancer</span>
+</code><button>Copy</button></pre>
+          <a id="md:features" class="tsd-anchor"></a>
+          <h2><a href="#md:features">Features</a></h2>
+          <ul>
+            <li>
+              Plain reactivity.<br />Without the implicit-cast Proxy magic like
+              Vue Reactivity and MobX.
+            </li>
+            <li>
+              Single-layer shallow reactivity.<br />It does not convert the
+              value with <code>Object.defineProperty</code> nor
+              <code>Proxy</code>. Keeping everything as plain JavaScript value
+              makes it easier to work with other libraries and easier for the
+              JavaScript engine to optimize.
+            </li>
+            <li>
+              Safe and fast lazy computation.<br />It solves multi-level
+              derivation issue (like in
+              <a
+                href="(https://svelte.dev/repl/6218ae0ecf5c455195b4a76d7f0cff9f?version=3.49.0)"
+                >Svelte Stores</a
+              >) with smart lazy value evaluation.
+            </li>
+            <li>
+              Weak side effects.<br /><code>Val</code>s are managed with
+              <code>FinalizationRegistry</code> and <code>WeakRef</code> which
+              means you can create and access derived
+              <code>Val.value</code> without worrying about memory leaks.
+              Disposers returned by subscriptions can also be easily managed
+              with libraries like
+              <a href="https://github.com/wopjs/disposable"
+                ><code>@wopjs/disposable</code></a
+              >.
+            </li>
+            <li>
+              Explicit.<br />Reactive objects are easy to tell since their types
+              are different from normal objects. Subscription also requires
+              explicit dependency declaration which reduce the work of
+              repetitive dynamic dependency collection in Proxy/Signal
+              implementations.
+            </li>
+            <li>
+              Simple DX.<br />Designed with ergonomics in mind. No hidden rules
+              for getting or setting values. What you see is what you get.
+            </li>
+          </ul>
+          <a id="md:sizes" class="tsd-anchor"></a>
+          <h2><a href="#md:sizes">Sizes</a></h2>
+          <!-- size-section-start -->
+
+          <table>
+            <thead>
+              <tr>
+                <th>import</th>
+                <th>size(brotli)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>*</code></td>
+                <td>1.85 kB</td>
+              </tr>
+              <tr>
+                <td><code>{ readonlyVal, val }</code> (core)</td>
+                <td>1.05 kB</td>
+              </tr>
+              <tr>
+                <td><code>{ from }</code></td>
+                <td>26 B</td>
+              </tr>
+              <tr>
+                <td><code>{ derive }</code></td>
+                <td>93 B</td>
+              </tr>
+              <tr>
+                <td><code>{ combine }</code></td>
+                <td>204 B</td>
+              </tr>
+              <tr>
+                <td><code>{ compute }</code></td>
+                <td>270 B</td>
+              </tr>
+              <tr>
+                <td><code>{ flattenFrom }</code></td>
+                <td>227 B</td>
+              </tr>
+              <tr>
+                <td><code>{ flatten }</code></td>
+                <td>36 B</td>
+              </tr>
+              <tr>
+                <td><code>{ reactiveMap }</code></td>
+                <td>489 B</td>
+              </tr>
+              <tr>
+                <td><code>{ reactiveSet }</code></td>
+                <td>359 B</td>
+              </tr>
+              <tr>
+                <td><code>{ reactiveList }</code></td>
+                <td>528 B</td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- size-section-end -->
+
+          <a id="md:quick-qampa" class="tsd-anchor"></a>
+          <h2><a href="#md:quick-qampa">Quick Q&amp;A</a></h2>
+          <details>
+            <summary>Why not MobX?</summary>
+
+            <p>
+              MobX is cleverly designed to make properties magically reactive.
+              But after using it in many of our large projects people started to
+              complain about this implicit behavior. It is hard to tell if a
+              property is reactive unless enforcing some kind of code style
+              rules. Rules of MobX are easy to be broken especially for new team
+              members.
+            </p>
+            <p>
+              MobX does not work well with other libraries. It could break other
+              libraries if you forget to exclude third-party instances from
+              making observable. <code>toJS</code> is also needed if data is
+              passed to other libraries.
+            </p>
+            <p>
+              MobX also prints error when it sees another version of MobX in the
+              global. It is not a good choice for making SDK or library that
+              will be delivered into customer&#39;s environment.
+            </p>
+            <p>
+              In my opinion, the vision of MobX has to be implemented as
+              language-level features, otherwise it will create all kinds of
+              compatibility issues. Svelte, SolidJS and even Vue are heading
+              towards the compiler direction now, looking forward to the next
+              generation of MobX.
+            </p>
+            <p>
+              In <code>value-enhancer</code> reactive Vals and plain JavaScript
+              values are easy to distinguish since they have different types.
+              The values of reactive Vals are still plain JavaScript values so
+              it works fine with other libraries. It is small and does not have
+              global variable issues.
+            </p>
+          </details>
+
+          <details>
+            <summary>Why not Vue Reactivity?</summary>
+
+            <p>
+              Vue3 brings Reactivity as standalone APIs. It is beautifully
+              designed and I had learned a lot from its source code.
+            </p>
+            <p>
+              But even though it is made standalone, it is still very Vue
+              centered. Many extra works related to Vue Components are added
+              under the hood.
+            </p>
+            <p>
+              Vue supports lazy deep reactive conversion. It converts plain
+              JavaScript values into reactive values which means it also suffers
+              from the same issues of MobX.
+            </p>
+            <p>
+              It is a good choice if you are choosing the Vue ecosystem. The
+              implementation of <code>value-enhancer</code> absorbs many
+              optimization strategies from Vue Reactivity while staying
+              framework agnostic.
+            </p>
+          </details>
+
+          <details>
+            <summary>Why not RxJS?</summary>
+
+            <p>
+              I love RxJS and the reactive paradigm behind it. But the goal of
+              RxJS is to compose asynchronous or callback-based code. It is not
+              optimized for state management.
+            </p>
+            <p>
+              It also requires you to write code in a pipe-able way which may
+              not be acceptable for everyone.
+            </p>
+          </details>
+
+          <details>
+            <summary>What about React Hooks?</summary>
+
+            <p>
+              The signature of <code>combine</code> and <code>derive</code> in
+              <code>value-enhancer</code> may look familiar to those who have
+              used React hooks.
+            </p>
+            <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">useMemo</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;react&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">derived</span><span class="hl-1"> = </span><span class="hl-0">useMemo</span><span class="hl-1">(() </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">source</span><span class="hl-1"> + </span><span class="hl-7">1</span><span class="hl-1">, [</span><span class="hl-4">source</span><span class="hl-1">]);</span>
+</code><button>Copy</button></pre>
+            <p>
+              I really like the explicit dependency declaration, but in React it
+              is error-prone since people keep forgetting adding or removing
+              dependencies. The React team even made a
+              <code>exhaustive-deps</code> linter rule for this.
+            </p>
+            <p>
+              <code>value-enhancer</code> solves this by absorbing the
+              RxJS-style callbacks.
+            </p>
+            <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">derive</span><span class="hl-1">, </span><span class="hl-4">combine</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">source$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">1</span><span class="hl-1">);</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">source$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 1</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">derived$</span><span class="hl-1"> = </span><span class="hl-0">derive</span><span class="hl-1">(</span><span class="hl-4">source$</span><span class="hl-1">, </span><span class="hl-4">source</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">source</span><span class="hl-1"> + </span><span class="hl-7">1</span><span class="hl-1">);</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">derived$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 2</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">combined$</span><span class="hl-1"> = </span><span class="hl-0">combine</span><span class="hl-1">(</span><br/><span class="hl-1">  [</span><span class="hl-4">source$</span><span class="hl-1">, </span><span class="hl-4">derived$</span><span class="hl-1">],</span><br/><span class="hl-1">  ([</span><span class="hl-4">source</span><span class="hl-1">, </span><span class="hl-4">derived</span><span class="hl-1">]) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">source</span><span class="hl-1"> + </span><span class="hl-4">derived</span><br/><span class="hl-1">);</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">combined$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 3</span>
+</code><button>Copy</button></pre>
+            <p>
+              Since the type of reactive objects are different from its values,
+              it is hard to have mismatched dependencies inside the
+              <code>transform</code> function.
+            </p>
+            <p>
+              <code>value-enhancer</code> can be used in React with a
+              super-simple hook
+              <a href="https://www.npmjs.com/package/use-value-enhancer"
+                ><code>use-value-enhancer</code></a
+              >.
+            </p>
+          </details>
+
+          <details>
+            <summary>Svelte Stores?</summary>
+
+            <p>
+              Svelte offers excellent support for Observables. Svelte store is
+              one of the simplest implementations. The code is really neat and
+              clean.
+            </p>
+            <p>
+              Svelte store works well for simple cases but it also leaves some
+              edge cases unresolved. For example, when <code>derived</code> a
+              list of stores, the transform function could be
+              <a
+                href="https://svelte.dev/repl/6218ae0ecf5c455195b4a76d7f0cff9f?version=3.49.0"
+                >invoked with intermediate states</a
+              >.
+            </p>
+            <p>
+              Svelte also adds a <code>$xxx</code> syntax for subscribing
+              Observables as values. The compiled code is really simple and
+              straightforward.
+            </p>
+            <p>
+              <code>value-enhancer</code> is compatible with Svelte Store
+              contract. It can be used in Svelte just like Svelte stores.
+            </p>
+            <p>
+              <code>value-enhancer</code> also fixes the edge cases of Svelte
+              stores by leveraging Vue&#39;s layered subscriber design.
+            </p>
+          </details>
+
+          <details>
+            <summary>SolidJS?</summary>
+
+            <p>
+              SolidJS &quot;create&quot;s are like React hooks but with saner
+              signatures. It is also thoughtfully optimized for edge cases.
+            </p>
+            <p>
+              A thing that one may feel odd in SolidJS is accessing reactive
+              value by calling it as function. <code>value-enhancer</code> keeps
+              the <code>xxx.value</code> way to access reactive value which I
+              think should be more intuitive.
+            </p>
+            <p>
+              It also suffers from implicit magic issues like MobX and Vue where
+              you ended up using something like
+              <a href="https://www.solidjs.com/docs/latest/api#mergeprops"
+                ><code>mergeProps</code></a
+              >
+              and
+              <a href="https://www.solidjs.com/docs/latest/api#splitprops"
+                ><code>splitProps</code></a
+              >.
+            </p>
+            <p>
+              <code>value-enhancer</code> is compatible with SolidJS using
+              <a href="https://www.solidjs.com/docs/latest/api#from"
+                ><code>from</code></a
+              >.
+            </p>
+          </details>
+
+          <details>
+            <summary>Preact Signals?</summary>
+
+            <p>
+              Preact recently released
+              <a href="https://preactjs.com/blog/introducing-signals/"
+                >Signals</a
+              >
+              which shares similar ideas with <code>value-enhancer</code>. It is
+              like signals of SolidJS but without the odd function-like value
+              accessing. It flushes reactions top-down then bottom-up like Vue
+              and <code>value-enhancer</code>.
+            </p>
+            <p>
+              The Preact team also took a step further to support writing
+              Signals directly within TSX. This offers Svelte-like neat coding
+              experience.
+            </p>
+            <pre><code class="language-tsx"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count</span><span class="hl-1"> = </span><span class="hl-0">signal</span><span class="hl-1">(</span><span class="hl-7">0</span><span class="hl-1">);</span><br/><br/><span class="hl-8">// Instead of this:</span><br/><span class="hl-9">&lt;</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><span class="hl-1">Value: </span><span class="hl-5">{</span><span class="hl-4">count</span><span class="hl-11">.</span><span class="hl-4">value</span><span class="hl-5">}</span><span class="hl-9">&lt;/</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><br/><br/><span class="hl-8">// … we can pass the signal directly into JSX:</span><br/><span class="hl-9">&lt;</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><span class="hl-1">Value: </span><span class="hl-5">{</span><span class="hl-4">count</span><span class="hl-5">}</span><span class="hl-9">&lt;/</span><span class="hl-10">p</span><span class="hl-9">&gt;</span><br/><br/><span class="hl-8">// … or even passing them as DOM properties:</span><br/><span class="hl-9">&lt;</span><span class="hl-10">input</span><span class="hl-1"> </span><span class="hl-12">value</span><span class="hl-1">=</span><span class="hl-5">{</span><span class="hl-4">count</span><span class="hl-5">}</span><span class="hl-1"> </span><span class="hl-9">/&gt;</span>
+</code><button>Copy</button></pre>
+            <p>But it also uses Vue-like magic to collect effects.</p>
+            <pre><code class="language-tsx"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">counter</span><span class="hl-1"> = </span><span class="hl-0">signal</span><span class="hl-1">(</span><span class="hl-7">0</span><span class="hl-1">);</span><br/><br/><span class="hl-0">effect</span><span class="hl-1">(() </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">counter</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">);</span><br/><span class="hl-1">});</span>
+</code><button>Copy</button></pre>
+            <p>
+              It might seem clean at first but it&#39;s not a self-consistent
+              solution either. You&#39;ll probably meet weird issues and find
+              workarounds like
+              <a href="https://github.com/preactjs/signals#signalpeek"
+                ><code>signal.peek()</code></a
+              >
+              which is error-prone.
+            </p>
+            <pre><code class="language-tsx"><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">counter</span><span class="hl-1"> = </span><span class="hl-0">signal</span><span class="hl-1">(</span><span class="hl-7">0</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">effectCount</span><span class="hl-1"> = </span><span class="hl-0">signal</span><span class="hl-1">(</span><span class="hl-7">0</span><span class="hl-1">);</span><br/><br/><span class="hl-0">effect</span><span class="hl-1">(() </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">counter</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">);</span><br/><br/><span class="hl-1">  </span><span class="hl-8">// Whenever this effect is triggered, increase `effectCount`.</span><br/><span class="hl-1">  </span><span class="hl-8">// But we don&#39;t want this signal to react to `effectCount`</span><br/><span class="hl-1">  </span><span class="hl-4">effectCount</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1"> = </span><span class="hl-4">effectCount</span><span class="hl-1">.</span><span class="hl-0">peek</span><span class="hl-1">() + </span><span class="hl-7">1</span><span class="hl-1">;</span><br/><span class="hl-1">});</span>
+</code><button>Copy</button></pre>
+            <p>
+              This issue does not exist in <code>value-enhancer</code> because
+              we do not collect dependencies implicitly by default.
+            </p>
+            <p>
+              In case of subscribing to flexible dynamic dependencies are
+              needed, <code>value-enhancer</code> does offer a simple
+              <code>compute</code> API which is similar to Jotai.
+            </p>
+            <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">compute</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">0</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">a$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-2">&quot;a&quot;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">b$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-2">&quot;b&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">s$</span><span class="hl-1"> = </span><span class="hl-0">compute</span><span class="hl-1">(</span><span class="hl-4">get</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">return</span><span class="hl-1"> </span><span class="hl-0">get</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">) % </span><span class="hl-7">2</span><span class="hl-1"> === </span><span class="hl-7">0</span><span class="hl-1"> ? </span><span class="hl-0">get</span><span class="hl-1">(</span><span class="hl-4">a$</span><span class="hl-1">) : </span><span class="hl-0">get</span><span class="hl-1">(</span><span class="hl-4">b$</span><span class="hl-1">);</span><br/><span class="hl-1">});</span>
+</code><button>Copy</button></pre>
+          </details>
+
+          <a id="md:devtools" class="tsd-anchor"></a>
+          <h2><a href="#md:devtools">Devtools</a></h2>
+          <details>
+            <summary>Custom Formatter</summary>
+
+            <p>
+              <code>value-enhancer</code> in development mode supports DevTools
+              <a
+                href="https://www.mattzeunert.com/2016/02/19/custom-chrome-devtools-object-formatters.html"
+                >custom formatters</a
+              >. You may enable it by checking the &quot;Enable custom
+              formatters&quot; option in the &quot;Console&quot; section of
+              DevTools general settings.
+            </p>
+          </details>
+
+          <a id="md:usage" class="tsd-anchor"></a>
+          <h2><a href="#md:usage">Usage</a></h2>
+          <a id="md:create-writable-val" class="tsd-anchor"></a>
+          <h2><a href="#md:create-writable-val">Create Writable Val</a></h2>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 2</span><br/><br/><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">);</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 3</span><br/><br/><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1"> = </span><span class="hl-7">4</span><span class="hl-1">;</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 4</span>
+</code><button>Copy</button></pre>
+          <a id="md:create-readonly-val" class="tsd-anchor"></a>
+          <h2><a href="#md:create-readonly-val">Create Readonly Val</a></h2>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">readonlyVal</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> [</span><span class="hl-6">count$</span><span class="hl-1">, </span><span class="hl-6">setCount</span><span class="hl-1">] = </span><span class="hl-0">readonlyVal</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 2</span><br/><br/><span class="hl-0">setCount</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">);</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 3</span><br/><br/><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1"> = </span><span class="hl-7">4</span><span class="hl-1">;</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 4</span>
+</code><button>Copy</button></pre>
+          <a id="md:subscribe-to-value-changes" class="tsd-anchor"></a>
+          <h2>
+            <a href="#md:subscribe-to-value-changes"
+              >Subscribe to value changes</a
+            >
+          </h2>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">combine</span><span class="hl-1">, </span><span class="hl-4">derive</span><span class="hl-1">, </span><span class="hl-4">nextTick</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">);</span><br/><br/><span class="hl-8">// Emit the current value synchronously, then emit the new value when it changes.</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">disposeSubscribe</span><span class="hl-1"> = </span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-0">subscribe</span><span class="hl-1">(</span><span class="hl-4">count</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`subscribe: </span><span class="hl-5">${</span><span class="hl-4">count</span><span class="hl-5">}</span><span class="hl-2">`</span><span class="hl-1">);</span><br/><span class="hl-1">}); </span><span class="hl-8">// printed &quot;subscribe: 3&quot;</span><br/><br/><span class="hl-8">// Only emit the new value when it changes.</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">disposeReaction</span><span class="hl-1"> = </span><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-0">reaction</span><span class="hl-1">(</span><span class="hl-4">count</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`reaction: </span><span class="hl-5">${</span><span class="hl-4">count</span><span class="hl-5">}</span><span class="hl-2">`</span><span class="hl-1">);</span><br/><span class="hl-1">}); </span><span class="hl-8">// (nothing printed)</span><br/><br/><span class="hl-8">// `Object.is` equality check by default</span><br/><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">); </span><span class="hl-8">// nothing happened</span><br/><br/><span class="hl-8">// subscription triggered asynchronously by default</span><br/><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-7">4</span><span class="hl-1">); </span><span class="hl-8">// nothing happened</span><br/><br/><span class="hl-3">await</span><span class="hl-1"> </span><span class="hl-0">nextTick</span><span class="hl-1">(); </span><span class="hl-8">// subscription triggered asynchronously by default</span><br/><br/><span class="hl-8">// printed &quot;subscribe: 4&quot;</span><br/><span class="hl-8">// printed &quot;reaction: 4&quot;</span><br/><br/><span class="hl-0">disposeSubscribe</span><span class="hl-1">();</span><br/><span class="hl-0">disposeReaction</span><span class="hl-1">();</span>
+</code><button>Copy</button></pre>
+          <a id="md:derive-val" class="tsd-anchor"></a>
+          <h2><a href="#md:derive-val">Derive Val</a></h2>
+          <p><code>derive</code> a new Val from another Val.</p>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">derive</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">derived$</span><span class="hl-1"> = </span><span class="hl-0">derive</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">, </span><span class="hl-4">count</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">count</span><span class="hl-1"> * </span><span class="hl-7">3</span><span class="hl-1">);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">derived$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 6</span>
+</code><button>Copy</button></pre>
+          <p>
+            Pipe-able style with functional lib like <code>rubico</code>:
+            <a
+              href="https://codesandbox.io/p/sandbox/value-enhancer-derive-functional-with-rubico-t7d4gm?file=%2Fsrc%2Findex.ts%3A15%2C1"
+              >(CodeSandbox)</a
+            >
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">derive</span><span class="hl-1">, </span><span class="hl-4">val</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">pipe</span><span class="hl-1">, </span><span class="hl-4">map</span><span class="hl-1">, </span><span class="hl-4">filter</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;rubico&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">isOdd</span><span class="hl-1"> = (</span><span class="hl-4">number</span><span class="hl-1">: </span><span class="hl-13">number</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">number</span><span class="hl-1"> % </span><span class="hl-7">2</span><span class="hl-1"> == </span><span class="hl-7">1</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">square</span><span class="hl-1"> = (</span><span class="hl-4">number</span><span class="hl-1">: </span><span class="hl-13">number</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">number</span><span class="hl-1"> ** </span><span class="hl-7">2</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">numbers$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">([</span><span class="hl-7">1</span><span class="hl-1">, </span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-7">3</span><span class="hl-1">, </span><span class="hl-7">4</span><span class="hl-1">, </span><span class="hl-7">5</span><span class="hl-1">]);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">derived$</span><span class="hl-1"> = </span><span class="hl-0">derive</span><span class="hl-1">(</span><span class="hl-4">numbers$</span><span class="hl-1">, </span><span class="hl-0">pipe</span><span class="hl-1">([</span><span class="hl-0">filter</span><span class="hl-1">(</span><span class="hl-4">isOdd</span><span class="hl-1">), </span><span class="hl-0">map</span><span class="hl-1">(</span><span class="hl-4">square</span><span class="hl-1">)]));</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">derived$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// [1, 9, 25]</span><br/><br/><span class="hl-4">derived$</span><span class="hl-1">.</span><span class="hl-0">reaction</span><span class="hl-1">(</span><span class="hl-4">numbers</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">&quot;reaction&quot;</span><span class="hl-1">, </span><span class="hl-4">numbers</span><span class="hl-1">);</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-4">numbers$</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">([</span><span class="hl-7">6</span><span class="hl-1">, </span><span class="hl-7">7</span><span class="hl-1">, </span><span class="hl-7">8</span><span class="hl-1">, </span><span class="hl-7">9</span><span class="hl-1">, </span><span class="hl-7">10</span><span class="hl-1">]);</span><br/><br/><span class="hl-8">// `reaction [49, 81]`</span>
+</code><button>Copy</button></pre>
+          <a id="md:combine-val" class="tsd-anchor"></a>
+          <h2><a href="#md:combine-val">Combine Val</a></h2>
+          <p><code>combine</code> multiple Vals into a new Val.</p>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">derive</span><span class="hl-1">, </span><span class="hl-4">combine</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">derived$</span><span class="hl-1"> = </span><span class="hl-0">derive</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">, </span><span class="hl-4">count</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">count</span><span class="hl-1"> * </span><span class="hl-7">3</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">combined$</span><span class="hl-1"> = </span><span class="hl-0">combine</span><span class="hl-1">(</span><br/><span class="hl-1">  [</span><span class="hl-4">count$</span><span class="hl-1">, </span><span class="hl-4">derived$</span><span class="hl-1">],</span><br/><span class="hl-1">  ([</span><span class="hl-4">count</span><span class="hl-1">, </span><span class="hl-4">derived</span><span class="hl-1">]) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">count</span><span class="hl-1"> + </span><span class="hl-4">derived</span><br/><span class="hl-1">);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">combined$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 8</span>
+</code><button>Copy</button></pre>
+          <a id="md:flatten-val" class="tsd-anchor"></a>
+          <h2><a href="#md:flatten-val">Flatten Val</a></h2>
+          <p>
+            <code>flatten</code> the inner Val from a Val of Val. This is useful
+            for subscribing to a dynamic Val that is inside another Val.
+          </p>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">flatten</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">itemList$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">([</span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">1</span><span class="hl-1">), </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">), </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">)]);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">firstItem$</span><span class="hl-1"> = </span><span class="hl-0">flatten</span><span class="hl-1">(</span><span class="hl-4">itemList$</span><span class="hl-1">, </span><span class="hl-4">itemList</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">itemList</span><span class="hl-1">[</span><span class="hl-7">0</span><span class="hl-1">]);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">firstItem$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 1</span><br/><br/><span class="hl-4">itemList$</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">([</span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">4</span><span class="hl-1">), </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">5</span><span class="hl-1">), </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">6</span><span class="hl-1">)]);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">firstItem$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 4</span>
+</code><button>Copy</button></pre>
+          <a id="md:compute" class="tsd-anchor"></a>
+          <h2><a href="#md:compute">Compute</a></h2>
+          <p>
+            <code>compute</code> is useful for subscribing to flexible dynamic
+            dependencies.
+          </p>
+          <p>
+            The <code>get</code> function passed to the effect callback can be
+            used to get the current value of a Val and subscribe to it. The
+            effect callback will be re-evaluated whenever the dependencies
+            change. Stale dependencies are unsubscribed automatically.
+          </p>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">compute</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">0</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">a$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-2">&quot;a&quot;</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">b$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-2">&quot;b&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">s$</span><span class="hl-1"> = </span><span class="hl-0">compute</span><span class="hl-1">(</span><span class="hl-4">get</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">return</span><span class="hl-1"> </span><span class="hl-0">get</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">) % </span><span class="hl-7">2</span><span class="hl-1"> === </span><span class="hl-7">0</span><span class="hl-1"> ? </span><span class="hl-0">get</span><span class="hl-1">(</span><span class="hl-4">a$</span><span class="hl-1">) : </span><span class="hl-0">get</span><span class="hl-1">(</span><span class="hl-4">b$</span><span class="hl-1">);</span><br/><span class="hl-1">});</span>
+</code><button>Copy</button></pre>
+          <a id="md:from" class="tsd-anchor"></a>
+          <h2><a href="#md:from">From</a></h2>
+          <p>
+            <code>from</code> creates a Val from any value source. Both
+            <code>derive</code> and <code>combine</code> are implemented using
+            <code>from</code> under the hood.
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">from</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">prefersDark</span><span class="hl-1"> = </span><span class="hl-4">window</span><span class="hl-1">.</span><span class="hl-0">matchMedia</span><span class="hl-1">(</span><span class="hl-2">&quot;(prefers-color-scheme: dark)&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">isDarkMode$</span><span class="hl-1"> = </span><span class="hl-0">from</span><span class="hl-1">(</span><br/><span class="hl-1">  () </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">prefersDark</span><span class="hl-1">.</span><span class="hl-4">matches</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">notify</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> {</span><br/><span class="hl-1">    </span><span class="hl-4">prefersDark</span><span class="hl-1">.</span><span class="hl-0">addEventListener</span><span class="hl-1">(</span><span class="hl-2">&quot;change&quot;</span><span class="hl-1">, </span><span class="hl-4">notify</span><span class="hl-1">);</span><br/><span class="hl-1">    </span><span class="hl-3">return</span><span class="hl-1"> () </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">prefersDark</span><span class="hl-1">.</span><span class="hl-0">removeEventListener</span><span class="hl-1">(</span><span class="hl-2">&quot;change&quot;</span><span class="hl-1">, </span><span class="hl-4">notify</span><span class="hl-1">);</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">);</span>
+</code><button>Copy</button></pre>
+          <a id="md:flattenfrom" class="tsd-anchor"></a>
+          <h2><a href="#md:flattenfrom">FlattenFrom</a></h2>
+          <p>
+            <code>flattenFrom</code> creates a Val from any value source like
+            <code>from</code> but also flatten the value if the value is a Val.
+            <code>flatten</code> is implemented using <code>flattenFrom</code>.
+          </p>
+          <a id="md:custom-equal" class="tsd-anchor"></a>
+          <h2><a href="#md:custom-equal">Custom Equal</a></h2>
+          <p>
+            By default, <code>Object.is</code> equality check is used to
+            determine whether a value has changed. You can customize the
+            equality check by passing a <code>equal</code> function.
+          </p>
+          <pre><code class="language-js"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">isSameXYPosition</span><span class="hl-1"> = (</span><span class="hl-4">p1</span><span class="hl-1">, </span><span class="hl-4">p2</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">p1</span><span class="hl-1">.</span><span class="hl-4">x</span><span class="hl-1"> === </span><span class="hl-4">p2</span><span class="hl-1">.</span><span class="hl-4">x</span><span class="hl-1"> &amp;&amp; </span><span class="hl-4">p1</span><span class="hl-1">.</span><span class="hl-4">y</span><span class="hl-1"> === </span><span class="hl-4">p2</span><span class="hl-1">.</span><span class="hl-4">y</span><span class="hl-1">;</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-0">isSameXYZPosition</span><span class="hl-1"> = (</span><span class="hl-4">p1</span><span class="hl-1">, </span><span class="hl-4">p2</span><span class="hl-1">) </span><span class="hl-5">=&gt;</span><br/><span class="hl-1">  </span><span class="hl-4">p1</span><span class="hl-1">.</span><span class="hl-4">x</span><span class="hl-1"> === </span><span class="hl-4">p2</span><span class="hl-1">.</span><span class="hl-4">x</span><span class="hl-1"> &amp;&amp; </span><span class="hl-4">p1</span><span class="hl-1">.</span><span class="hl-4">y</span><span class="hl-1"> === </span><span class="hl-4">p2</span><span class="hl-1">.</span><span class="hl-4">y</span><span class="hl-1"> &amp;&amp; </span><span class="hl-4">p1</span><span class="hl-1">.</span><span class="hl-4">z</span><span class="hl-1"> === </span><span class="hl-4">p2</span><span class="hl-1">.</span><span class="hl-4">z</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">xyzPosition$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">({ </span><span class="hl-4">x:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1">, </span><span class="hl-4">y:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1">, </span><span class="hl-4">z:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1"> }, { </span><span class="hl-4">equal:</span><span class="hl-1"> </span><span class="hl-4">isSameXYZPosition</span><span class="hl-1"> });</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">xyPosition$</span><span class="hl-1"> = </span><span class="hl-0">derive</span><span class="hl-1">(</span><span class="hl-4">xyzPosition$</span><span class="hl-1">, ({ </span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1"> }) </span><span class="hl-5">=&gt;</span><span class="hl-1"> ({ </span><span class="hl-4">x</span><span class="hl-1">, </span><span class="hl-4">y</span><span class="hl-1"> }), {</span><br/><span class="hl-1">  </span><span class="hl-4">equal:</span><span class="hl-1"> </span><span class="hl-4">isSameXYPosition</span><span class="hl-1">,</span><br/><span class="hl-1">});</span><br/><br/><span class="hl-4">xyPosition$</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">({ </span><span class="hl-4">x:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1">, </span><span class="hl-4">y:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1">, </span><span class="hl-4">z:</span><span class="hl-1"> </span><span class="hl-7">0</span><span class="hl-1"> }); </span><span class="hl-8">// nothing happened</span>
+</code><button>Copy</button></pre>
+          <a id="md:synchronous-subscription" class="tsd-anchor"></a>
+          <h2>
+            <a href="#md:synchronous-subscription">Synchronous subscription</a>
+          </h2>
+          <p>
+            Subscription is triggered asynchronously on next tick by default. To
+            trigger synchronously, set <code>eager</code> parameter to
+            <code>true</code>.
+          </p>
+          <pre><code class="language-js"><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-0">subscribe</span><span class="hl-1">(</span><span class="hl-4">count</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`subscribe: </span><span class="hl-5">${</span><span class="hl-4">count</span><span class="hl-5">}</span><span class="hl-2">`</span><span class="hl-1">), </span><span class="hl-5">true</span><span class="hl-1">);</span><br/><span class="hl-4">count$</span><span class="hl-1">.</span><span class="hl-0">reaction</span><span class="hl-1">(</span><span class="hl-4">count</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-2">`reaction: </span><span class="hl-5">${</span><span class="hl-4">count</span><span class="hl-5">}</span><span class="hl-2">`</span><span class="hl-1">), </span><span class="hl-5">true</span><span class="hl-1">);</span>
+</code><button>Copy</button></pre>
+          <p>
+            Or set <code>eager</code> to <code>true</code> when creating the
+            Val.
+          </p>
+          <pre><code class="language-js"><span class="hl-8">// subscription of count$ is trigger synchronously by default</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">count$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">, { </span><span class="hl-4">eager:</span><span class="hl-1"> </span><span class="hl-5">true</span><span class="hl-1"> });</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">derived$</span><span class="hl-1"> = </span><span class="hl-0">derive</span><span class="hl-1">(</span><span class="hl-4">count$</span><span class="hl-1">, </span><span class="hl-4">count</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">count</span><span class="hl-1"> * </span><span class="hl-7">3</span><span class="hl-1">, { </span><span class="hl-4">eager:</span><span class="hl-1"> </span><span class="hl-5">true</span><span class="hl-1"> });</span>
+</code><button>Copy</button></pre>
+          <a id="md:reactive-collections" class="tsd-anchor"></a>
+          <h2><a href="#md:reactive-collections">Reactive Collections</a></h2>
+          <p>
+            The Reactive Collections are a group of classes that expand on the
+            built-in JavaScript collections, allowing changes to the collections
+            to be observed. See
+            <a href="https://value-enhancer.js.org/modules/collections.html"
+              >docs</a
+            >
+            for API details.
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">derive</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">reactiveList</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer/collections&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">list</span><span class="hl-1"> = </span><span class="hl-0">reactiveList</span><span class="hl-1">([</span><span class="hl-2">&quot;a&quot;</span><span class="hl-1">, </span><span class="hl-2">&quot;b&quot;</span><span class="hl-1">, </span><span class="hl-2">&quot;c&quot;</span><span class="hl-1">]);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">item$</span><span class="hl-1"> = </span><span class="hl-0">derive</span><span class="hl-1">(</span><span class="hl-4">list</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1">, </span><span class="hl-4">list</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">list</span><span class="hl-1">[</span><span class="hl-7">2</span><span class="hl-1">]); </span><span class="hl-8">// watch the item at index 2</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">item$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// &quot;c&quot;</span><br/><br/><span class="hl-4">list</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">, </span><span class="hl-2">&quot;d&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">item$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// &quot;d&quot;</span>
+</code><button>Copy</button></pre>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-4">flatten</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">reactiveMap</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer/collections&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">map</span><span class="hl-1"> = </span><span class="hl-0">reactiveMap</span><span class="hl-1">();</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">v</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-2">&quot;someValue&quot;</span><span class="hl-1">);</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">item$</span><span class="hl-1"> = </span><span class="hl-0">flatten</span><span class="hl-1">(</span><span class="hl-4">map</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1">, </span><span class="hl-4">map</span><span class="hl-1"> </span><span class="hl-5">=&gt;</span><span class="hl-1"> </span><span class="hl-4">map</span><span class="hl-1">.</span><span class="hl-0">get</span><span class="hl-1">(</span><span class="hl-2">&quot;someKey&quot;</span><span class="hl-1">)); </span><span class="hl-8">// watch the item at &quot;someKey&quot;</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">item$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// undefined</span><br/><br/><span class="hl-4">map</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-2">&quot;someKey&quot;</span><span class="hl-1">, </span><span class="hl-4">v</span><span class="hl-1">); </span><span class="hl-8">// set a val, the value inside the val is subscribed and flatten to `item$`</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">item$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// &quot;someValue&quot;</span><br/><br/><span class="hl-4">v</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-2">&quot;someValue2&quot;</span><span class="hl-1">); </span><span class="hl-8">// you can also set a non-val value, which is passed to `item$`` directly</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">item$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// &quot;someValue2&quot;</span>
+</code><button>Copy</button></pre>
+          <a id="md:patterns" class="tsd-anchor"></a>
+          <h2><a href="#md:patterns">Patterns</a></h2>
+          <a id="md:use-in-class-with-different-types" class="tsd-anchor"></a>
+          <h3>
+            <a href="#md:use-in-class-with-different-types"
+              >Use in Class with different types.</a
+            >
+          </h3>
+          <p>
+            With this pattern, Writable <code>Val</code> properties are exposed
+            as <code>$$</code> and <code>ReadonlyVal</code> properties are
+            exposed as <code>$</code>.
+          </p>
+          <p>
+            Note that they are all Writable <code>Val</code> under the hood. The
+            difference is just the type.
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">ReadonlyVal</span><span class="hl-1">, </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">Val</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-13">MyClassVals</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">a</span><span class="hl-1">: </span><span class="hl-13">number</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-4">b</span><span class="hl-1">: </span><span class="hl-13">string</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">type</span><span class="hl-1"> </span><span class="hl-13">MyClass$</span><span class="hl-1"> = {</span><br/><span class="hl-1">  [</span><span class="hl-13">K</span><span class="hl-1"> </span><span class="hl-5">in</span><span class="hl-1"> </span><span class="hl-5">keyof</span><span class="hl-1"> </span><span class="hl-13">MyClassVals</span><span class="hl-1">]: </span><span class="hl-13">ReadonlyVal</span><span class="hl-1">&lt;</span><span class="hl-13">MyClassVals</span><span class="hl-1">[</span><span class="hl-13">K</span><span class="hl-1">]&gt;;</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">type</span><span class="hl-1"> </span><span class="hl-13">MyClass$$</span><span class="hl-1"> = {</span><br/><span class="hl-1">  [</span><span class="hl-13">K</span><span class="hl-1"> </span><span class="hl-5">in</span><span class="hl-1"> </span><span class="hl-5">keyof</span><span class="hl-1"> </span><span class="hl-13">MyClassVals</span><span class="hl-1">]: </span><span class="hl-13">Val</span><span class="hl-1">&lt;</span><span class="hl-13">MyClassVals</span><span class="hl-1">[</span><span class="hl-13">K</span><span class="hl-1">]&gt;;</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-13">MyClass</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">readonly</span><span class="hl-1"> </span><span class="hl-4">$</span><span class="hl-1">: </span><span class="hl-13">MyClass$</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">readonly</span><span class="hl-1"> </span><span class="hl-4">$$</span><span class="hl-1">: </span><span class="hl-13">MyClass$$</span><span class="hl-1">;</span><br/><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">constructor</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1"> = </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">$$</span><span class="hl-1"> = {</span><br/><span class="hl-1">      </span><span class="hl-4">a:</span><span class="hl-1"> </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">1</span><span class="hl-1">),</span><br/><span class="hl-1">      </span><span class="hl-4">b:</span><span class="hl-1"> </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-2">&quot;2&quot;</span><span class="hl-1">),</span><br/><span class="hl-1">    };</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">myClass</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">MyClass</span><span class="hl-1">();</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">myClass</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1">.</span><span class="hl-4">a</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">);</span><br/><span class="hl-4">myClass</span><span class="hl-1">.</span><span class="hl-4">$$</span><span class="hl-1">.</span><span class="hl-4">a</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">);</span>
+</code><button>Copy</button></pre>
+          <a
+            id="md:use-in-class-with-readonlyval-and-setter"
+            class="tsd-anchor"
+          ></a>
+          <h3>
+            <a href="#md:use-in-class-with-readonlyval-and-setter"
+              >Use in Class with ReadonlyVal and setter</a
+            >
+          </h3>
+          <p>
+            If you want to ensure maximum safety and prevent others from
+            modifying the value accidentally, you can use a real
+            <code>ReadonlyVal</code>.
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">readonlyVal</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">ReadonlyVal</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">ValSetValue</span><span class="hl-1">,</span><br/><span class="hl-1">} </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-13">MyClassVals</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">a</span><span class="hl-1">: </span><span class="hl-13">number</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-4">b</span><span class="hl-1">: </span><span class="hl-13">string</span><span class="hl-1">;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">type</span><span class="hl-1"> </span><span class="hl-13">MyClass$</span><span class="hl-1"> = {</span><br/><span class="hl-1">  [</span><span class="hl-13">K</span><span class="hl-1"> </span><span class="hl-5">in</span><span class="hl-1"> </span><span class="hl-5">keyof</span><span class="hl-1"> </span><span class="hl-13">MyClassVals</span><span class="hl-1">]: </span><span class="hl-13">ReadonlyVal</span><span class="hl-1">&lt;</span><span class="hl-13">MyClassVals</span><span class="hl-1">[</span><span class="hl-13">K</span><span class="hl-1">]&gt;;</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">type</span><span class="hl-1"> </span><span class="hl-13">MyClassSet$</span><span class="hl-1"> = {</span><br/><span class="hl-1">  [</span><span class="hl-13">K</span><span class="hl-1"> </span><span class="hl-5">in</span><span class="hl-1"> </span><span class="hl-5">keyof</span><span class="hl-1"> </span><span class="hl-13">MyClassVals</span><span class="hl-1">]: </span><span class="hl-13">ValSetValue</span><span class="hl-1">&lt;</span><span class="hl-13">MyClassVals</span><span class="hl-1">[</span><span class="hl-13">K</span><span class="hl-1">]&gt;;</span><br/><span class="hl-1">};</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-13">MyClass</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">readonly</span><span class="hl-1"> </span><span class="hl-4">$</span><span class="hl-1">: </span><span class="hl-13">MyClass$</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">readonly</span><span class="hl-1"> </span><span class="hl-4">set$</span><span class="hl-1">: </span><span class="hl-13">MyClassSet$</span><span class="hl-1">;</span><br/><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">constructor</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> [</span><span class="hl-6">a$</span><span class="hl-1">, </span><span class="hl-6">setA</span><span class="hl-1">] = </span><span class="hl-0">readonlyVal</span><span class="hl-1">(</span><span class="hl-7">1</span><span class="hl-1">);</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> [</span><span class="hl-6">b$</span><span class="hl-1">, </span><span class="hl-6">setB</span><span class="hl-1">] = </span><span class="hl-0">readonlyVal</span><span class="hl-1">(</span><span class="hl-2">&quot;2&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1"> = { </span><span class="hl-4">a:</span><span class="hl-1"> </span><span class="hl-4">a$</span><span class="hl-1">, </span><span class="hl-4">b:</span><span class="hl-1"> </span><span class="hl-4">b$</span><span class="hl-1"> };</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">set$</span><span class="hl-1"> = { </span><span class="hl-4">a:</span><span class="hl-1"> </span><span class="hl-4">setA</span><span class="hl-1">, </span><span class="hl-4">b:</span><span class="hl-1"> </span><span class="hl-4">setB</span><span class="hl-1"> };</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">myClass</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">MyClass</span><span class="hl-1">();</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">myClass</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1">.</span><span class="hl-4">a</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">);</span><br/><span class="hl-4">myClass</span><span class="hl-1">.</span><span class="hl-4">set$</span><span class="hl-1">.</span><span class="hl-0">a</span><span class="hl-1">(</span><span class="hl-7">3</span><span class="hl-1">);</span>
+</code><button>Copy</button></pre>
+          <a id="md:use-in-class-with-groupvals" class="tsd-anchor"></a>
+          <h3>
+            <a href="#md:use-in-class-with-groupvals"
+              >Use in Class with GroupVals</a
+            >
+          </h3>
+          <p>
+            Writing all these ReadonlyVals and setters could be cumbersome. With
+            <code>groupVals</code> you can easily create a group of ReadonlyVals
+            and setters.
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">ReadonlyVal</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">ValSetValue</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">FlattenVal</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">readonlyVal</span><span class="hl-1">,</span><br/><span class="hl-1">  </span><span class="hl-4">groupVals</span><span class="hl-1">,</span><br/><span class="hl-1">} </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-13">Foo$</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">a</span><span class="hl-1">: </span><span class="hl-13">ReadonlyVal</span><span class="hl-1">&lt;</span><span class="hl-13">number</span><span class="hl-1">&gt;;</span><br/><span class="hl-1">  </span><span class="hl-4">b</span><span class="hl-1">: </span><span class="hl-13">ReadonlyVal</span><span class="hl-1">&lt;</span><span class="hl-13">number</span><span class="hl-1">&gt;;</span><br/><span class="hl-1">  </span><span class="hl-4">c</span><span class="hl-1">: </span><span class="hl-13">ReadonlyVal</span><span class="hl-1">&lt;</span><span class="hl-13">string</span><span class="hl-1">&gt;;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-3">export</span><span class="hl-1"> </span><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-13">Foo</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">readonly</span><span class="hl-1"> </span><span class="hl-4">$</span><span class="hl-1">: </span><span class="hl-13">Foo$</span><span class="hl-1">;</span><br/><span class="hl-1">  </span><span class="hl-5">private</span><span class="hl-1"> </span><span class="hl-5">readonly</span><span class="hl-1"> </span><span class="hl-4">set$</span><span class="hl-1">: { [</span><span class="hl-13">K</span><span class="hl-1"> </span><span class="hl-5">in</span><span class="hl-1"> </span><span class="hl-5">keyof</span><span class="hl-1"> </span><span class="hl-13">Foo$</span><span class="hl-1">]: </span><span class="hl-13">ValSetValue</span><span class="hl-1">&lt;</span><span class="hl-13">UnwrapVal</span><span class="hl-1">&lt;</span><span class="hl-13">Foo$</span><span class="hl-1">[</span><span class="hl-13">K</span><span class="hl-1">]&gt;&gt; };</span><br/><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-5">constructor</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-5">const</span><span class="hl-1"> [</span><span class="hl-6">vals</span><span class="hl-1">, </span><span class="hl-6">set$</span><span class="hl-1">] = </span><span class="hl-0">groupVals</span><span class="hl-1">({</span><br/><span class="hl-1">      </span><span class="hl-4">a:</span><span class="hl-1"> </span><span class="hl-0">readonlyVal</span><span class="hl-1">(</span><span class="hl-7">1</span><span class="hl-1">),</span><br/><span class="hl-1">      </span><span class="hl-4">b:</span><span class="hl-1"> </span><span class="hl-0">readonlyVal</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">),</span><br/><span class="hl-1">      </span><span class="hl-4">c:</span><span class="hl-1"> </span><span class="hl-0">readonlyVal</span><span class="hl-1">(</span><span class="hl-2">&quot;3&quot;</span><span class="hl-1">),</span><br/><span class="hl-1">    });</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1"> = </span><span class="hl-4">vals</span><span class="hl-1">;</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">set$</span><span class="hl-1"> = </span><span class="hl-4">set$</span><span class="hl-1">;</span><br/><span class="hl-1">  }</span><br/><br/><span class="hl-1">  </span><span class="hl-5">public</span><span class="hl-1"> </span><span class="hl-0">myMethod</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">set$</span><span class="hl-1">.</span><span class="hl-0">a</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">);</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">set$</span><span class="hl-1">.</span><span class="hl-0">c</span><span class="hl-1">(</span><span class="hl-2">&quot;4&quot;</span><span class="hl-1">);</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">foo</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">Foo</span><span class="hl-1">();</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">foo</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1">.</span><span class="hl-4">a</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 1</span><br/><br/><span class="hl-4">foo</span><span class="hl-1">.</span><span class="hl-0">myMethod</span><span class="hl-1">();</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">foo</span><span class="hl-1">.</span><span class="hl-4">$</span><span class="hl-1">.</span><span class="hl-4">a</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 2</span>
+</code><button>Copy</button></pre>
+          <a id="md:sharing-vals-to-other-classes" class="tsd-anchor"></a>
+          <h3>
+            <a href="#md:sharing-vals-to-other-classes"
+              >Sharing vals to other Classes</a
+            >
+          </h3>
+          <p>
+            Sharing vals to other classes directly should be careful. Other
+            classes may <code>dispose</code> the vals and cause unexpected
+            behavior.
+          </p>
+          <p>
+            To share ReadonlyVals to other classes, use <code>.ref()</code> to
+            create a ref ReadonlyVal. It is just like <code>derive</code> a val
+            without <code>transform</code>. It is simpler hence more efficient.
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">ReadonlyVal</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-13">AProps</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">a$</span><span class="hl-1">: </span><span class="hl-13">ReadonlyVal</span><span class="hl-1">&lt;</span><span class="hl-13">number</span><span class="hl-1">&gt;;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-13">A</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">a$</span><span class="hl-1">: </span><span class="hl-13">ReadonlyVal</span><span class="hl-1">&lt;</span><span class="hl-13">number</span><span class="hl-1">&gt;;</span><br/><br/><span class="hl-1">  </span><span class="hl-5">constructor</span><span class="hl-1">(</span><span class="hl-4">props</span><span class="hl-1">: </span><span class="hl-13">AProps</span><span class="hl-1">) {</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1"> = </span><span class="hl-4">props</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1">;</span><br/><span class="hl-1">  }</span><br/><br/><span class="hl-1">  </span><span class="hl-0">dispose</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-0">dispose</span><span class="hl-1">();</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">a$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">1</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">a</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">A</span><span class="hl-1">({ </span><span class="hl-4">a$:</span><span class="hl-1"> </span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-0">ref</span><span class="hl-1">() });</span><br/><span class="hl-4">a</span><span class="hl-1">.</span><span class="hl-0">dispose</span><span class="hl-1">(); </span><span class="hl-8">// will not affect a$</span>
+</code><button>Copy</button></pre>
+          <p>
+            To share writable vals to other classes, use a
+            <code>.ref(true)</code>.
+          </p>
+          <p>
+            It creates a new Val referencing the value of the current Val as
+            source. All ref Vals share the same value from the source Val. The
+            act of setting a value on the ref Val is essentially setting the
+            value to the source Val.
+          </p>
+          <p>
+            The ref Vals can be safely disposed without affecting the source Val
+            and other ref Vals.
+          </p>
+          <pre><code class="language-ts"><span class="hl-3">import</span><span class="hl-1"> { </span><span class="hl-4">val</span><span class="hl-1">, </span><span class="hl-3">type</span><span class="hl-1"> </span><span class="hl-4">Val</span><span class="hl-1"> } </span><span class="hl-3">from</span><span class="hl-1"> </span><span class="hl-2">&quot;value-enhancer&quot;</span><span class="hl-1">;</span><br/><br/><span class="hl-5">interface</span><span class="hl-1"> </span><span class="hl-13">AProps</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">a$</span><span class="hl-1">: </span><span class="hl-13">Val</span><span class="hl-1">&lt;</span><span class="hl-13">number</span><span class="hl-1">&gt;;</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">class</span><span class="hl-1"> </span><span class="hl-13">A</span><span class="hl-1"> {</span><br/><span class="hl-1">  </span><span class="hl-4">a$</span><span class="hl-1">: </span><span class="hl-13">Val</span><span class="hl-1">&lt;</span><span class="hl-13">number</span><span class="hl-1">&gt;;</span><br/><br/><span class="hl-1">  </span><span class="hl-5">constructor</span><span class="hl-1">(</span><span class="hl-4">props</span><span class="hl-1">: </span><span class="hl-13">AProps</span><span class="hl-1">) {</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1"> = </span><span class="hl-4">props</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1">;</span><br/><span class="hl-1">  }</span><br/><br/><span class="hl-1">  </span><span class="hl-0">dispose</span><span class="hl-1">() {</span><br/><span class="hl-1">    </span><span class="hl-5">this</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-0">dispose</span><span class="hl-1">();</span><br/><span class="hl-1">  }</span><br/><span class="hl-1">}</span><br/><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">a$</span><span class="hl-1"> = </span><span class="hl-0">val</span><span class="hl-1">(</span><span class="hl-7">1</span><span class="hl-1">);</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">a1</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">A</span><span class="hl-1">({ </span><span class="hl-4">a$:</span><span class="hl-1"> </span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-0">ref</span><span class="hl-1">(</span><span class="hl-5">true</span><span class="hl-1">) });</span><br/><span class="hl-5">const</span><span class="hl-1"> </span><span class="hl-6">a2</span><span class="hl-1"> = </span><span class="hl-5">new</span><span class="hl-1"> </span><span class="hl-0">A</span><span class="hl-1">({ </span><span class="hl-4">a$:</span><span class="hl-1"> </span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-0">ref</span><span class="hl-1">(</span><span class="hl-5">true</span><span class="hl-1">) });</span><br/><br/><span class="hl-4">a2</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-0">set</span><span class="hl-1">(</span><span class="hl-7">2</span><span class="hl-1">);</span><br/><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 2</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">a1</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 2</span><br/><span class="hl-4">console</span><span class="hl-1">.</span><span class="hl-0">log</span><span class="hl-1">(</span><span class="hl-4">a2</span><span class="hl-1">.</span><span class="hl-4">a$</span><span class="hl-1">.</span><span class="hl-4">value</span><span class="hl-1">); </span><span class="hl-8">// 2</span><br/><br/><span class="hl-4">a1</span><span class="hl-1">.</span><span class="hl-0">dispose</span><span class="hl-1">(); </span><span class="hl-8">// will not affect a$ and a2.a$</span>
+</code><button>Copy</button></pre>
+        </div>
+      </div>
+      <div class="col-sidebar">
+        <div class="page-menu">
+          <div class="tsd-navigation settings">
+            <details class="tsd-index-accordion">
+              <summary class="tsd-accordion-summary">
+                <h3>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <use href="assets/icons.svg#icon-chevronDown"></use></svg
+                  >Settings
+                </h3>
+              </summary>
+              <div class="tsd-accordion-details">
+                <div class="tsd-theme-toggle">
+                  <h4 class="uppercase">Theme</h4>
+                  <select id="tsd-theme">
+                    <option value="os">OS</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+          </div>
+          <details open class="tsd-index-accordion tsd-page-navigation">
+            <summary class="tsd-accordion-summary">
+              <h3>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <use href="assets/icons.svg#icon-chevronDown"></use></svg
+                >On This Page
+              </h3>
+            </summary>
+            <div class="tsd-accordion-details">
+              <a href="#md:value-enhancer"
+                ><span>value-<wbr />enhancer</span></a
+              >
+              <ul>
+                <li>
+                  <a href="#md:install"><span>Install</span></a>
+                </li>
+                <li>
+                  <a href="#md:features"><span>Features</span></a>
+                </li>
+                <li>
+                  <a href="#md:sizes"><span>Sizes</span></a>
+                </li>
+                <li>
+                  <a href="#md:quick-qampa"
+                    ><span>Quick <wbr />Q&amp;A</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:devtools"><span>Devtools</span></a>
+                </li>
+                <li>
+                  <a href="#md:usage"><span>Usage</span></a>
+                </li>
+                <li>
+                  <a href="#md:create-writable-val"
+                    ><span>Create <wbr />Writable <wbr />Val</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:create-readonly-val"
+                    ><span>Create <wbr />Readonly <wbr />Val</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:subscribe-to-value-changes"
+                    ><span>Subscribe to value changes</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:derive-val"
+                    ><span>Derive <wbr />Val</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:combine-val"
+                    ><span>Combine <wbr />Val</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:flatten-val"
+                    ><span>Flatten <wbr />Val</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:compute"><span>Compute</span></a>
+                </li>
+                <li>
+                  <a href="#md:from"><span>From</span></a>
+                </li>
+                <li>
+                  <a href="#md:flattenfrom"
+                    ><span>Flatten<wbr />From</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:custom-equal"
+                    ><span>Custom <wbr />Equal</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:synchronous-subscription"
+                    ><span>Synchronous subscription</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:reactive-collections"
+                    ><span>Reactive <wbr />Collections</span></a
+                  >
+                </li>
+                <li>
+                  <a href="#md:patterns"><span>Patterns</span></a>
+                </li>
+                <li>
+                  <ul>
+                    <li>
+                      <a href="#md:use-in-class-with-different-types"
+                        ><span
+                          >Use in <wbr />Class with different types.</span
+                        ></a
+                      >
+                    </li>
+                    <li>
+                      <a href="#md:use-in-class-with-readonlyval-and-setter"
+                        ><span
+                          >Use in <wbr />Class with <wbr />Readonly<wbr />Val
+                          and setter</span
+                        ></a
+                      >
+                    </li>
+                    <li>
+                      <a href="#md:use-in-class-with-groupvals"
+                        ><span
+                          >Use in <wbr />Class with
+                          <wbr />Group<wbr />Vals</span
+                        ></a
+                      >
+                    </li>
+                    <li>
+                      <a href="#md:sharing-vals-to-other-classes"
+                        ><span>Sharing vals to other <wbr />Classes</span></a
+                      >
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </details>
+        </div>
+        <div class="site-menu">
+          <nav class="tsd-navigation">
+            <a href="index.html" class="current"
+              ><svg class="tsd-kind-icon" viewBox="0 0 24 24">
+                <use href="assets/icons.svg#icon-1"></use></svg
+              ><span>value-enhancer - v5.5.1</span></a
+            >
+            <ul
+              class="tsd-small-nested-navigation"
+              id="tsd-nav-container"
+              data-base="."
+            >
+              <li>Loading...</li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+    <footer></footer>
+    <div class="overlay"></div>
+  </body>
+</html>
