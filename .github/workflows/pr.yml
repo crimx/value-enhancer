@@ -1,0 +1,30 @@
+on: ["pull_request"]
+
+name: Build and Test PR
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies 📦
+        run: npm ci
+
+      - name: Lint 🧹
+        run: |
+          npm run lint
+          npm run ts-check
+
+      - name: Build 🔧
+        run: npm run build
+
+      - name: Test 🧪
+        run: npm run test:ci

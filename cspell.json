@@ -3,16 +3,20 @@
   "words": [
     "coverallsapp",
     "CRIMX",
+    "endregion",
     "hyrious",
     "lcov",
+    "Parens",
     "pnpm",
     "preinstall",
+    "treeshake",
     "tsup",
     "typedoc",
     "Vals",
     "vite",
     "vitest",
-    "wopjs"
+    "wopjs",
+    "yoctocolors"
   ],
   "ignorePaths": [
     "**/coverage/**",

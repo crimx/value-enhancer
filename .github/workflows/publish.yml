@@ -1,0 +1,36 @@
+name: Node.js Package
+
+on:
+  push:
+    tags: "v**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          registry-url: "https://registry.npmjs.org"
+          cache: npm
+
+      - name: Install dependencies 📦
+        run: npm install
+
+      - name: Build 🔧
+        run: npm run build
+
+      - name: Publish Package 🚀
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,40 +1,58 @@
 {
-  "name": "@wopjs/template",
-  "version": "0.1.0",
-  "description": "Collection of common utilities.",
-  "type": "module",
-  "exports": "./dist/index.js",
+  "name": "value-enhancer",
+  "version": "1.0.0",
+  "description": "Enhance value with plain and explicit reactive wrapper. Think of it as hook-style signals.",
+  "repository": "crimx/value-enhancer",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "files": [
     "src",
     "dist"
   ],
-  "scripts": {
-    "prepublish": "pnpm run build",
-    "lint": "eslint --ext .ts,.tsx . && prettier --check .",
-    "build": "tsup src/index.ts --clean --format esm --target esnext --dts"
+  "author": {
+    "name": "CRIMX",
+    "email": "straybugs@gmail.com",
+    "url": "https://github.com/crimx/"
   },
-  "keywords": [
-    "template"
-  ],
-  "maintainers": [
-    {
-      "name": "CRIMX",
-      "email": "straybugs@gmail.com"
-    },
-    {
-      "name": "hyrious",
-      "email": "hyrious@outlook.com"
-    }
-  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "lint": "eslint && prettier --check .",
+    "lint:fix": "eslint --fix && prettier --write .",
+    "ts-check": "tsc --noEmit",
+    "docs": "typedoc --options typedoc.json",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:ci": "vitest --coverage",
+    "build": "tsup",
+    "build:min": "MINIFY=true tsup && node scripts/gzip.mjs",
+    "release": "commit-and-tag-version"
+  },
+  "keywords": [],
   "license": "MIT",
+  "dependencies": {
+    "adaptive-set": "<=0"
+  },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.36.1",
-    "@typescript-eslint/parser": "^5.36.1",
-    "eslint": "^8.23.0",
-    "eslint-config-prettier": "^8.5.0",
-    "prettier": "^2.7.1",
-    "tsup": "^6.2.3",
-    "typescript": "^4.8.2"
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "commit-and-tag-version": "^12.5.0",
+    "eslint": "^9.17.0",
+    "eslint-config-flat-gitignore": "^0.3.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import-x": "^4.5.0",
+    "eslint-plugin-perfectionist": "^4.3.0",
+    "gzip-size": "^7.0.0",
+    "jest-extended": "^4.0.2",
+    "prettier": "^3.4.1",
+    "pretty-bytes": "^6.1.1",
+    "tsup": "^8.3.5",
+    "typedoc": "^0.27.5",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vitest": "^2.1.6",
+    "yoctocolors": "^2.1.1"
   }
 }
