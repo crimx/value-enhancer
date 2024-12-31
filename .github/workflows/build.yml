@@ -37,6 +37,13 @@ jobs:
       - name: Build Docs 📖
         run: npm run docs
 
+      - name: Clone V5 Docs 📖
+        run: |
+          cd docs
+          git clone --branch v5-gh-pages --single-branch --depth 1 https://github.com/crimx/value-enhancer.git v5
+          cd v5
+          rm -rf CNAME .nojekyll .git
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:

@@ -12,7 +12,7 @@
 
 Enhance value with plain and explicit reactive wrapper. Think of it as hook-style signals.
 
-Docs: <https://value-enhancer.js.org>
+Legacy versions: [v5](https://value-enhancer.js.org/v5/)
 
 ## Features
 
