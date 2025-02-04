@@ -7,42 +7,38 @@ import {
   type ValVersion,
 } from "./typings";
 
-export const INIT_VALUE: unique symbol = /* @__PURE__ */ Symbol();
+export const BRAND: symbol = /* @__PURE__ */ Symbol.for("value-enhancer");
 
-export type INIT_VALUE = typeof INIT_VALUE;
+export const UNIQUE_VALUE: unique symbol = /* @__PURE__ */ Symbol();
+
+export type UNIQUE_VALUE = typeof UNIQUE_VALUE;
 
 /**
  * Set the value of a val.
  * It works for both `Val` and `ReadonlyVal` type (if the `ReadonlyVal` is actually a `Val`).
  * Do nothing if the val is really `ReadonlyVal`.
  */
-export const setValue = <TValue>(val: ReadonlyVal<TValue>, value: TValue): void => (val as Val<TValue>)?.set?.(value);
+export const trySetValue = <TValue>(val: ReadonlyVal<TValue>, value: TValue): void => (val as Val<TValue>).set?.(value);
+
+export const setValue = <TValue>(val: Val<TValue>, value: TValue): void => val.set(value);
 
 /**
  * Subscribe to value changes with immediate emission.
  * @param val
  * @param subscriber
- * @param eager by default subscribers will be notified on next tick. set `true` to notify subscribers of value changes synchronously.
  * @returns a disposer function that cancels the subscription
  */
-export const subscribe = <TValue>(
-  val: ReadonlyVal<TValue>,
-  subscriber: ValSubscriber<TValue>,
-  eager?: boolean,
-): ValDisposer => val.subscribe(subscriber, eager);
+export const subscribe = <TValue>(val: ReadonlyVal<TValue>, subscriber: ValSubscriber<TValue>): ValDisposer =>
+  val.subscribe(subscriber);
 
 /**
  * Subscribe to value changes without immediate emission.
  * @param val
  * @param subscriber
- * @param eager by default subscribers will be notified on next tick. set `true` to notify subscribers of value changes synchronously.
  * @returns a disposer function that cancels the subscription
  */
-export const reaction = <TValue>(
-  val: ReadonlyVal<TValue>,
-  subscriber: ValSubscriber<TValue>,
-  eager?: boolean,
-): ValDisposer => val.reaction(subscriber, eager);
+export const reaction = <TValue>(val: ReadonlyVal<TValue>, subscriber: ValSubscriber<TValue>): ValDisposer =>
+  val.reaction(subscriber);
 
 /**
  * Remove the given subscriber.
@@ -109,19 +105,6 @@ export const getValues = <TValInputs extends readonly ReadonlyVal[]>(
 
 export const getValVersion = (val$: ReadonlyVal): ValVersion => val$.$version;
 
-export interface Invoke {
-  (fn: () => void): void;
-  <TValue>(fn: (value: TValue) => void, value: TValue): void;
-}
-
-export const invoke: Invoke = <TValue>(fn: (value?: TValue) => void, value?: TValue): void => {
-  try {
-    fn(value);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
 /**
  * Attach a new setter to a val.
  * @param val$ a readonly Val
@@ -144,10 +127,10 @@ interface IsVal {
  *
  * @returns `true` if `val` is `ReadonlyVal` or `Val`.
  */
-export const isVal: IsVal = (val$: unknown): val$ is ReadonlyVal => !!(val$ as any)?.reaction;
+export const isVal: IsVal = (val$: unknown): val$ is ReadonlyVal => (val$ as ReadonlyVal | undefined)?.brand === BRAND;
 
 /**
- * Checks if `val` is a writable `Val`.
- * @returns `true` if `val` is a writable `Val`.
+ * Checks if `val` is a readonly `Val`.
+ * @returns `true` if `val` is a readonly `Val`.
  */
-export const isWritable = <TValue>(val$: ReadonlyVal<TValue>): val$ is Val<TValue> => !!(val$ as Val)?.set;
+export const isReadonly = <TValue>(val$: ReadonlyVal<TValue>): val$ is Val<TValue> => !(val$ as Val)?.set;

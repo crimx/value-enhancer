@@ -1,6 +1,6 @@
 export { batch, batchFlush, batchStart } from "./batch";
 
-export { compute, type ComputeEffect } from "./compute";
+export { compute, type ComputeFn } from "./compute";
 
 export type {
   FlattenVal,

@@ -16,12 +16,6 @@ export interface Get {
 }
 
 /**
- * @internal
- * @ignore
- */
-export type NoInfer<T> = [T][T extends any ? 0 : never];
-
-/**
  * A ReadonlyVal contains a readonly `value` and does not have a `set` method.
  */
 export interface ReadonlyVal<TValue = any> {
@@ -32,6 +26,10 @@ export interface ReadonlyVal<TValue = any> {
   readonly $version: ValVersion;
   readonly brand: symbol;
   /**
+   * Current value of the val.
+   */
+  readonly value: TValue;
+  /**
    * Remove all subscribers.
    */
   dispose(): void;
@@ -39,6 +37,8 @@ export interface ReadonlyVal<TValue = any> {
    * Get current value of the val.
    */
   get: () => TValue;
+  /** @internal */
+  onReaction_(subscriber: ValSubscriber<TValue>): void;
   /**
    * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
    * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)
@@ -51,17 +51,15 @@ export interface ReadonlyVal<TValue = any> {
   /**
    * Subscribe to value changes without immediate emission.
    * @param subscriber
-   * @param eager by default subscribers will be notified on next tick. set `true` to notify subscribers of value changes synchronously.
    * @returns a disposer function that cancels the subscription
    */
-  reaction(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
+  reaction(subscriber: ValSubscriber<TValue>): ValDisposer;
   /**
    * Subscribe to value changes with immediate emission.
    * @param subscriber
-   * @param eager by default subscribers will be notified on next tick. set `true` to notify subscribers of value changes synchronously.
    * @returns a disposer function that cancels the subscription
    */
-  subscribe(subscriber: ValSubscriber<TValue>, eager?: boolean): ValDisposer;
+  subscribe(subscriber: ValSubscriber<TValue>): ValDisposer;
   /**
    * Subscribe to value changes without immediate emission.
    * The subscribers will be called before sync and async subscribers from [[reaction]] and [[subscribe]].
@@ -76,10 +74,6 @@ export interface ReadonlyVal<TValue = any> {
    * @param subscriber
    */
   unsubscribe(subscriber?: (...args: any[]) => any): void;
-  /**
-   * Current value of the val.
-   */
-  readonly value: TValue;
 }
 
 export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
@@ -88,6 +82,8 @@ export type UnwrapVal<T> = T extends ReadonlyVal<infer TValue> ? TValue : T;
  * A Val contains a writable `value` property and a `set` method.
  */
 export interface Val<TValue = any> extends ReadonlyVal<TValue> {
+  /** Current value of the val */
+  value: TValue;
   /**
    * Create a new ReadonlyVal referencing the value of the current ReadonlyVal as source.
    * (It is just like `derive` a val without `transform`. It is simpler hence more efficient.)
@@ -122,19 +118,12 @@ export interface Val<TValue = any> extends ReadonlyVal<TValue> {
   ref(writable?: false): ReadonlyVal<TValue>;
   /** Set new value */
   set: (value: TValue) => void;
-  /** Current value of the val */
-  value: TValue;
 }
 
 /**
  * Custom config for the val.
  */
 export interface ValConfig<TValue = any> {
-  /**
-   * Set the default behavior of subscription and reaction.
-   * Emission triggers synchronously if `true`. Default `false`.
-   */
-  readonly eager?: boolean;
   /**
    * Compare two values. Default `Object.is`.
    * `false` to disable equality check.

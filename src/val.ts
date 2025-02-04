@@ -10,7 +10,7 @@ import {
   type ValSubscriber,
   type ValVersion,
 } from "./typings";
-import { attachSetter, INIT_VALUE as DIRTY_VALUE, INIT_VALUE, invoke, strictEqual } from "./utils";
+import { attachSetter, BRAND, strictEqual, UNIQUE_VALUE } from "./utils";
 import { getVersion } from "./version";
 
 export type Deps = Map<ValImpl, ValVersion>;
@@ -23,8 +23,6 @@ const registry = /* @__PURE__ */ new FinalizationRegistry<{
     dep.dependents_ = remove(dep.dependents_, r);
   }
 });
-
-const BRAND: symbol = Symbol.for("value-enhancer");
 
 interface CreateReadonlyVal {
   /**
@@ -91,7 +89,7 @@ export class ValImpl<TValue = any> {
   /**
    * @internal
    */
-  public lastSubInvokeVersion_: DIRTY_VALUE | ValVersion = DIRTY_VALUE;
+  public lastSubInvokeVersion_: UNIQUE_VALUE | ValVersion = UNIQUE_VALUE;
 
   public readonly name?: string;
 
@@ -133,7 +131,7 @@ export class ValImpl<TValue = any> {
   /**
    * @internal
    */
-  private _value_: TValue = INIT_VALUE as TValue;
+  private _value_: TValue = UNIQUE_VALUE as TValue;
 
   /**
    * @internal
@@ -143,7 +141,7 @@ export class ValImpl<TValue = any> {
   /**
    * @internal
    */
-  private _version_: ValVersion = INIT_VALUE;
+  private _version_: ValVersion = UNIQUE_VALUE;
 
   /**
    * @internal
@@ -157,7 +155,6 @@ export class ValImpl<TValue = any> {
   ) {
     this._resolveValue_ = resolveValue;
     this.equal_ = (config?.equal ?? strictEqual) || undefined;
-    this.eager_ = config?.eager;
     this.name = config?.name;
     this.deps_ = deps;
   }
@@ -205,7 +202,7 @@ export class ValImpl<TValue = any> {
         }
       }
       if (changed) {
-        this._resolveValueError_ = INIT_VALUE;
+        this._resolveValueError_ = UNIQUE_VALUE;
         try {
           const value = this._resolveValue_(this);
           if (!this.equal_?.(value, this._value_)) {
@@ -219,11 +216,11 @@ export class ValImpl<TValue = any> {
         }
       }
     }
-    if (!strictEqual(this._resolveValueError_, INIT_VALUE)) {
+    if (!strictEqual(this._resolveValueError_, UNIQUE_VALUE)) {
       throw this._resolveValueError_;
     }
     if (process.env.NODE_ENV !== "production") {
-      if (strictEqual(INIT_VALUE, this._value_)) {
+      if (strictEqual(UNIQUE_VALUE, this._value_)) {
         throw new Error("Cycle detected");
       }
     }
@@ -234,6 +231,13 @@ export class ValImpl<TValue = any> {
    * @internal
    */
   public notify_ = (): void => {
+    if (process.env.NODE_ENV !== "production") {
+      if (this._DEV_ValDisposed_) {
+        console.error(new Error("[val-dev] Updating a disposed val."));
+        console.error((this as any)._DEV_ValDisposed_);
+      }
+    }
+
     this._valueMaybeDirty_ = true;
 
     const isFirst = batchStart();
@@ -252,12 +256,17 @@ export class ValImpl<TValue = any> {
     isFirst && batchFlush();
   };
 
-  public reaction(subscriber: ValSubscriber<TValue>, _eager = this.eager_): ValDisposer {
+  /** @internal */
+  public onReaction_(subscriber: ValSubscriber<TValue>): void {
     if (size(this.subs_) <= 0) {
       // start tracking last first on first subscription
       this.lastSubInvokeVersion_ = this.$version;
     }
     this.subs_ = add(this.subs_, subscriber);
+  }
+
+  public reaction(subscriber: ValSubscriber<TValue>): ValDisposer {
+    this.onReaction_(subscriber);
     return this.unsubscribe.bind(this, subscriber);
   }
 
@@ -268,9 +277,9 @@ export class ValImpl<TValue = any> {
     }
   }
 
-  public subscribe(subscriber: ValSubscriber<TValue>, eager = this.eager_): ValDisposer {
-    const disposer = this.reaction(subscriber, eager);
-    invoke(subscriber, this.get());
+  public subscribe(subscriber: ValSubscriber<TValue>): ValDisposer {
+    const disposer = this.reaction(subscriber);
+    subscriber(this.get());
     return disposer;
   }
 
@@ -283,8 +292,8 @@ export class ValImpl<TValue = any> {
    * JSON.stringify(v$); // '{"a":1}'
    * ```
    */
-  public toJSON(key: string): unknown {
-    const value = this.get() as null | undefined | { toJSON?: (key: string) => unknown };
+  public toJSON(key?: string): unknown {
+    const value = this.get() as null | undefined | { toJSON?: (key?: string) => unknown };
     return value?.toJSON ? value.toJSON(key) : value;
   }
 
@@ -298,7 +307,7 @@ export class ValImpl<TValue = any> {
    * ```
    */
   public toString(): string {
-    return this.get() + "";
+    return "" + this.toJSON();
   }
 
   public unsubscribe(subscriber?: (...args: any[]) => any): void {

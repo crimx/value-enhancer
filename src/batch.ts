@@ -1,7 +1,7 @@
-import { INIT_VALUE, isVal, strictEqual } from "./utils";
+import { isVal, strictEqual, UNIQUE_VALUE } from "./utils";
 import { type ValImpl } from "./val";
 
-const SCOPE: unique symbol = Symbol.for("[val-scope]");
+const SCOPE: unique symbol = Symbol.for("[val-batch]");
 
 declare const globalThis: {
   [SCOPE]?: boolean;
@@ -13,7 +13,7 @@ export const batchStart = (): boolean => (globalThis[SCOPE] ? false : (globalThi
 
 export const batchFlush = (): void => {
   if (globalThis[SCOPE]) {
-    let error: unknown = INIT_VALUE;
+    let error: unknown = UNIQUE_VALUE;
     for (const v of dirtyVals) {
       dirtyVals.delete(v);
 
@@ -22,7 +22,6 @@ export const batchFlush = (): void => {
           v.lastSubInvokeVersion_ = v.$version;
           const value = v.get();
           for (const sub of v.subs_) {
-            invoke(sub, value);
             try {
               sub(value);
             } catch (e) {
@@ -41,7 +40,7 @@ export const batchFlush = (): void => {
 
     globalThis[SCOPE] = false;
 
-    if (error !== INIT_VALUE) {
+    if (error !== UNIQUE_VALUE) {
       throw error;
     }
   }

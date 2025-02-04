@@ -1,6 +1,6 @@
 import { type ValVersion } from "./typings";
 
-const objectVersion = new WeakMap<WeakKey, ValVersion>();
+const objectVersion = /* @__PURE__ */ new WeakMap<WeakKey, ValVersion>();
 
 const isObject = (value: unknown): value is object =>
   value !== null && (typeof value === "object" || typeof value === "function");

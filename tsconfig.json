@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "target": "ESNext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "lib": ["DOM", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "isolatedModules": true,
     "noFallthroughCasesInSwitch": true,
-    "noUnusedParameters": true,
     "noImplicitOverride": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
+    "noUnusedParameters": true,
+    "outDir": "dist",
     "resolveJsonModule": true,
-    "lib": ["DOM", "ESNext"],
-    "outDir": "dist"
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext"
   },
   "include": ["src/**/*"]
 }

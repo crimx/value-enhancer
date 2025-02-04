@@ -15,7 +15,7 @@ export const watch = (effect: WatchEffect): ValDisposer => {
 
   let cleanupEffect: null | undefined | ValDisposer | void;
 
-  const get = <T = any>(val$?: ReadonlyVal<T> | T | { $: ReadonlyVal<T> }): T | undefined => {
+  const get = <T = any>(val$?: null | ReadonlyVal<T> | undefined | { $: ReadonlyVal<T> }): T | undefined => {
     if (!isVal(val$)) {
       if (!isVal((val$ as undefined | { $: ReadonlyVal<T> })?.$)) {
         return val$ as T | undefined;
@@ -25,8 +25,7 @@ export const watch = (effect: WatchEffect): ValDisposer => {
 
     if (!has(collectedDeps, val$)) {
       collectedDeps = add(collectedDeps, val$);
-      // only allow sync reaction
-      val$.reaction(subscription, true);
+      val$.onReaction_(subscription);
     }
 
     return val$.get();
@@ -49,11 +48,7 @@ export const watch = (effect: WatchEffect): ValDisposer => {
     if (cleanupEffect) {
       const cleanup = cleanupEffect;
       cleanupEffect = null;
-      try {
-        batch(cleanup);
-      } catch (e) {
-        console.error(e);
-      }
+      batch(cleanup);
     }
   };
 

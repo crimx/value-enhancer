@@ -2,11 +2,11 @@ import { type Get, type ReadonlyVal, type ValConfig } from "./typings";
 import { isVal } from "./utils";
 import { ValImpl } from "./val";
 
-export interface ComputeEffect<TValue> {
+export interface ComputeFn<TValue> {
   (get: Get): TValue;
 }
 
-export const compute = <TValue>(effect: ComputeEffect<TValue>, config?: ValConfig<TValue>): ReadonlyVal<TValue> => {
+export const compute = <TValue>(fn: ComputeFn<TValue>, config?: ValConfig<TValue>): ReadonlyVal<TValue> => {
   let running: boolean | undefined;
 
   let self: ValImpl<TValue>;
@@ -34,7 +34,7 @@ export const compute = <TValue>(effect: ComputeEffect<TValue>, config?: ValConfi
     }
 
     try {
-      return effect(get);
+      return fn(get);
     } finally {
       if (isFirst) {
         running = false;
