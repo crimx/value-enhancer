@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.5.2](https://github.com/crimx/value-enhancer/compare/v5.5.1...v5.5.2) (2025-04-03)
+
+
+### Bug Fixes
+
+* should notify if some keys with same value are removed ([f9b4455](https://github.com/crimx/value-enhancer/commit/f9b44558f8b5027d1b5cec55fb47e7798e40249a))
+
 ### [5.5.1](https://github.com/crimx/value-enhancer/compare/v5.5.0...v5.5.1) (2024-12-24)
 
 ## [5.5.0](https://github.com/crimx/value-enhancer/compare/v5.4.6...v5.5.0) (2024-09-04)
