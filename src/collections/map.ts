@@ -210,27 +210,28 @@ class ReactiveMapImpl<TKey, TValue>
 
   public replace(entries: Iterable<readonly [TKey, TValue]>): Iterable<TValue> {
     const oldMap = new Map(this);
-    const deleted = new Set<TValue>(this.values());
+    const deletedValues = new Set<TValue>(this.values());
     let hasNewValue = false;
     super.clear();
 
     for (const [key, value] of entries) {
       super.set(key, value);
-      deleted.delete(value);
+      deletedValues.delete(value);
       hasNewValue =
         hasNewValue || !oldMap.has(key) || !Object.is(oldMap.get(key), value);
+      oldMap.delete(key);
     }
 
-    if (hasNewValue || deleted.size > 0) {
+    if (hasNewValue || oldMap.size > 0 || deletedValues.size > 0) {
       if (this.#onDeleted) {
-        for (const value of deleted) {
+        for (const value of deletedValues) {
           this.#onDeleted(value);
         }
       }
       this.#notify();
     }
 
-    return deleted.values();
+    return deletedValues.values();
   }
 
   public toJSON(): object {

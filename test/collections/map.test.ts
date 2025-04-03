@@ -390,6 +390,45 @@ describe("ReactiveMap", () => {
       dispose();
     });
 
+    it("should notify if some keys with same value are removed", () => {
+      const map = reactiveMap<string, number>([
+        ["baz", 4],
+        ["foo", 4],
+      ]);
+      const mockNotify = jest.fn();
+      const dispose = map.$.reaction(mockNotify, true);
+
+      expect(map.get("foo")).toBe(4);
+
+      map.replace([["baz", 4]]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(map.get("baz")).toBe(4);
+      expect(map.get("foo")).toBeUndefined();
+
+      dispose();
+    });
+
+    it("should notify if some values are changed to values from other keys", () => {
+      const map = reactiveMap<string, number>([
+        ["baz", 3],
+        ["foo", 4],
+      ]);
+      const mockNotify = jest.fn();
+      const dispose = map.$.reaction(mockNotify, true);
+
+      expect(map.get("foo")).toBe(4);
+
+      map.replace([
+        ["baz", 4],
+        ["foo", 3],
+      ]);
+      expect(mockNotify).toHaveBeenCalledTimes(1);
+      expect(map.get("baz")).toBe(4);
+      expect(map.get("foo")).toBe(3);
+
+      dispose();
+    });
+
     it("should return deleted entries", () => {
       const map = reactiveMap<string, number>([
         ["baz", 3],
