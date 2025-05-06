@@ -43,7 +43,7 @@
     "adaptive-set": "<=0"
   },
   "devDependencies": {
-    "@types/node": "^22.13.1",
+    "@types/node": "^22.15.11",
     "@vitest/coverage-v8": "^3.0.4",
     "@wopjs/eslint-config": "^0.1.9",
     "@wopjs/gzip-size": "^0.1.0",

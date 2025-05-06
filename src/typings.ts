@@ -151,4 +151,4 @@ export type ValSetValue<TValue = any> = (value: TValue) => void;
 
 export type ValSubscriber<TValue = any> = (newValue: TValue) => void;
 
-export type ValVersion = unknown;
+export type ValVersion = number;

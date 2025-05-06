@@ -11,7 +11,6 @@ import {
   type ValVersion,
 } from "./typings";
 import { attachSetter, BRAND, strictEqual, UNIQUE_VALUE } from "./utils";
-import { getVersion } from "./version";
 
 export type Deps = Map<ValImpl, ValVersion>;
 
@@ -46,10 +45,10 @@ interface CreateReadonlyVal {
    * @param config Optional custom config for the val.
    * @returns A tuple with the readonly val and a function to set the value.
    */
-  <TValue = any>(
-    value: TValue,
-    config?: ValConfig<TValue>,
-  ): [ReadonlyVal<NoInfer<TValue>>, ValSetValue<NoInfer<TValue>>];
+  <TValue = any>(value: TValue, config?: ValConfig<TValue>): [
+    ReadonlyVal<NoInfer<TValue>>,
+    ValSetValue<NoInfer<TValue>>,
+  ];
   /**
    * Creates a readonly val with the given value.
    *
@@ -57,10 +56,10 @@ interface CreateReadonlyVal {
    * @param config Optional custom config for the val.
    * @returns A tuple with the readonly val and a function to set the value.
    */
-  <TValue = any>(
-    value?: TValue,
-    config?: ValConfig<TValue>,
-  ): [ReadonlyVal<NoInfer<TValue | undefined>>, ValSetValue<NoInfer<TValue | undefined>>];
+  <TValue = any>(value?: TValue, config?: ValConfig<TValue>): [
+    ReadonlyVal<NoInfer<TValue | undefined>>,
+    ValSetValue<NoInfer<TValue | undefined>>,
+  ];
 }
 
 export class ValImpl<TValue = any> {
@@ -89,7 +88,7 @@ export class ValImpl<TValue = any> {
   /**
    * @internal
    */
-  public lastSubInvokeVersion_: UNIQUE_VALUE | ValVersion = UNIQUE_VALUE;
+  public lastSubInvokeVersion_: ValVersion = -1;
 
   public readonly name?: string;
 
@@ -141,7 +140,7 @@ export class ValImpl<TValue = any> {
   /**
    * @internal
    */
-  private _version_: ValVersion = UNIQUE_VALUE;
+  private _version_: ValVersion = -1;
 
   /**
    * @internal
@@ -207,7 +206,7 @@ export class ValImpl<TValue = any> {
           const value = this._resolveValue_(this);
           if (!this.equal_?.(value, this._value_)) {
             this._value_ = value;
-            this._version_ = this.equal_ ? getVersion(this._value_) : Symbol();
+            this._version_ = (this._version_ + 1) | 0;
           }
         } catch (e) {
           this._valueMaybeDirty_ = true;

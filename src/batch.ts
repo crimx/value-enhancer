@@ -1,4 +1,4 @@
-import { isVal, strictEqual, UNIQUE_VALUE } from "./utils";
+import { isVal, UNIQUE_VALUE } from "./utils";
 import { type ValImpl } from "./val";
 
 const SCOPE: unique symbol = Symbol.for("[val-batch]");
@@ -18,7 +18,7 @@ export const batchFlush = (): void => {
       dirtyVals.delete(v);
 
       if (isVal(v)) {
-        if (v.subs_ && !strictEqual(v.lastSubInvokeVersion_, v.$version)) {
+        if (v.subs_ && v.lastSubInvokeVersion_ !== v.$version) {
           v.lastSubInvokeVersion_ = v.$version;
           const value = v.get();
           for (const sub of v.subs_) {
