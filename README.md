@@ -46,8 +46,8 @@ npm add value-enhancer
 
 | import                        | size(brotli) |
 | ----------------------------- | ------------ |
-| `*`                           | 1.85 kB      |
-| `{ readonlyVal, val }` (core) | 1.05 kB      |
+| `*`                           | 1.87 kB      |
+| `{ readonlyVal, val }` (core) | 1.07 kB      |
 | `{ from }`                    | 26 B         |
 | `{ derive }`                  | 93 B         |
 | `{ combine }`                 | 204 B        |
