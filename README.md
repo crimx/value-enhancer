@@ -42,23 +42,7 @@ npm add value-enhancer
 
 ## Sizes
 
-<!-- size-section-start -->
-
-| import                        | size(brotli) |
-| ----------------------------- | ------------ |
-| `*`                           | 1.87 kB      |
-| `{ readonlyVal, val }` (core) | 1.07 kB      |
-| `{ from }`                    | 26 B         |
-| `{ derive }`                  | 93 B         |
-| `{ combine }`                 | 204 B        |
-| `{ compute }`                 | 270 B        |
-| `{ flattenFrom }`             | 227 B        |
-| `{ flatten }`                 | 36 B         |
-| `{ reactiveMap }`             | 495 B        |
-| `{ reactiveSet }`             | 359 B        |
-| `{ reactiveList }`            | 528 B        |
-
-<!-- size-section-end -->
+![value-enhancer size](https://value-enhancer.js.org/images/export-size.svg)
 
 ## Quick Q&A
 
