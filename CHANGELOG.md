@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.6.0](https://github.com/crimx/value-enhancer/compare/v5.5.3...v5.6.0) (2025-08-01)
+
+
+### Features
+
+* add watch ([4f060b8](https://github.com/crimx/value-enhancer/commit/4f060b882799735befaf3690aee8b70e6355da90))
+
 ### [5.5.3](https://github.com/crimx/value-enhancer/compare/v5.5.2...v5.5.3) (2025-06-04)
 
 ### [5.5.2](https://github.com/crimx/value-enhancer/compare/v5.5.1...v5.5.2) (2025-04-03)
