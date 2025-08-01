@@ -35,18 +35,15 @@ export const watch = (
   config?: WatchConfig
 ): ValDisposer => {
   // eslint-disable-next-line prefer-const
-  let v: ReadonlyVal | undefined;
-  // eslint-disable-next-line prefer-const
+  let v: ReadonlyVal<(() => void) | undefined | void> | undefined;
   let disposed: boolean | undefined;
-  // eslint-disable-next-line prefer-const
-  let subscription: ValDisposer | undefined;
   const disposer: ValDisposer = () => {
     if (!disposed) {
       disposed = true;
       if (v?.value) {
         invoke(v.value);
       }
-      subscription?.();
+      v?.dispose();
     }
   };
   v = compute(
@@ -67,6 +64,6 @@ export const watch = (
     },
     { ...config, equal: false }
   );
-  subscription = v.subscribe(identity);
+  v.subscribe(identity);
   return disposer;
 };
