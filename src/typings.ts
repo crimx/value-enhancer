@@ -2,6 +2,8 @@
  * A ReadonlyVal contains a readonly `value` and does not have a `set` method.
  */
 export interface ReadonlyVal<TValue = any> {
+  /** Display debug name. */
+  readonly name?: string;
   /**
    * Current value of the val.
    */
@@ -115,6 +117,8 @@ export type ValDisposer = () => void;
  * Custom config for the val.
  */
 export interface ValConfig<TValue = any> {
+  /** Debug name. */
+  readonly name?: string;
   /**
    * Compare two values. Default `Object.is`.
    * `false` to disable equality check.

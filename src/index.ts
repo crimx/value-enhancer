@@ -32,6 +32,12 @@ export {
   unsubscribe,
 } from "./utils";
 export { groupVals, readonlyVal, val } from "./val";
+export {
+  watch,
+  type WatchConfig,
+  type WatchEffect,
+  type WatchGet,
+} from "./watch";
 
 if (process.env.NODE_ENV !== "production") {
   initDev();

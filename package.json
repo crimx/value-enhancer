@@ -49,6 +49,7 @@
   "scripts": {
     "prepublishOnly": "pnpm run build",
     "lint": "eslint --ext .ts,.tsx . && prettier --check . && tsc --noEmit",
+    "lint:fix": "eslint --fix --ext .ts,.tsx . && prettier --write . && tsc --noEmit",
     "size-limit": "size-limit",
     "test": "node --expose-gc ./node_modules/jest/bin/jest.js --runInBand",
     "test:coverage": "tsc --noEmit -p ./test/tsconfig.json && node --expose-gc ./node_modules/jest/bin/jest.js --collect-coverage",

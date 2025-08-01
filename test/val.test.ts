@@ -203,6 +203,12 @@ describe.each(eachItem)("$name", ({ createVal }) => {
 
       v$.dispose();
     });
+
+    it("should get debug name", () => {
+      const [v$] = createVal(1, { name: "testVal" });
+      expect(v$.name).toBe("testVal");
+      v$.dispose();
+    });
   });
 
   describe("subscribe", () => {

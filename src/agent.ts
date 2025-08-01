@@ -25,6 +25,7 @@ export enum AgentStatus {
 export interface IValAgent<TValue = any> {
   subs_: Map<ValSubscriber<TValue>, SubMode>;
   version_: ValVersion;
+  name_?: string;
   eager_?: boolean;
   sourceAgent_: IValAgent;
   resolveValue_: () => TValue;
@@ -43,6 +44,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     this.#getValue = getValue;
     this.equal_ = (config?.equal ?? strictEqual) || void 0;
     this.eager_ = config?.eager;
+    this.name_ = config?.name;
 
     if (onChange) {
       const ref = new WeakRef(this);
@@ -75,6 +77,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   public value_: TValue = INIT_VALUE;
   public equal_?: (newValue: TValue, oldValue: TValue) => boolean;
   public eager_?: boolean;
+  public name_?: string;
 
   public resolveValue_ = (): TValue => {
     if (this.status_ & AgentStatus.NeedResolveValue) {
@@ -161,6 +164,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     if (process.env.NODE_ENV !== "production") {
       this.#disposed = new Error("[val-dev] Val disposed at:");
     } else {
+      /* istanbul ignore next */
       this.#disposed = true;
     }
   }

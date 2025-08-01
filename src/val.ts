@@ -29,6 +29,11 @@ export class ValImpl<TValue = any> implements ReadonlyVal<TValue> {
     agent.resolveValue_();
   }
 
+  /** Debug display name. */
+  public get name(): string | undefined {
+    return this.#agent.name_;
+  }
+
   public get $version(): ValVersion {
     // resolve current value for the latest version
     this.get();
