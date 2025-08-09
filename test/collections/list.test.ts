@@ -338,22 +338,43 @@ describe("ReactiveList", () => {
   });
 
   describe("splice", () => {
+    it("should not remove elements if the second argument is not provided", () => {
+      const list = reactiveList([1, 2, 3]);
+      list.splice(0);
+
+      const arr = [1, 2, 3];
+      arr.splice(0);
+
+      expect(list.array).toEqual(arr);
+    });
     it("should remove the specified elements from the list", () => {
       const list = reactiveList([1, 2, 3]);
       list.splice(1, 2);
-      expect(list.array).toEqual([1]);
+
+      const arr = [1, 2, 3];
+      arr.splice(1, 2);
+
+      expect(list.array).toEqual(arr);
     });
 
     it("should remove the specified elements from the list and insert new elements", () => {
       const list = reactiveList([1, 2, 3]);
       list.splice(1, 2, 4, 5);
-      expect(list.array).toEqual([1, 4, 5]);
+
+      const arr = [1, 2, 3];
+      arr.splice(1, 2, 4, 5);
+
+      expect(list.array).toEqual(arr);
     });
 
     it("should count backward on negative index", () => {
       const list = reactiveList([1, 2, 3]);
       list.splice(-1, 2);
-      expect(list.array).toEqual([1, 2]);
+
+      const arr = [1, 2, 3];
+      arr.splice(-1, 2);
+
+      expect(list.array).toEqual(arr);
     });
 
     it("should notify on splice", () => {

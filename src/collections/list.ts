@@ -314,17 +314,9 @@ class ReactiveListImpl<TValue> implements ReactiveList<TValue> {
     deleteCount: number,
     ...items: TValue[]
   ): TValue[];
-  public splice(
-    start: number,
-    deleteCount?: number,
-    ...rest: TValue[]
-  ): TValue[] {
-    const result = (this.array as TValue[]).splice(
-      start as number,
-      deleteCount as number,
-      ...(rest as TValue[])
-    );
-    if (result.length > 0 || rest.length > 0) {
+  public splice(...rest: [number, number, ...any[]]): TValue[] {
+    const result = (this.array as TValue[]).splice(...rest);
+    if (result.length > 0 || rest.length > 2) {
       this.#notify();
     }
     return result;
