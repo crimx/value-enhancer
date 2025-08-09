@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [5.6.2](https://github.com/crimx/value-enhancer/compare/v5.6.1...v5.6.2) (2025-08-09)
+
+
+### Bug Fixes
+
+* **collection:** reactive list splice ([e3d45d5](https://github.com/crimx/value-enhancer/commit/e3d45d5f631350d9fb8cb9e8903145040ab1da3b))
+
 ### [5.6.1](https://github.com/crimx/value-enhancer/compare/v5.6.0...v5.6.1) (2025-08-01)
 
 ## [5.6.0](https://github.com/crimx/value-enhancer/compare/v5.5.3...v5.6.0) (2025-08-01)
