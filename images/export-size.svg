@@ -229,11 +229,11 @@
 <g transform="translate(0, 400)">
   <g class="stagger" style="animation-delay: 1600ms">
     <text x="2" y="15" class="text">{ reactiveList }</text>
-    <text x="215" y="34" class="text">673 B</text>
+    <text x="215" y="34" class="text">671 B</text>
 
     <svg width="200" x="0" y="25">
       <rect rx="5" ry="5" x="0" y="0" width="200" height="8" fill="#bd93f934"></rect>
-      <svg width="32.047619047619044%">
+      <svg width="31.952380952380956%">
         <rect height="8" fill="#bd93f9" rx="5" ry="5" x="0" y="0" class="progress" style="animation-delay: 1900ms" />
       </svg>
     </svg>
