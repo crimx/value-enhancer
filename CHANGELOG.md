@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.7.0](https://github.com/crimx/value-enhancer/compare/v5.6.2...v5.7.0) (2025-08-27)
+
+
+### Features
+
+* add onDisposeValue ([28f095a](https://github.com/crimx/value-enhancer/commit/28f095a59a6cade28cd9155d2012afedbef9b6fc))
+
 ### [5.6.2](https://github.com/crimx/value-enhancer/compare/v5.6.1...v5.6.2) (2025-08-09)
 
 
