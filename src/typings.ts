@@ -129,6 +129,11 @@ export interface ValConfig<TValue = any> {
    * Emission triggers synchronously if `true`. Default `false`.
    */
   readonly eager?: boolean;
+  /**
+   * A callback invoked with the old value when a new value is set.
+   * @param oldValue The old value being replaced.
+   */
+  readonly onDisposeValue?: (oldValue: TValue) => void;
 }
 
 export type ValVersion = any;

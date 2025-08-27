@@ -209,6 +209,72 @@ describe.each(eachItem)("$name", ({ createVal }) => {
       expect(v$.name).toBe("testVal");
       v$.dispose();
     });
+
+    it("should call onDisposeValue when value changes", async () => {
+      const onDisposeValue = jest.fn();
+      const obj1 = { a: 1 };
+      const obj2 = { a: 2 };
+      const obj3 = { a: 3 };
+
+      const [v$, set] = createVal(obj1, { onDisposeValue });
+      expect(v$.value).toBe(obj1);
+      expect(onDisposeValue).toBeCalledTimes(0);
+
+      set(obj1);
+      expect(v$.value).toBe(obj1);
+      expect(onDisposeValue).toBeCalledTimes(0);
+
+      set(obj2);
+      expect(v$.value).toBe(obj2);
+      expect(onDisposeValue).toBeCalledTimes(1);
+      expect(onDisposeValue).lastCalledWith(obj1);
+
+      set(obj2);
+      expect(v$.value).toBe(obj2);
+      expect(onDisposeValue).toBeCalledTimes(1);
+
+      set(obj3);
+      expect(v$.value).toBe(obj3);
+      expect(onDisposeValue).toBeCalledTimes(2);
+      expect(onDisposeValue).lastCalledWith(obj2);
+
+      v$.dispose();
+      expect(onDisposeValue).toBeCalledTimes(3);
+      expect(onDisposeValue).lastCalledWith(obj3);
+    });
+
+    it("should call onDisposeValue when value changes (equal: false)", async () => {
+      const onDisposeValue = jest.fn();
+      const obj1 = { a: 1 };
+      const obj2 = { a: 2 };
+      const obj3 = { a: 3 };
+
+      const [v$, set] = createVal(obj1, { onDisposeValue, equal: false });
+      expect(v$.value).toBe(obj1);
+      expect(onDisposeValue).toBeCalledTimes(0);
+
+      set(obj1);
+      expect(v$.value).toBe(obj1);
+      expect(onDisposeValue).toBeCalledTimes(0);
+
+      set(obj2);
+      expect(v$.value).toBe(obj2);
+      expect(onDisposeValue).toBeCalledTimes(1);
+      expect(onDisposeValue).lastCalledWith(obj1);
+
+      set(obj2);
+      expect(v$.value).toBe(obj2);
+      expect(onDisposeValue).toBeCalledTimes(1);
+
+      set(obj3);
+      expect(v$.value).toBe(obj3);
+      expect(onDisposeValue).toBeCalledTimes(2);
+      expect(onDisposeValue).lastCalledWith(obj2);
+
+      v$.dispose();
+      expect(onDisposeValue).toBeCalledTimes(3);
+      expect(onDisposeValue).lastCalledWith(obj3);
+    });
   });
 
   describe("subscribe", () => {
@@ -1049,6 +1115,55 @@ describe.each(eachItem)("$name", ({ createVal }) => {
       expect(consoleErrorMock).toBeCalled();
 
       consoleErrorMock.mockRestore();
+    });
+
+    it("should unsubscribe all callbacks in production mode", async () => {
+      const NODE_ENV = process.env.NODE_ENV;
+      process.env.NODE_ENV = "production";
+
+      const consoleErrorMock = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => void 0);
+
+      const spySubscribe = jest.fn();
+      const spyReaction = jest.fn();
+      const [v$, set] = createVal<number>(1);
+
+      v$.subscribe(spySubscribe);
+      v$.reaction(spyReaction);
+
+      expect(spySubscribe).toBeCalledTimes(1);
+      expect(spyReaction).toBeCalledTimes(0);
+
+      spySubscribe.mockClear();
+      spyReaction.mockClear();
+
+      set(2);
+      await nextTick();
+      expect(v$.value).toBe(2);
+      expect(spySubscribe).toBeCalledTimes(1);
+      expect(spyReaction).toBeCalledTimes(1);
+      expect(spySubscribe).lastCalledWith(2);
+      expect(spyReaction).lastCalledWith(2);
+
+      expect(consoleErrorMock).not.toBeCalled();
+
+      v$.dispose();
+
+      spySubscribe.mockClear();
+      spyReaction.mockClear();
+
+      set(3);
+      await nextTick();
+      expect(v$.value).toBe(3);
+      expect(spySubscribe).toBeCalledTimes(0);
+      expect(spyReaction).toBeCalledTimes(0);
+
+      expect(consoleErrorMock).toBeCalled();
+
+      consoleErrorMock.mockRestore();
+
+      process.env.NODE_ENV = NODE_ENV;
     });
   });
 

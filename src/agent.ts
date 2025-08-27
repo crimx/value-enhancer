@@ -45,6 +45,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     this.equal_ = (config?.equal ?? strictEqual) || void 0;
     this.eager_ = config?.eager;
     this.name_ = config?.name;
+    this.#onDisposeValue = config?.onDisposeValue;
 
     if (onChange) {
       const ref = new WeakRef(this);
@@ -158,6 +159,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   }
 
   public dispose_(): void {
+    const oldValue = this.value_;
     this.remove_();
     registry.unregister(this);
     this.#disposeEffect?.();
@@ -166,6 +168,9 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
     } else {
       /* istanbul ignore next */
       this.#disposed = true;
+    }
+    if (this.#onDisposeValue && oldValue !== INIT_VALUE) {
+      this.#onDisposeValue(oldValue);
     }
   }
 
@@ -177,12 +182,20 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   }
 
   private _bumpVersionBySymbol_(value: TValue): void {
+    const oldValue = this.value_;
     this.value_ = value;
     this.version_ = Symbol();
+    if (this.#onDisposeValue && oldValue !== INIT_VALUE && oldValue !== value) {
+      this.#onDisposeValue(oldValue);
+    }
   }
 
   private _bumpVersionByValue_(value: TValue): void {
+    const oldValue = this.value_;
     this.value_ = this.version_ = value;
+    if (this.#onDisposeValue && oldValue !== INIT_VALUE && oldValue !== value) {
+      this.#onDisposeValue(oldValue);
+    }
   }
 
   private [SubMode.Async] = 0;
@@ -190,6 +203,8 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
   private [SubMode.Computed] = 0;
 
   #disposeEffect?: () => void;
+
+  #onDisposeValue?: (oldValue: TValue) => void;
 
   readonly #getValue: () => TValue;
 
