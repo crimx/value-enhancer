@@ -98,7 +98,7 @@ export class ValAgent<TValue = any> implements IValAgent<TValue>, Task {
 
   public notify_ = (): void => {
     if (this.#disposed) {
-      console.error(new Error("disposed"));
+      console.error(this.value_, new Error(`${this.name_ || ""} disposed`));
       if (process.env.NODE_ENV !== "production") {
         console.error(this.#disposed);
       }
