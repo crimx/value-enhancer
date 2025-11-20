@@ -26,4 +26,12 @@ describe("setValue", () => {
     setValue(v$, 2);
     expect(v$.value).toBe(1);
   });
+
+  it("should throw type error when setting incompatible type", async () => {
+    const v$ = val<1 | 2>(1);
+
+    // @ts-expect-error - type '4' is not assignable to type '1 | 2'
+    setValue(v$, 4);
+    expect(v$.value).toBe(4);
+  });
 });

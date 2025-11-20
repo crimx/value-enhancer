@@ -16,7 +16,7 @@ export const INIT_VALUE: any = {};
  */
 export const setValue = <TValue>(
   val: ReadonlyVal<TValue>,
-  value: TValue
+  value: NoInfer<TValue>
 ): void => (val as Val<TValue>)?.set?.(value);
 
 /**
